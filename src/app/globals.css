@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* Dark mode berdasarkan class (.dark) bukan media query prefers-color-scheme */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f0f2f5;
+  --foreground: #1a1a2e;
+  --card: #ffffff;
+  --card-border: #e4e6eb;
+  --muted: #65676b;
+  --brand: #dc2626;
+  --brand-hover: #b91c1c;
+  --brand-light: #fef2f2;
+  --accent: #dc2626;
+  --accent-hover: #b91c1c;
+  --like: #dc2626;
+  --comment: #2563eb;
+  --navbar-height: 56px;
+}
+
+:root.dark {
+  --background: #161618;
+  --foreground: #e3e3e7;
+  --card: #1e1e22;
+  --card-border: #2a2a30;
+  --muted: #9ca3af;
+  --brand: #ef4444;
+  --brand-hover: #dc2626;
+  --brand-light: #2a1515;
+  --accent: #ef4444;
+  --accent-hover: #dc2626;
+  --like: #ef4444;
+  --comment: #3b82f6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-accent: var(--accent);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono: var(--font-mono, "JetBrains Mono", monospace);
+}
+
+/* Font size responsif terhadap lebar layar */
+html {
+  font-size: clamp(14px, calc(14px + 0.12vw), 18px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  line-height: 1.4706;
+}
+
+/* ── Responsive card rounding ──────────────── */
+/* Mobile: rounded-lg, Desktop: rounded-xl */
+@media (max-width: 767px) {
+  .rounded-xl {
+    border-radius: 0.5rem;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Prevent iOS auto-zoom on input focus ──── */
+/* iOS Safari auto-zooms when input font-size < 16px */
+@media (max-width: 767px) {
+  input, textarea, select {
+    font-size: 14px !important;
+  }
+}
+
+/* Animasi slide-up untuk mobile bottom sheet */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@utility animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@utility animate-zoom-in {
+  animation: zoom-in 0.2s ease-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@utility animate-shake {
+  animation: shake 0.4s ease-out;
+}
+
+@utility scrollbar-none {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

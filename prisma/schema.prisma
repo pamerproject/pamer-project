@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+model User {
+  id             String   @id @default(cuid())
+  name           String?
+  username       String   @unique
+  email          String   @unique
+  password       String?
+  bio            String?
+  avatar         String?
+  avatarPosition String   @default("center")
+  coverImage     String?
+  coverPosition  String   @default("center")
+  website        String?
+  github         String?
+  linkedin       String?
+  links          Json      @default("[]")
+  role           UserRole @default(USER)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  projects    Project[]
+  posts       Post[]
+  comments    Comment[]
+  likes       Like[]
+  commentLikes CommentLike[]
+  resetToken       String?   @unique
+  resetTokenExpires DateTime?
+  emailVerified     DateTime?
+  verifyToken       String?   @unique
+  verifyTokenExpires DateTime?
+
+  jobs             Job[]
+  notifications    Notification[] @relation("NotificationRecipient")
+  actorNotifs      Notification[] @relation("NotificationActor")
+
+  events           Event[]
+  eventParticipants EventParticipant[]
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String?       @unique
+  description String?
+  content     String?
+  image       String?
+  tags        String[]
+  liveUrl     String?
+  repoUrl     String?
+  status      ProjectStatus @default(DRAFT)
+  visibility  Visibility    @default(PUBLIC)
+  pinned      Boolean       @default(false)
+  userId      String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  posts      Post[]
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments   Comment[]
+  likes      Like[]
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  type      String   @default("cerita")
+  slug      String?  @unique
+  content   String
+  image     String?
+  pinned    Boolean  @default(false)
+  projectId String?
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  comments      Comment[]
+  likes         Like[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  postId    String?
+  projectId String?
+  parentId  String?
+  pinned    Boolean  @default(false)
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  editedAt  DateTime?
+
+  ogTitle       String?
+  ogDescription String?
+  ogImage       String?
+  ogSiteName    String?
+
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  project Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+  likes   CommentLike[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String?
+  projectId String?
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@unique([userId, projectId])
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  REPLY
+  VISIT
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  userId    String
+  actorId   String
+  postId    String?
+  projectId String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user    User     @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  actor   User     @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  slug        String?   @unique
+  description String?
+  location    String?
+  type        String?
+  salary      String?
+  salaryMin   Int?
+  salaryMax   Int?
+  currency    String   @default("IDR")
+  tags        String[]
+  contactEmail String?
+  url         String?
+  image       String?
+  status      String   @default("PUBLISHED")
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ── Events ───────────────────────────────────────────────
+// Konten event (judul, deskripsi, badge, durasi, periode, tata cara, syarat,
+// hadiah) dibuat manual oleh admin — satu bahasa, tidak perlu terjemahan id/en.
+
+model Event {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String
+  image        String?
+  badge        String   @default("Lomba")
+  duration     String
+  // Durasi terstruktur (angka + satuan) supaya sistem bisa hitung sisa waktu
+  durationValue Int?
+  durationUnit  String?
+  endsAt        DateTime?
+  // Status event: aktif (muncul di atas) vs nonaktif (di bawah)
+  active       Boolean  @default(true)
+  period       String
+  howTo        String[]
+  requirements String[]
+  prizes       String[]
+  userId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participants EventParticipant[]
+}
+
+model EventParticipant {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+}
+
+// ── SEO Settings ──────────────────────────────────────────
+// Pengaturan SEO situs — satu baris (id "singleton") yang dikelola admin
+// lewat Dashboard → Pengaturan. Title/deskripsi/keyword berlaku untuk semua
+// halaman (dipakai oleh generateMetadata di root layout).
+
+model SeoSettings {
+  id          String   @id @default("singleton")
+  title       String
+  description String
+  keywords    String   @default("")
+  ogImage     String?
+  favicon     String?
+  updatedAt   DateTime @updatedAt
+}
+
+// ── Page Content ──────────────────────────────────────────
+// Konten halaman statis (About, Privacy, Terms, Contact) yang dikelola
+// admin lewat Dashboard → Pengaturan. Satu baris per key (id = "about",
+// "privacy", "terms", "contact"). Konten satu bahasa (dibuat manual admin).
+
+model PageContent {
+  id        String   @id
+  title     String
+  content   String
+  updatedAt DateTime @updatedAt
+}

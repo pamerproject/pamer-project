@@ -1,0 +1,55 @@
+name: Migrate Database
+
+# Jalankan migrasi secara otomatis setiap kali kode di-push ke main.
+# Aman & idempotent: `prisma migrate deploy` hanya menerapkan migrasi yang
+# belum pernah dijalankan (dicatat di tabel _prisma_migrations). Data tidak
+# pernah dihapus — migrasi tidak memakai `migrate reset` / `migrate dev`.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Cegah dua run migrasi bertabrakan (push beruntun) — migrasi harus serial
+concurrency:
+  group: migrate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    # Batas waktu agar migrasi yang macet tidak berjalan selamanya
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        # postinstall otomatis menjalankan `prisma generate`
+
+      - name: Ensure DIRECT_URL secret is set
+        # DIRECT_URL (koneksi direct Neon) wajib ada — tanpa itu migrasi bisa
+        # diam-diam memakai pooled URL dan gagal di DDL (advisory lock).
+        run: |
+          if [ -z "$DIRECT_URL" ]; then
+            echo "::error::DIRECT_URL secret belum di-set. Tambahkan di GitHub > Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Apply migrations (deploy)
+        run: npx prisma migrate deploy
+        env:
+          # DIRECT_URL = koneksi direct Neon (tanpa -pooler) — direkomendasikan
+          # untuk DDL. prisma.config.ts membaca DIRECT_URL dengan fallback
+          # DATABASE_URL. Tambahkan DIRECT_URL sebagai secret di
+          # GitHub > Settings > Secrets and variables > Actions.
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
