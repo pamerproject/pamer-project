@@ -58,3 +58,10 @@ di GitHub → Settings → Secrets and variables → Actions.
 
 > `prisma migrate deploy` bersifat **idempotent** — hanya menerapkan migrasi yang
 > belum dijalankan, tidak pernah menghapus data.
+
+## OAuth (Google/GitHub)
+Saat mengaktifkan OAuth, set KEDUA pasangan env var ini bersamaan di Vercel:
+- Server (auth): `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`, `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
+- UI tombol (client): `NEXT_PUBLIC_GOOGLE_CLIENT_ID` / `NEXT_PUBLIC_GITHUB_CLIENT_ID` (nilai sama dengan Client ID)
+Jika hanya server var yang di-set, tombol login Google/GitHub tetap tersembunyi.
+Kosongkan `NEXT_PUBLIC_*` untuk menyembunyikan tombol OAuth.

@@ -19,6 +19,12 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(""); // "google" | "github" | "credentials" | ""
   const [nameInput, setNameInput] = useState("");
 
+  // OAuth hanya tersedia bila kredensial di-set (env server GOOGLE_CLIENT_ID/GITHUB_CLIENT_ID).
+  // NEXT_PUBLIC_* di-inline saat build — tombol disembunyikan jika kosong.
+  const googleEnabled = !!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const githubEnabled = !!process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+  const hasSocial = googleEnabled || githubEnabled;
+
   // Preview username — helper bersama dengan backend (generateUsername).
   // Backend memakai base langsung jika tersedia; angka baru ditambah kalau
   // username tersebut sudah dipakai orang lain.
@@ -108,7 +114,9 @@ export default function RegisterPage() {
         </div>
 
         {/* Social Login */}
+        {hasSocial && (
         <div className="mt-8 space-y-3">
+          {googleEnabled && (
           <button
             onClick={() => handleSocialSignIn("google")}
             disabled={!!loading}
@@ -129,7 +137,9 @@ export default function RegisterPage() {
             )}
             {t("auth.signInWithGoogle")}
           </button>
+          )}
 
+          {githubEnabled && (
           <button
             onClick={() => handleSocialSignIn("github")}
             disabled={!!loading}
@@ -147,7 +157,9 @@ export default function RegisterPage() {
             )}
             {t("auth.signInWithGithub")}
           </button>
+          )}
         </div>
+        )}
 
         {/* Toggle email form button */}
         <div className="mt-6">
