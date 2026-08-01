@@ -1,4 +1,4 @@
-# 🚀 DEPLOY-CHECKLIST — pamerkoding.com
+# 🚀 DEPLOY-CHECKLIST — pamerproject.com
 
 Checklist ini dipakai setiap kali deploy ke **produksi** (Vercel + Neon PostgreSQL).
 
@@ -16,7 +16,7 @@ Checklist ini dipakai setiap kali deploy ke **produksi** (Vercel + Neon PostgreS
 | 2 | **Tambahkan `DIRECT_URL` di Vercel** — koneksi **direct** Neon (tanpa `-pooler`) untuk migrasi | ☐ |
 | 3 | **Jalankan migrasi ke DB produksi** sekali: `npx prisma migrate deploy` (pakai DIRECT_URL) | ☐ |
 | 4 | **Seed akun admin** sekali: `npm run seed-admin` (butuh `ADMIN_EMAIL`/`ADMIN_PASSWORD` di env) | ☐ |
-| 5 | Pastikan `NEXTAUTH_URL` = domain produksi (mis. `https://pamerkoding.com`) | ☐ |
+| 5 | Pastikan `NEXTAUTH_URL` = domain produksi (mis. `https://pamerproject.com`) | ☐ |
 | 6 | Pastikan `NEXTAUTH_SECRET` terisi (buat: `openssl rand -base64 32`) | ☐ |
 
 ## 2. 🔵 Env vars lengkap untuk Vercel
@@ -25,7 +25,7 @@ Checklist ini dipakai setiap kali deploy ke **produksi** (Vercel + Neon PostgreS
 |---|---|---|
 | `DATABASE_URL` | `postgresql://...@...-pooler.c-3....neon.tech/neondb?sslmode=require` | Runtime (pooled) |
 | `DIRECT_URL` | `postgresql://...@....c-3....neon.tech/neondb?sslmode=require` | Migrasi (direct) |
-| `NEXTAUTH_URL` | `https://pamerkoding.com` | OAuth callback, link email |
+| `NEXTAUTH_URL` | `https://pamerproject.com` | OAuth callback, link email |
 | `NEXTAUTH_SECRET` | `openssl rand -base64 32` | Session JWT |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | dari Google Console | Login Google |
 | `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | dari GitHub OAuth Apps | Login GitHub |

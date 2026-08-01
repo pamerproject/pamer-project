@@ -1,6 +1,6 @@
 # PamerProject
 
-Platform komunitas untuk developer Indonesia untuk **memamerkan project**, berbagi **postingan**, **lowongan kerja**, **event**, dan **freelance** dalam satu tempat. Dapat diakses di [pamerkoding.com](https://pamerkoding.com).
+Platform komunitas untuk developer Indonesia untuk **memamerkan project**, berbagi **postingan**, **lowongan kerja**, **event**, dan **freelance** dalam satu tempat. Dapat diakses di [pamerproject.com](https://pamerproject.com).
 
 ## Fitur
 
