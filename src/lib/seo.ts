@@ -73,7 +73,7 @@ export async function buildSeoMetadata(opts: SeoMetadataOptions = {}): Promise<M
     },
     icons: {
       // Apple touch icon tetap PNG (iOS tidak mendukung webp untuk ini)
-      apple: "/icon-192.png",
+      apple: "/icon-180.png",
       ...(favicon ? { icon: [{ url: favicon }] } : {}),
     },
     openGraph: {

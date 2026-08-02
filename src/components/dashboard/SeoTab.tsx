@@ -251,7 +251,7 @@ export default function SeoTab() {
       )}
 
       {/* Meta tags — berlaku untuk semua halaman */}
-      <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+      <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand-light)]">
             <svg className="h-4 w-4 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -306,7 +306,7 @@ export default function SeoTab() {
 
       {/* Gambar OG + Favicon */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+        <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
           <ImageField
             label={t("seo.ogImageLabel")}
             hint={t("seo.ogImageHint")}
@@ -316,7 +316,7 @@ export default function SeoTab() {
             onError={setError}
           />
         </div>
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+        <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
           <ImageField
             label={t("seo.faviconLabel")}
             hint={t("seo.faviconHint")}

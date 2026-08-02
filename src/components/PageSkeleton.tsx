@@ -5,7 +5,7 @@ export default function PageSkeleton() {
       <div className="h-48 w-full rounded-t-xl bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
 
       {/* Profile header skeleton */}
-      <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+      <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
         <div className="flex items-start gap-4">
           <div className="h-24 w-24 shrink-0 rounded-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
           <div className="flex-1 space-y-3 pt-4">
@@ -24,7 +24,7 @@ export default function PageSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4"
+          className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4"
         >
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />

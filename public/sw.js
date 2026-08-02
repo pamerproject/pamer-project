@@ -1,8 +1,10 @@
-const CACHE = "pamerproject-v1";
+const CACHE = "pamerproject-v2";
 const ASSETS = [
   "/",
   "/manifest.json",
   "/icon.svg",
+  "/icon-192.png",
+  "/icon-512.png",
 ];
 
 // Install — cache critical assets

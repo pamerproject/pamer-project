@@ -92,7 +92,7 @@ interface PinnedCardProps {
 function PinnedCard({ type, titleLabel, unpinLabel, pinned, busy, onUnpin }: PinnedCardProps) {
   const { t } = useTranslation();
   return (
-    <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+    <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
       <div className="flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand-light)]">
           <svg className="h-4 w-4 text-[var(--brand)]" fill="currentColor" viewBox="0 0 24 24">

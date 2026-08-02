@@ -60,7 +60,7 @@ export default function JobCard({ job, children }: { job: JobCardJob; children?:
   const budget = formatSalary(job);
 
   return (
-    <div className="group overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
+    <div className="card-app group overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
       <Link href={`/freelance/${job.slug || job.id}`} className="block">
         {job.image && (
           <div className="aspect-video w-full overflow-hidden">

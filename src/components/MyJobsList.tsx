@@ -81,7 +81,7 @@ export default function MyJobsList() {
     return (
       <div className="mt-4 space-y-3">
         {[1, 2].map((i) => (
-          <div key={i} className="animate-pulse rounded-xl border border-[var(--card-border)] p-4">
+          <div key={i} className="card-app animate-pulse rounded-xl border border-[var(--card-border)] p-4">
             <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
             <div className="mt-2 h-3 w-1/2 rounded bg-gray-100 dark:bg-gray-700" />
           </div>

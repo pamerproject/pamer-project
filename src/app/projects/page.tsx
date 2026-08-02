@@ -104,7 +104,7 @@ export default function ProjectsPage() {
         {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden"
+              className="card-app animate-pulse rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden"
             >
               {/* Image skeleton */}
               <div className="aspect-video w-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
@@ -140,7 +140,7 @@ export default function ProjectsPage() {
   // ── Empty ──
   if (projects.length === 0) {
     return (
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-12 text-center">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-12 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
           <svg
             className="h-8 w-8 text-[var(--brand)]"
@@ -260,7 +260,7 @@ export default function ProjectsPage() {
               href={`/project/${project.slug || project.id}`}
               className="group block"
             >
-              <article className="overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
+              <article className="card-app overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
                 {/* Image */}
                 {primaryImage ? (
                   <div className="aspect-video w-full overflow-hidden">

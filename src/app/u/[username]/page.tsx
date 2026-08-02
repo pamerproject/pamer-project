@@ -437,7 +437,7 @@ export default function ProfilePage() {
             </div>
 
             {/* ── Profile Info ────────────────────────────── */}
-            <div className="relative border-b border-l border-r border-[var(--card-border)] bg-[var(--card)] px-4 pb-6 md:rounded-b-xl md:px-6">
+            <div className="card-app relative border-b border-l border-r border-[var(--card-border)] bg-[var(--card)] px-4 pb-6 md:rounded-b-xl md:px-6">
               {/* Avatar */}
               <div className="group/av relative -mt-16 inline-block md:-mt-20">
                 {user.avatar ? (
@@ -641,7 +641,7 @@ export default function ProfilePage() {
                     );
                   })}
                   {allPosts.filter((p) => p.type === "cerita").length === 0 && (
-                    <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
+                    <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
                       <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
                         <svg className="h-8 w-8 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -754,7 +754,7 @@ export default function ProfilePage() {
                     );
                   })}
                   {allPosts.filter((p) => p.type === "project").length === 0 && (
-                    <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
+                    <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
                       <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
                         <svg className="h-8 w-8 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
@@ -799,7 +799,7 @@ export default function ProfilePage() {
                           ))}
                         </div>
                       ) : (
-                        <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
+                        <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
                           <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
                             <svg className="h-8 w-8 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

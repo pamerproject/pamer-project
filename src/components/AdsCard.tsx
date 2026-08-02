@@ -10,7 +10,7 @@ export default function AdsCard() {
   const { t } = useTranslation();
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
+    <div className="card-app relative overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
       {/* Accent gradien Hostinger */}
       <div className="h-1.5 w-full bg-gradient-to-r from-[#673de6] via-[#8a5cf6] to-[#a855f7]" />
 

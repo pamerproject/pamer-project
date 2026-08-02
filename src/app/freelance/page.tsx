@@ -43,7 +43,7 @@ function LoadingSkeleton() {
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-2">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="animate-pulse rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+        <div key={i} className="card-app animate-pulse rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-4">
           <div className="flex items-start justify-between">
             <div className="h-5 w-20 rounded-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
             <div className="h-5 w-24 rounded-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />

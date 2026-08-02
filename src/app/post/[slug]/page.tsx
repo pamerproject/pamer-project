@@ -1212,7 +1212,7 @@ export default function PostDetailPage() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+        <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700" />
             <div className="flex-1 space-y-2">
@@ -1275,7 +1275,7 @@ export default function PostDetailPage() {
         ]} />
       </div>
       {/* ── Post Card ── */}
-      <article className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
+      <article className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
         <div className="flex items-start gap-3 px-4 pb-2 pt-4">
           <Link href={`/u/${post.user.username}`}>
             <Avatar src={post.user.avatar} name={post.user.name} size="sm" />
@@ -1522,7 +1522,7 @@ export default function PostDetailPage() {
       />
 
       {/* ── Comments List ── */}
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
         <div className="border-b border-[var(--card-border)] px-4 py-3">
           <h3 className="text-sm font-bold">{t("project.comments")} ({commentCount})</h3>
         </div>

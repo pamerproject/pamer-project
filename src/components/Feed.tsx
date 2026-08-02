@@ -108,7 +108,7 @@ export default function Feed() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4"
+              className="card-app animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4"
             >
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
@@ -130,7 +130,7 @@ export default function Feed() {
           Gagal memuat postingan lainnya
         </div>
       ) : posts.length === 0 ? (
-        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
+        <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
           <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
             <svg
               className="h-8 w-8 text-[var(--brand)]"

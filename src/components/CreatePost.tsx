@@ -6,7 +6,7 @@ import Avatar from "./ui/Avatar";
 export default function CreatePost() {
   const { t } = useTranslation();
   return (
-    <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+    <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-4">
       <div className="flex items-center gap-3">
         <Avatar
           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23dc2626' width='100' height='100'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='white' font-size='40' font-weight='800' font-family='Inter'%3EU%3C/text%3E%3C/svg%3E"

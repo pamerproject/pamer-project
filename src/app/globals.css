@@ -68,6 +68,19 @@ body {
   }
 }
 
+/* ── Mobile app feel: card tanpa border kiri/kanan ──── */
+/* Hanya garis atas/bawah sebagai separator antar card (seperti list item
+   di mobile app); jarak tepi kiri/kanan layar memakai margin kontainer
+   (px-4). Radius di-nol-kan di mobile agar garis separator lurus penuh,
+   mirip list item app. Desktop tetap border penuh + rounded. */
+@media (max-width: 767px) {
+  .card-app {
+    border-left-width: 0;
+    border-right-width: 0;
+    border-radius: 0;
+  }
+}
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;

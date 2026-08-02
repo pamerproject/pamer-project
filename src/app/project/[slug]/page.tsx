@@ -1172,7 +1172,7 @@ export default function ProjectDetailPage() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+        <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-6">
           <div className="h-7 w-1/2 rounded bg-gray-200 dark:bg-gray-700" />
           <div className="mt-3 h-4 w-1/3 rounded bg-gray-100 dark:bg-gray-700" />
           <div className="mt-6 h-4 w-full rounded bg-gray-200 dark:bg-gray-700" />
@@ -1226,7 +1226,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* ── Project Card ── */}
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
         {/* Cover Image — carousel jika > 1 gambar */}
         {project.image && (
           <div className="w-full overflow-hidden border-b border-[var(--card-border)]">
@@ -1483,7 +1483,7 @@ export default function ProjectDetailPage() {
       />
 
       {/* ── Comments List ── */}
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
         <div className="border-b border-[var(--card-border)] px-4 py-3">
           <h3 className="text-sm font-bold">{t("project.comments")} ({commentCount})</h3>
         </div>

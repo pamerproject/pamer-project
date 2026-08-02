@@ -172,7 +172,7 @@ export default function ContentTab() {
       </div>
 
       {/* Form create & edit jadi satu */}
-      <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+      <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
         {error && (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
             {error}

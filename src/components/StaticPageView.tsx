@@ -23,7 +23,7 @@ export default function StaticPageView({ pageKey, title, content, published }: S
         ]}
       />
 
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
         {/* Header */}
         <div className="flex items-center gap-3 border-b border-[var(--card-border)] px-6 py-5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--brand-light)]">
