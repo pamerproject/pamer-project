@@ -9,6 +9,7 @@ import { useInfiniteScroll } from "@/lib/hooks";
 import renderContent from "@/lib/renderContent";
 import Breadcrumb from "@/components/Breadcrumb";
 import { translateApiError } from "@/lib/helpers";
+import NotFoundContent from "@/components/NotFoundContent";
 import { useTranslation } from "@/lib/lang";
 import EmojiPicker, { isOnlyEmoji } from "@/components/ui/EmojiPicker";
 import StickerPicker from "@/components/ui/StickerPicker";
@@ -754,6 +755,7 @@ export default function ProjectDetailPage() {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
@@ -907,7 +909,18 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     if (!slug) return;
     fetch(`/api/projects/${slug}`)
-      .then((res) => (res.ok ? res.json() : null))
+      .then(async (res) => {
+        if (res.status === 404) {
+          // Project dihapus / tidak ada / tidak berhak lihat → halaman 404
+          setNotFound(true);
+          return null;
+        }
+        if (!res.ok) {
+          setError(t("error.failedToLoad"));
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
         if (data?.project) {
           setProject(data.project);
@@ -915,8 +928,6 @@ export default function ProjectDetailPage() {
           setLikeCount(data.project._count?.likes || 0);
           setCommentCount(data.project._count?.comments || 0);
           setError(null);
-        } else {
-          setError(t("error.notFound"));
         }
       })
       .catch(() => setError(t("error.failedToLoad")))
@@ -1180,6 +1191,10 @@ export default function ProjectDetailPage() {
         </div>
       </div>
     );
+  }
+
+  if (notFound) {
+    return <NotFoundContent />;
   }
 
   if (error || !project) {

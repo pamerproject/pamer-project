@@ -14,6 +14,7 @@ import { useInfiniteScroll } from "@/lib/hooks";
 import renderContent from "@/lib/renderContent";
 import Breadcrumb from "@/components/Breadcrumb";
 import { translateApiError } from "@/lib/helpers";
+import NotFoundContent from "@/components/NotFoundContent";
 
 /* ─── Types ──────────────────────────────────────────── */
 
@@ -765,6 +766,7 @@ export default function PostDetailPage() {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [postLiked, setPostLiked] = useState(false);
   const [postLikeCount, setPostLikeCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
@@ -958,7 +960,18 @@ export default function PostDetailPage() {
   useEffect(() => {
     if (!slug) return;
     fetch(`/api/posts/${slug}`)
-      .then((res) => (res.ok ? res.json() : null))
+      .then(async (res) => {
+        if (res.status === 404) {
+          // Post dihapus / tidak ada / tidak berhak lihat → tampilkan halaman 404
+          setNotFound(true);
+          return null;
+        }
+        if (!res.ok) {
+          setError(t("error.failedToLoad"));
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
         if (data?.post) {
           setPost(data.post);
@@ -966,8 +979,6 @@ export default function PostDetailPage() {
           setPostLikeCount(data.post._count?.likes || 0);
           setCommentCount(data.post._count?.comments || 0);
           setError(null);
-        } else {
-          setError(t("error.failedToLoad"));
         }
       })
       .catch((err) => {
@@ -1228,6 +1239,10 @@ export default function PostDetailPage() {
         </div>
       </div>
     );
+  }
+
+  if (notFound) {
+    return <NotFoundContent />;
   }
 
   if (error || !post) {
