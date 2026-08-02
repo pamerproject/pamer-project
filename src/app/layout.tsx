@@ -81,7 +81,10 @@ export default async function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').catch(function() {});
+                  // updateViaCache:'none' → browser selalu revalidasi sw.js ke
+                  // server (tidak memakai HTTP cache), jadi update SW cepat
+                  // menyebar ke perangkat pengguna.
+                  navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(function() {});
                 });
               }
             `,
