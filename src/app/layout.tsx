@@ -4,6 +4,7 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
+import InstallApp from "@/components/InstallApp";
 import { LangProvider } from "@/lib/lang";
 import { buildSeoMetadata } from "@/lib/seo";
 import dynamic from "next/dynamic";
@@ -22,6 +23,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: "#dc2626",
 };
 
 // Metadata default situs — dibaca dari SeoSettings (DB) via helper bersama.
@@ -60,6 +62,7 @@ export default async function RootLayout({
               </div>
             </div>
             <MobileNav />
+            <InstallApp />
           </LangProvider>
         </AuthProvider>
         <script

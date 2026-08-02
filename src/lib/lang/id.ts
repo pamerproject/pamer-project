@@ -71,6 +71,15 @@ const id = {
     profile: "Profil",
   },
 
+  // ── PWA Install ────────────────────────────────────
+  pwa: {
+    install: "Install Aplikasi",
+    iosTitle: "Cara Install di iPhone/iPad",
+    iosStep1: "Buka menu Bagikan (ikon kotak dengan panah) di Safari",
+    iosStep2: "Pilih \"Tambahkan ke Layar Utama\"",
+    iosStep3: "Ketuk \"Tambah\" di pojok kanan atas",
+  },
+
   // ── Home Page (Beranda) ────────────────────────────
   home: {
     heroTitle: "Pamerkan",

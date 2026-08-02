@@ -1,4 +1,4 @@
-const CACHE = "pamerproject-v2";
+const CACHE = "pamerproject-v3";
 const ASSETS = [
   "/",
   "/manifest.json",

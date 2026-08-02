@@ -71,6 +71,15 @@ const en = {
     profile: "Profile",
   },
 
+  // ── PWA Install ────────────────────────────────────
+  pwa: {
+    install: "Install App",
+    iosTitle: "How to Install on iPhone/iPad",
+    iosStep1: "Open the Share menu (square with arrow icon) in Safari",
+    iosStep2: "Choose \"Add to Home Screen\"",
+    iosStep3: "Tap \"Add\" in the top-right corner",
+  },
+
   // ── Home Page (Beranda) ────────────────────────────
   home: {
     heroTitle: "Showcase Your",
