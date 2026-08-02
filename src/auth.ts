@@ -59,10 +59,14 @@ export const authOptions: NextAuthOptions = {
         const existing = await prisma.user.findUnique({ where: { email: user.email } });
 
         if (!existing) {
-          // Buat user baru dengan username unik — helper bersama dengan
-          // register (optimistic create + retry bila username bentrok,
-          // race condition aman). Email dari provider sudah terverifikasi.
-          await createUserWithUniqueUsername(user.name || "user", (username) => ({
+          // Buat user baru dengan username UNIK dari bagian lokal email
+          // (mis. "danayasa2@gmail.com" → basis "danayasa2") — lebih aman
+          // daripada dari nama (nama bisa ada spasi/karakter aneh). Helper
+          // createUserWithUniqueUsername men-sanitasi + retry bila bentrok.
+          // Email dari provider sudah terverifikasi.
+          const emailLocal = user.email.split("@")[0] || "";
+          const usernameBasis = emailLocal || user.name || "user";
+          await createUserWithUniqueUsername(usernameBasis, (username) => ({
             name: user.name || "User",
             username,
             email: user.email!,
@@ -94,21 +98,46 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user, trigger }) {
       if (user) {
-        token.id = user.id;
-        token.username = user.username;
-        token.picture = user.image;
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: { role: true, username: true, avatar: true, name: true, emailVerified: true },
-        });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.username = dbUser.username;
-          token.picture = dbUser.avatar;
-          token.name = dbUser.name;
-          token.emailVerified = dbUser.emailVerified;
+        // Cari user di DB via EMAIL, bukan id — untuk login OAuth,
+        // `user.id` adalah sub provider (mis. "123456789"), BUKAN id DB,
+        // sehingga lookup by id gagal dan token.username kosong. Akibatnya
+        // session.username undefined → link profil jadi /u/<Nama> (dengan
+        // spasi, mis. /u/Ketut%20Dana). Email selalu konsisten dengan DB.
+        const email = user.email || (token.email as string) || "";
+        if (email) {
+          const dbUser = await prisma.user.findUnique({
+            where: { email },
+            select: { id: true, role: true, username: true, avatar: true, name: true, emailVerified: true },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.role = dbUser.role;
+            token.username = dbUser.username;
+            token.picture = dbUser.avatar;
+            token.name = dbUser.name;
+            token.emailVerified = dbUser.emailVerified;
+          }
         }
       }
+      // Backfill untuk sesi LAMA (token JWT dibuat sebelum fix ini): token
+      // belum punya username, jadi masih menghasilkan link /u/<Nama> sampai
+      // re-login. Isi sekali saja — berikutnya token.username sudah terisi,
+      // sehingga blok ini tidak jalan lagi (tanpa biaya per-request).
+      if (!token.username && token.email) {
+        const legacyUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+          select: { id: true, role: true, username: true, avatar: true, name: true, emailVerified: true },
+        });
+        if (legacyUser) {
+          token.id = legacyUser.id;
+          token.role = legacyUser.role;
+          token.username = legacyUser.username;
+          token.picture = legacyUser.avatar;
+          token.name = legacyUser.name;
+          token.emailVerified = legacyUser.emailVerified;
+        }
+      }
+
       // Update token saat session di-update — baca data terbaru dari DB
       if (trigger === "update") {
         const userId = token.id;
