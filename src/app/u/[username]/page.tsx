@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
+import Avatar from "@/components/ui/Avatar";
 import { parsePostImage, getTimeAgo, getObjPosition, getZoomLevel, translateApiError } from "@/lib/helpers";
 import renderContent from "@/lib/renderContent";
 import { useInfiniteScroll } from "@/lib/hooks";
@@ -96,6 +97,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [notFound, setNotFound] = useState(false);
   const [editTarget, setEditTarget] = useState<EditTarget>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("project");
@@ -318,12 +320,20 @@ export default function ProfilePage() {
     }
 
     fetch(`/api/users/${username}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(t("error.userNotFound"));
+      .then(async (res) => {
+        if (res.status === 404) {
+          // Profil dihapus / tidak ada / tidak berhak lihat → tampilkan not-found
+          if (!ignore) {
+            setNotFound(true);
+            setLoading(false);
+          }
+          return null;
+        }
+        if (!res.ok) throw new Error(t("error.failedToLoad"));
         return res.json();
       })
       .then((data) => {
-        if (!ignore) {
+        if (!ignore && data?.user) {
           setUser(data.user);
           setAllPosts(data.user?.posts || []);
           setPinnedProjects(data.user?.projects || []);
@@ -378,19 +388,49 @@ export default function ProfilePage() {
     return <PageSkeleton />;
   }
 
-  // ─── Error ───────────────────────────────────────────────────
+  // ─── Error / User tidak ditemukan ───────────────────────────────
   if (error || !user) {
     return (
-      <div className="mx-auto mt-20 max-w-lg text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-          <svg className="h-8 w-8 text-red-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+        {/* Avatar placeholder — komponen Avatar yang sama seperti di komentar */}
+        <div className="relative mb-6">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[var(--brand-light)] ring-4 ring-[var(--brand)]/10">
+            <Avatar src={null} name="?" size="xl" />
+          </div>
+          <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-white shadow-lg">
+            ?
+          </div>
         </div>
-        <p className="text-lg font-medium">{error || t("error.userNotFound")}</p>
-        <Link href="/" className="mt-4 inline-block text-sm text-[var(--brand)] hover:underline">
-          {t("error.backToHome")}
-        </Link>
+
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">
+          {notFound ? t("error.userNotFound") : error || t("error.userNotFound")}
+        </h1>
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-[var(--muted)]">
+          {lang === "id"
+            ? "Profil yang kamu cari mungkin sudah dihapus, diganti nama, atau belum pernah ada. Coba periksa kembali URL-nya."
+            : "The profile you're looking for might have been removed, renamed, or never existed. Try checking the URL again."}
+        </p>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-[var(--brand-hover)] hover:shadow-md active:scale-[0.97]"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            {t("error.backToHome")}
+          </Link>
+          <button
+            onClick={() => window.history.back()}
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-6 py-3 text-sm font-medium text-[var(--foreground)] shadow-sm transition-all hover:border-[var(--brand)] hover:text-[var(--brand)] active:scale-[0.97]"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            {lang === "id" ? "Kembali" : "Go Back"}
+          </button>
+        </div>
       </div>
     );
   }
