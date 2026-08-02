@@ -7,6 +7,7 @@ async function main() {
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
   const adminPinId = process.env.ADMIN_PIN_ID || null;
+  const adminUsername = process.env.ADMIN_USERNAME || `admin_${adminEmail?.split("@")[0] || "admin"}`;
 
   if (!adminEmail) {
     console.error("ADMIN_EMAIL env var is required");
@@ -22,26 +23,40 @@ async function main() {
     where: { email: adminEmail },
   });
 
+  // Hash password sekali — dipakai di cabang update & create.
+  const hashedPassword = await bcrypt.hash(adminPassword, 12);
+  // Username konsisten di kedua cabang, agar re-run seed TIDAK
+  // mengganti nama user admin. Nilai dari ADMIN_USERNAME (mis. "pamerproject"),
+  // fallback ke skema admin_<prefix-email>.
+  // Akun admin dibuat/di-seed oleh operator — sudah trusted, jadi email
+  // langsung dianggap terverifikasi (hindari banner "verifikasi email").
+  const emailVerified = new Date();
+
   if (existingAdmin) {
+    // Update juga password — kalau ADMIN_PASSWORD berubah, hash harus
+    // ikut disinkronkan (sebelumnya hanya name/username/role yang di-update,
+    // sehingga password baru tidak pernah berlaku untuk admin yang sudah ada).
     const updated = await prisma.user.update({
       where: { id: existingAdmin.id },
       data: {
         name: adminName,
-        username: `admin_${existingAdmin.id.slice(0, 8)}`,
+        username: adminUsername,
         role: "ADMIN",
+        password: hashedPassword,
+        emailVerified,
       },
     });
     console.log(`✅ Admin user updated: ${updated.email} (${updated.role})`);
     await seedPin(updated.id, adminPinId);
   } else {
-    const hashedPassword = await bcrypt.hash(adminPassword, 12);
     const admin = await prisma.user.create({
       data: {
         name: adminName,
-        username: `admin_${adminEmail.split("@")[0]}`,
+        username: adminUsername,
         email: adminEmail,
         password: hashedPassword,
         role: "ADMIN",
+        emailVerified,
       },
     });
     console.log(`✅ Admin user created: ${admin.email} (role: ${admin.role})`);
