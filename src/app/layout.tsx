@@ -97,6 +97,43 @@ export default async function RootLayout({
           nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: `
+              // SW enforcer — paksa perangkat yang masih dikuasai service worker
+              // LAMA (v1/v2) langsung membuang cache usang & memasang SW terbaru.
+              // Tanpa ini, update SW hanya terjadi saat browser kebetulan mengecek
+              // (bisa berhari-hari) — itulah kenapa garis kiri/kanan card masih
+              // muncul di banyak HP padahal CSS baru sudah live.
+              if ('serviceWorker' in navigator && 'caches' in window) {
+                // 1) Hapus cache lama, sisakan versi tertinggi pamerproject-vN
+                //    (self-maintaining: tidak perlu hardcode nomor versi).
+                caches.keys().then(function(keys) {
+                  var maxVer = -1, keep = null, regex = /^pamerproject-v(\\d+)$/;
+                  for (var i = 0; i < keys.length; i++) {
+                    var m = keys[i].match(regex);
+                    if (m && parseInt(m[1], 10) > maxVer) { maxVer = parseInt(m[1], 10); keep = keys[i]; }
+                  }
+                  // Guard: hanya hapus bila ada cache ber-versi (keep !== null),
+                  // supaya jangan menghapus cache lain di origin yang tak dikenal.
+                  if (keep !== null) {
+                    for (var j = 0; j < keys.length; j++) {
+                      if (keys[j] !== keep) caches.delete(keys[j]);
+                    }
+                  }
+                }).catch(function() {});
+                // 2) Paksa browser cek & pasang service worker terbaru sekarang.
+                //    sw.js v3 punya skipWaiting + clients.claim + activate yang
+                //    membersihkan cache lama — jadi begitu update() berjalan,
+                //    SW baru langsung mengambil alih.
+                navigator.serviceWorker.ready.then(function(reg) {
+                  reg.update().catch(function() {});
+                }).catch(function() {});
+              }
+            `,
+          }}
+        />
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `
               document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
             `,
           }}
