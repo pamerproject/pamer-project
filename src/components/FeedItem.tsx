@@ -137,7 +137,7 @@ export default function FeedItem({
   };
 
   return (
-    <article className={`card-app border-b border-l border-r border-[var(--card-border)] bg-[var(--card)] px-2 rounded-2xl md:rounded-xl md:border-t md:px-0 ${pinned ? "ring-2 ring-red-500/70" : ""}`}>
+    <article className={`card-app border-b border-[var(--card-border)] bg-[var(--card)] px-2 rounded-2xl md:rounded-xl md:border-l md:border-r md:border-t md:px-0 ${pinned ? "ring-2 ring-red-500/70" : ""}`}>
       {/* Header: avatar + name + username + time + type badge */}
       <div className="flex items-start gap-2 px-3 pb-6 pt-3 md:gap-3 md:px-4 md:pt-4 md:pb-8">
         {isLoggedIn ? (

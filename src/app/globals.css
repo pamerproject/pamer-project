@@ -74,10 +74,16 @@ body {
    (px-4). Radius di-nol-kan di mobile agar garis separator lurus penuh,
    mirip list item app. Desktop tetap border penuh + rounded. */
 @media (max-width: 767px) {
+  /* Pakai !important + properti fisik DAN logis: memastikan menang atas
+     utility Tailwind .border-l/.border-r (border-left-width:1px) di semua
+     browser termasuk in-app browser — cascade/urutan rule tidak bisa
+     menggagalkan override ini. */
   .card-app {
-    border-left-width: 0;
-    border-right-width: 0;
-    border-radius: 0;
+    border-left-width: 0 !important;
+    border-right-width: 0 !important;
+    border-inline-start-width: 0 !important;
+    border-inline-end-width: 0 !important;
+    border-radius: 0 !important;
   }
 }
 

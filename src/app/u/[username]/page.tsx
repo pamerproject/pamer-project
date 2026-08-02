@@ -437,7 +437,7 @@ export default function ProfilePage() {
             </div>
 
             {/* ── Profile Info ────────────────────────────── */}
-            <div className="card-app relative border-b border-l border-r border-[var(--card-border)] bg-[var(--card)] px-4 pb-6 md:rounded-b-xl md:px-6">
+            <div className="card-app relative border-b border-[var(--card-border)] bg-[var(--card)] px-4 pb-6 md:rounded-b-xl md:border-l md:border-r md:px-6">
               {/* Avatar */}
               <div className="group/av relative -mt-16 inline-block md:-mt-20">
                 {user.avatar ? (
