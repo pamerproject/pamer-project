@@ -1,4 +1,4 @@
-const CACHE = "pamerproject-v4";
+const CACHE = "pamerproject-v5";
 const ASSETS = [
   "/",
   "/manifest.json",
@@ -17,14 +17,22 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate — clean old caches
+// Activate — clean old caches, ambil alih, lalu paksa SEMUA halaman/tab yang
+// terbuka reload ke versi terbaru. Ini memutus siklus "perangkat masih
+// menampilkan halaman lama" dari cache SW v1/v2 yang cache-first: begitu SW
+// baru terpasang (skipWaiting), semua window langsung di-navigate ulang.
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    )
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+      await self.clients.claim();
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      await Promise.all(
+        windows.map((win) => win.navigate(win.url).catch(() => {}))
+      );
+    })()
   );
-  self.clients.claim();
 });
 
 // Fetch — network-first for pages, cache-first for static assets
