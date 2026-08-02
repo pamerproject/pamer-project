@@ -15,7 +15,7 @@ type EditTarget = "avatar" | "cover" | null;
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { data: session, update: updateSession } = useSession();
+  const { data: session, status, update: updateSession } = useSession();
   const { t, lang } = useTranslation();
 
   // ─── Profile fields ──────────────────────────────────────
@@ -245,6 +245,12 @@ export default function SettingsPage() {
       setSavingPassword(false);
     }
   }, [currentPassword, newPassword, confirmPassword]);
+
+  // Hindari flash "Silakan login dulu" saat reload: tunggu session selesai dimuat
+  // (status === "loading") dulu dengan menampilkan skeleton, baru cek login.
+  if (status === "loading") {
+    return <PageSkeleton />;
+  }
 
   if (!session) {
     return (
