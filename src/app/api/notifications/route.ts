@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { cacheHeaders } from "@/lib/cache";
+import { noStoreHeaders } from "@/lib/cache";
 
 export async function GET() {
   try {
@@ -49,7 +49,9 @@ export async function GET() {
       where: { userId, read: false },
     });
 
-    return NextResponse.json({ notifications: enriched, unreadCount }, { headers: cacheHeaders(10) });
+    // Data notifikasi PRIBADI per user — jangan pernah di-cache CDN publik
+    // (tanpa Vary: Cookie, respons user lain bisa bocor ke user ini).
+    return NextResponse.json({ notifications: enriched, unreadCount }, { headers: noStoreHeaders() });
   } catch {
     return NextResponse.json({ message: "auth.failedToLoadNotifications" }, { status: 500 });
   }

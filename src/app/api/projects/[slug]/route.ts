@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { cacheHeaders } from "@/lib/cache";
+import { noStoreHeaders } from "@/lib/cache";
 
 export async function GET(
   _req: NextRequest,
@@ -85,7 +85,7 @@ export async function GET(
         githubUrl,
         isLiked,
       },
-    }, { headers: cacheHeaders(30) });
+    }, { headers: noStoreHeaders() });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "error.failedToLoad";
     return NextResponse.json({ message }, { status: 500 });

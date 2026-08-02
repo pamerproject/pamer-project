@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { createNotification } from "@/lib/notif";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { cacheHeaders } from "@/lib/cache";
+import { noStoreHeaders } from "@/lib/cache";
 import { requireVerifiedEmail } from "@/lib/verified";
 
 export async function GET(
@@ -30,9 +30,10 @@ export async function GET(
       where: { userId_postId: { userId: session.user.id, postId: post.id } },
     });
 
-    return NextResponse.json({ liked: !!existing }, { headers: cacheHeaders(5) });
+    // State like SPESIFIK per user — jangan di-cache CDN publik.
+    return NextResponse.json({ liked: !!existing }, { headers: noStoreHeaders() });
   } catch {
-    return NextResponse.json({ liked: false }, { headers: cacheHeaders(5) });
+    return NextResponse.json({ liked: false }, { headers: noStoreHeaders() });
   }
 }
 

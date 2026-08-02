@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { createNotification } from "@/lib/notif";
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate-limit";
-import { cacheHeaders } from "@/lib/cache";
+import { noStoreHeaders } from "@/lib/cache";
 import { censorFields } from "@/lib/censor";
 import { requireVerifiedEmail } from "@/lib/verified";
 
@@ -69,7 +69,8 @@ export async function GET(
       })),
     }));
 
-    return NextResponse.json({ comments: formatted, total: totalComments }, { headers: cacheHeaders(10) });
+    // Respons berisi isLiked per viewer — jangan di-cache CDN publik.
+    return NextResponse.json({ comments: formatted, total: totalComments }, { headers: noStoreHeaders() });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "error.failedToLoad";
     return NextResponse.json({ message }, { status: 500 });
