@@ -1,21 +1,20 @@
 import "dotenv/config";
-import prismaPkg from "@prisma/client";
+import { neon } from "@neondatabase/serverless";
 
-const { PrismaClient } = prismaPkg;
-
-// Migrasi URL gambar lama dari domain R2 dev (pub-*.r2.dev) yang diblokir
-// internetpositif/TrustPositif di Indonesia, ke custom domain (mis.
-// https://media.pamerproject.com) yang dilampirkan ke bucket di Cloudflare.
+// Migrasi URL gambar lama dari domain R2 yang DIBLOKIR internetpositif/
+// TrustPositif (pub-*.r2.dev, dan fallback endpoint S3 r2.cloudflarestorage.com)
+// ke custom domain (mis. https://media.pamerproject.com) yang sudah dilampirkan
+// ke bucket di Cloudflare → R2 → Settings → Custom Domains.
 //
-// Domain lama default diambil dari pemakaian sebelumnya. Bisa diganti dengan
-// flag --from, dan target baru dengan --to atau R2_PUBLIC_URL di .env.
+// Pakai SQL REPLACE sederhana: prefix URL diganti apa adanya di kolom teks,
+// termasuk di dalam JSON Post.image (imgs: [...]).
 //
 // Usage:
-//   node scripts/migrate-r2-domain.mjs --dry-run
+//   node scripts/migrate-r2-domain.mjs --dry-run          # preview, tanpa tulis
 //   node scripts/migrate-r2-domain.mjs --to https://media.pamerproject.com
-//   node scripts/migrate-r2-domain.mjs  # pakai R2_PUBLIC_URL dari .env
+//   node scripts/migrate-r2-domain.mjs                     # pakai R2_PUBLIC_URL di .env
 
-const prisma = new PrismaClient();
+const sql = neon(process.env.DATABASE_URL);
 
 const args = process.argv.slice(2);
 const argOf = (name) => {
@@ -24,6 +23,7 @@ const argOf = (name) => {
 };
 
 const OLD_DEV_DOMAIN = "https://pub-f4c9c6989a1b49aabec5a73b7a433dd1.r2.dev";
+const OLD_S3_FALLBACK = "https://4c41ab1db088006757fafa9abc80ab70.r2.cloudflarestorage.com/pamerproject";
 const from = (argOf("--from") || OLD_DEV_DOMAIN).replace(/\/+$/, "");
 const to = (argOf("--to") || process.env.R2_PUBLIC_URL || "").replace(/\/+$/, "");
 const dryRun = args.includes("--dry-run");
@@ -40,71 +40,57 @@ if (!to.startsWith("https://") && !to.startsWith("http://")) {
   process.exit(1);
 }
 
-console.log(`Migrasi URL gambar:`);
+// (table, column) yang menyimpan URL gambar hasil upload R2
+const TARGETS = [
+  ["User", "avatar"],
+  ["User", "coverImage"],
+  ["Project", "image"],
+  ["Post", "image"],
+  ["Comment", "ogImage"],
+  ["Job", "image"],
+  ["Event", "image"],
+  ["SeoSettings", "ogImage"],
+  ["SeoSettings", "favicon"],
+];
+
+console.log("Migrasi URL gambar R2:");
 console.log(`  dari : ${from}`);
 console.log(`  ke   : ${to}`);
 console.log(`  mode : ${dryRun ? "DRY-RUN (tidak menulis)" : "tulis ke DB"}`);
 console.log("");
 
-function rewriteUrl(url) {
-  if (typeof url !== "string" || !url) return url;
-  if (!url.startsWith(from)) return url;
-  return to + url.slice(from.length);
-}
-
-function rewritePostImage(raw) {
-  if (typeof raw !== "string" || !raw) return raw;
-  try {
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      return JSON.stringify(parsed.map(rewriteUrl));
-    }
-    if (parsed && typeof parsed === "object" && Array.isArray(parsed.imgs)) {
-      return JSON.stringify({ ...parsed, imgs: parsed.imgs.map(rewriteUrl) });
-    }
-    return raw;
-  } catch {
-    return raw;
-  }
-}
-
-// model + field yang menyimpan URL gambar hasil upload R2
-const CONFIG = [
-  { model: "user", fields: ["avatar", "coverImage"] },
-  { model: "project", fields: ["image"] },
-  { model: "post", fields: ["image"], json: true },
-  { model: "comment", fields: ["ogImage"] },
-  { model: "job", fields: ["image"] },
-  { model: "event", fields: ["image"] },
-  { model: "seoSettings", fields: ["ogImage", "favicon"] },
-];
+const oldPrefixes = [from];
+if (from === OLD_DEV_DOMAIN) oldPrefixes.push(OLD_S3_FALLBACK);
 
 let total = 0;
 
-for (const { model, fields, json } of CONFIG) {
-  for (const field of fields) {
-    const rows = await prisma[model].findMany({
-      where: { [field]: { contains: from } },
-      select: { id: true, [field]: true },
-    });
+for (const [table, col] of TARGETS) {
+  for (const old of oldPrefixes) {
+    const like = `%${old}%`;
+    const countRes = await sql.query(
+      `SELECT count(*)::int AS n FROM "${table}" WHERE "${col}" LIKE $1`,
+      [like]
+    );
+    const found = countRes[0]?.n || 0;
+    if (found === 0) continue;
 
-    let changed = 0;
-    for (const row of rows) {
-      const next = json ? rewritePostImage(row[field]) : rewriteUrl(row[field]);
-      if (next === row[field]) continue;
-      changed++;
-      total++;
-      if (!dryRun) {
-        await prisma[model].update({ where: { id: row.id }, data: { [field]: next } });
-      } else {
-        console.log(`  [dry-run] ${model}.${field} → ${row.id}`);
-      }
+    if (dryRun) {
+      console.log(`  [dry-run] ${table}.${col}: ${found} baris akan diubah (${old})`);
+      total += found;
+      continue;
     }
 
-    console.log(`${model}.${field}: ${rows.length} ditemukan, ${changed} akan diubah`);
+    const res = await sql.query(
+      `UPDATE "${table}"
+       SET "${col}" = REPLACE("${col}", $1, $2)
+       WHERE "${col}" LIKE $3`,
+      [old, to, like]
+    );
+    const updated = res?.rowCount ?? found;
+    console.log(`  ${table}.${col}: ${updated} baris diubah (${old})`);
+    total += updated;
   }
 }
 
 console.log("");
 console.log(`Total ${dryRun ? "AKAN diubah" : "diubah"}: ${total} baris`);
-await prisma.$disconnect();
