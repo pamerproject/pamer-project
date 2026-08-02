@@ -35,6 +35,14 @@ self.addEventListener("fetch", (event) => {
   // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
+  // Pass through non-GET (POST, PUT, DELETE, dll.) tanpa caching — Cache API
+  // tidak mendukung put() untuk request non-GET. Server Actions Next.js dan
+  // form submission mem-POST ke URL halaman, jadi harus dilewatkan langsung.
+  if (request.method !== "GET") {
+    event.respondWith(fetch(request).catch(() => new Response(null, { status: 503 })));
+    return;
+  }
+
   // API calls — network only, no cache
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(fetch(request).catch(() => new Response(null, { status: 503 })));
