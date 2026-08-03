@@ -74,14 +74,20 @@ export function useKeepAboveKeyboard(focused: boolean) {
   useEffect(() => {
     if (!el) return;
 
-    // Saat tidak fokus, reset bar ke dasar layar dan jangan pasang listener
+    // Saat tidak fokus, reset bar ke dasar layar, pulihkan padding asli,
+    // dan jangan pasang listener.
     if (!focused) {
       el.style.bottom = "0px";
+      el.style.paddingBottom = "";
       return;
     }
 
     const vv = window.visualViewport;
     if (!vv) return;
+
+    // Keyboard sudah menutupi area home-indicator → kecilkan padding bawah
+    // agar tidak ada sisa ruang kosong antara input dan keyboard.
+    el.style.paddingBottom = "4px";
 
     const update = () => {
       const keyboardHeight = Math.max(
@@ -96,12 +102,20 @@ export function useKeepAboveKeyboard(focused: boolean) {
     window.addEventListener("resize", update);
     update();
 
+    // iOS: animasi keyboard naik butuh waktu — rehitung beberapa kali
+    // setelah fokus agar posisi bar tidak tertinggal (menyisakan gap).
+    const t1 = window.setTimeout(update, 150);
+    const t2 = window.setTimeout(update, 400);
+
     return () => {
       vv.removeEventListener("resize", update);
       vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
-      // Cleanup: kembalikan ke bottom 0 saat effect dibersihkan
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      // Cleanup: kembalikan ke bottom 0 & padding asli
       el.style.bottom = "0px";
+      el.style.paddingBottom = "";
     };
   }, [el, focused]);
 

@@ -1535,7 +1535,7 @@ export default function ProjectDetailPage() {
         <div
           ref={setMobileBarEl}
           className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden"
-          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.25rem)" }}
         >
           {replyingTo && (
             <div className="flex items-center gap-1.5 border-b border-[var(--card-border)] bg-[var(--brand-light)]/50 px-3 py-1.5">
