@@ -73,6 +73,14 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const CURRENCY_SYMBOLS: Record<string, string> = {
+    IDR: "Rp",
+    USD: "$",
+    SGD: "S$",
+    MYR: "RM",
+  };
+  const currencySymbol = CURRENCY_SYMBOLS[form.currency] || form.currency;
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -174,18 +182,23 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
   return (
     <>
       <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[var(--card-border)] bg-[var(--card)] shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
+      {/* Full-screen di mobile, card centered di desktop */}
+      <div className="fixed inset-0 z-50 flex flex-col bg-[var(--card)] md:inset-auto md:left-1/2 md:top-1/2 md:h-auto md:max-h-[90vh] md:w-[90vw] md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl md:border md:border-[var(--card-border)] md:shadow-2xl animate-fade-in">
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--card-border)] bg-[var(--card)] px-5 py-4">
+        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-[var(--card-border)] bg-[var(--card)] px-5 py-4">
           <h2 className="text-lg font-bold text-[var(--foreground)]">{editJob ? t("freelance.editJob") : t("freelance.postJob")}</h2>
-          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-all hover:bg-red-50 hover:text-red-500">
+          <button
+            onClick={onClose}
+            aria-label={t("nav.close")}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--muted)] transition-all hover:bg-red-50 hover:text-red-500 active:scale-95"
+          >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 pb-12 md:pb-10">
           {error && <ErrorAlert message={error} />}
 
           {/* Row: Title + Company */}
@@ -276,20 +289,20 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
                   type="number"
                   value={form.salaryMin}
                   onChange={(e) => updateField("salaryMin", e.target.value)}
-                  placeholder={t("freelance.min")}
+                  placeholder={t("freelance.salaryMin")}
                   className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-3.5 py-2.5 pl-10 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-light)] transition-all"
                 />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--muted)]">Rp </span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--muted)]">{currencySymbol}</span>
               </div>
               <div className="relative">
                 <input
                   type="number"
                   value={form.salaryMax}
                   onChange={(e) => updateField("salaryMax", e.target.value)}
-                  placeholder={t("freelance.max")}
+                  placeholder={t("freelance.salaryMax")}
                   className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-3.5 py-2.5 pl-10 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-light)] transition-all"
                 />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--muted)]">Rp </span>
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-[var(--muted)]">{currencySymbol}</span>
               </div>
               <select
                 value={form.currency}

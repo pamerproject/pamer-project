@@ -9,6 +9,9 @@ const en = {
   // ── Navbar ─────────────────────────────────────────
   nav: {
     back: "Back",
+    home: "Home",
+    freelance: "Freelance",
+    news: "News",
     searchPlaceholder: "Search projects...",
     notifications: "Notifications",
     newNotif: "new",

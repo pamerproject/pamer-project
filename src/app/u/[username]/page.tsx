@@ -12,7 +12,6 @@ import { useInfiniteScroll } from "@/lib/hooks";
 import PageSkeleton from "@/components/PageSkeleton";
 import dynamic from "next/dynamic";
 const FeedItem = dynamic(() => import("@/components/FeedItem"));
-import EditPhotoModal from "@/components/EditPhotoModal";
 import JobCard from "@/components/JobCard";
 import MyJobsList from "@/components/MyJobsList";
 import AdsCard from "@/components/AdsCard";
@@ -83,7 +82,6 @@ interface ProfilePost {
   _count: { comments: number; likes: number };
 }
 
-type EditTarget = "avatar" | "cover" | null;
 type Tab = "cerita" | "project" | "freelance";
 
 // ─── Component ──────────────────────────────────────────────────
@@ -98,7 +96,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
-  const [editTarget, setEditTarget] = useState<EditTarget>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>("project");
   const [showPostModal, setShowPostModal] = useState(false);
@@ -357,32 +354,6 @@ export default function ProfilePage() {
     };
   }, [username, refreshKey]);
 
-  // Save photo (avatar / cover)
-  const handlePhotoSave = useCallback(
-    async (imageUrl: string | null, position: string) => {
-      const payload: Record<string, string | null> = {};
-      if (editTarget === "avatar") {
-        payload.avatar = imageUrl;
-        payload.avatarPosition = position;
-      } else {
-        payload.coverImage = imageUrl;
-        payload.coverPosition = position;
-      }
-
-      const res = await fetch("/api/users/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error(t("settings.savePhotoFailed"));
-      // Trigger session refresh — JWT callback akan baca avatar terbaru dari DB
-      window.dispatchEvent(new CustomEvent("session-refresh"));
-      setRefreshKey((k) => k + 1);
-    },
-    [editTarget]
-  );
-
   // ─── Loading skeleton ───────────────────────────────────────
   if (loading) {
     return <PageSkeleton />;
@@ -462,18 +433,6 @@ export default function ProfilePage() {
                 <div className="h-full w-full bg-gradient-to-br from-[var(--brand)]/20 via-[var(--brand)]/10 to-[var(--background)]" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)] via-transparent to-transparent" />
-              {isOwnProfile && (
-                <button
-                  onClick={() => setEditTarget("cover")}
-                  className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-black/50 px-3 py-1.5 text-xs font-medium text-white opacity-100 backdrop-blur-sm transition-all hover:bg-black/70 md:opacity-0 md:group-hover:opacity-100"
-                >
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
-                  </svg>
-                  {t("profile.editCover")}
-                </button>
-              )}
             </div>
 
             {/* ── Profile Info ────────────────────────────── */}
@@ -496,17 +455,6 @@ export default function ProfilePage() {
                   <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-[var(--card)] bg-[var(--brand)] text-4xl font-bold text-white shadow-lg md:h-32 md:w-32">
                     {(user.name || user.username).charAt(0).toUpperCase()}
                   </div>
-                )}
-                {isOwnProfile && (
-                  <button
-                    onClick={() => setEditTarget("avatar")}
-                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-100 transition-all md:opacity-0 md:hover:opacity-100"
-                  >
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
-                    </svg>
-                  </button>
                 )}
               </div>
 
@@ -1141,23 +1089,6 @@ export default function ProfilePage() {
         />
       )}
 
-      {/* ── Edit Photo Modals ──────────────────────────────── */}
-      <EditPhotoModal
-        isOpen={editTarget === "avatar"}
-        onClose={() => setEditTarget(null)}
-        currentImage={user.avatar}
-        currentPosition={user.avatarPosition}
-        type="avatar"
-        onSave={handlePhotoSave}
-      />
-      <EditPhotoModal
-        isOpen={editTarget === "cover"}
-        onClose={() => setEditTarget(null)}
-        currentImage={user.coverImage}
-        currentPosition={user.coverPosition}
-        type="cover"
-        onSave={handlePhotoSave}
-      />
     </>
   );
 }

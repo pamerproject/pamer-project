@@ -338,7 +338,7 @@ export default function SettingsPage() {
 
             {/* ── Profile Form ─────────────────────────── */}
             <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
-              <h2 className="text-lg font-extrabold">{t("settings.profileInfo")}</h2>
+              <h2 className="text-base font-bold text-[var(--foreground)]">{t("settings.profileInfo")}</h2>
 
               {error && <ErrorAlert message={error} />}
               {success && <ErrorAlert type="success" message={success} />}
@@ -351,7 +351,7 @@ export default function SettingsPage() {
                     type="email"
                     value={sessionUser?.email || ""}
                     disabled
-                    className="mt-1 block w-full cursor-not-allowed rounded-lg border border-[var(--card-border)] bg-gray-50 px-3 py-2.5 text-sm text-[var(--muted)] outline-none"
+                    className="mt-1 block w-full cursor-not-allowed rounded-lg border border-[var(--card-border)] bg-[var(--card-border)]/30 px-3 py-2.5 text-sm text-[var(--muted)] outline-none"
                   />
                   <p className="mt-1 text-[11px] text-[var(--muted)]">{t("auth.emailNotChangeable")}</p>
                 </div>
@@ -363,7 +363,7 @@ export default function SettingsPage() {
                     type="text"
                     value={sessionUser?.username || ""}
                     disabled
-                    className="mt-1 block w-full cursor-not-allowed rounded-lg border border-[var(--card-border)] bg-gray-50 px-3 py-2.5 text-sm text-[var(--muted)] outline-none"
+                    className="mt-1 block w-full cursor-not-allowed rounded-lg border border-[var(--card-border)] bg-[var(--card-border)]/30 px-3 py-2.5 text-sm text-[var(--muted)] outline-none"
                   />
                   <p className="mt-1 text-[11px] text-[var(--muted)]">{t("auth.usernameNotChangeable")}</p>
                 </div>
@@ -376,7 +376,7 @@ export default function SettingsPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t("auth.namePlaceholder")}
-                    className="mt-1 block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 text-sm outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)]"
+                    className="mt-1 block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 text-sm outline-none focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)]"
                   />
                 </div>
 
@@ -389,7 +389,7 @@ export default function SettingsPage() {
                     placeholder={t("settings.profileInfo")}
                     rows={3}
                     maxLength={500}
-                    className="mt-1 block w-full resize-none rounded-lg border border-[var(--card-border)] px-3 py-2.5 text-sm outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)]"
+                    className="mt-1 block w-full resize-none rounded-lg border border-[var(--card-border)] px-3 py-2.5 text-sm outline-none focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)]"
                   />
                   <div className="mt-1 text-right text-xs text-[var(--muted)]">{500 - bio.length}/500</div>
                 </div>
@@ -411,10 +411,10 @@ export default function SettingsPage() {
                       {links.map((link, i) => (
                         <div
                           key={i}
-                          className="group flex items-center gap-3 rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-4 py-3 transition-all hover:border-[var(--brand)]/30"
+                          className="group flex items-center gap-3 rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-4 py-3 transition-all hover:border-[var(--foreground)]/25"
                         >
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-light)]">
-                            <svg className="h-4 w-4 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--card-border)]/40">
+                            <svg className="h-4 w-4 text-[var(--muted)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                             </svg>
                           </div>
@@ -429,7 +429,7 @@ export default function SettingsPage() {
                           <div className="flex shrink-0 items-center gap-1 opacity-100 transition-all md:opacity-0 md:group-hover:opacity-100">
                             <button
                               onClick={() => startEditLink(i)}
-                              className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"
+                              className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-[var(--card-border)]/40 hover:text-[var(--foreground)]"
                               title={t("settings.editLinkTitle")}
                             >
                               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -438,7 +438,7 @@ export default function SettingsPage() {
                             </button>
                             <button
                               onClick={() => removeLink(i)}
-                              className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-red-50 hover:text-red-500"
+                              className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-[var(--card-border)]/40 hover:text-[var(--foreground)]"
                               title={t("settings.deleteLinkTitle")}
                             >
                               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -452,9 +452,9 @@ export default function SettingsPage() {
                   )}
 
                   {/* Add/Edit link form — redesigned card */}
-                  <div className="rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--background)] p-4 transition-all focus-within:border-[var(--brand)]/50 focus-within:bg-[var(--brand-light)]/30">
+                  <div className="rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--background)] p-4 transition-all focus-within:border-[var(--foreground)]/40 focus-within:bg-[var(--card-border)]/10">
                     {editingLinkIndex !== null ? (
-                      <p className="mb-3 text-xs font-medium text-[var(--brand)]">{t("settings.editLinkLabel")}</p>
+                      <p className="mb-3 text-xs font-medium text-[var(--foreground)]">{t("settings.editLinkLabel")}</p>
                     ) : (
                       <p className="mb-3 text-xs font-medium text-[var(--muted)]">{t("settings.addLinkLabel")}</p>
                     )}
@@ -465,7 +465,7 @@ export default function SettingsPage() {
                           value={linkName}
                           onChange={(e) => setLinkName(e.target.value)}
                           placeholder={t("settings.linkNamePlaceholder")}
-                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] sm:w-1/3"
+                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)] sm:w-1/3"
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
@@ -479,7 +479,7 @@ export default function SettingsPage() {
                           value={linkUrl}
                           onChange={(e) => setLinkUrl(e.target.value)}
                           placeholder="https://example.com"
-                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] sm:flex-1"
+                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)] sm:flex-1"
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
@@ -495,7 +495,7 @@ export default function SettingsPage() {
                             <button
                               onClick={saveEditLink}
                               disabled={!linkName.trim() || !linkUrl.trim()}
-                              className="flex-1 rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] disabled:opacity-50 sm:flex-none"
+                              className="flex-1 rounded-lg bg-[var(--foreground)] px-4 py-2.5 text-sm font-bold text-[var(--background)] transition-all hover:opacity-85 active:scale-[0.98] disabled:opacity-50 sm:flex-none"
                             >
                               {t("settings.saveLink")}
                             </button>
@@ -510,7 +510,7 @@ export default function SettingsPage() {
                           <button
                             onClick={addLink}
                             disabled={!linkName.trim() || !linkUrl.trim()}
-                            className="flex-1 rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] disabled:opacity-50 sm:flex-none"
+                            className="flex-1 rounded-lg bg-[var(--foreground)] px-4 py-2.5 text-sm font-bold text-[var(--background)] transition-all hover:opacity-85 disabled:opacity-50 sm:flex-none"
                           >
                             {t("settings.addLink")}
                           </button>
@@ -523,7 +523,7 @@ export default function SettingsPage() {
                 <button
                   onClick={handleSaveProfile}
                   disabled={saving}
-                  className="w-full rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] disabled:opacity-50"
+                  className="w-full rounded-lg bg-[var(--foreground)] px-4 py-2.5 text-sm font-bold text-[var(--background)] transition-all hover:opacity-85 active:scale-[0.98] disabled:opacity-50"
                 >                    {saving ? t("settings.saving") : t("settings.save")}
                 </button>
               </div>
@@ -532,7 +532,7 @@ export default function SettingsPage() {
             {/* ── Password ─────────────────────────────── */}
             {hasPassword ? (
               <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
-                <h2 className="text-lg font-extrabold">{t("settings.changePassword")}</h2>
+                <h2 className="text-base font-bold text-[var(--foreground)]">{t("settings.changePassword")}</h2>
 
                 {passwordError && <ErrorAlert message={passwordError} />}
                 {passwordSuccess && <ErrorAlert type="success" message={passwordSuccess} />}
@@ -547,7 +547,7 @@ export default function SettingsPage() {
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 pr-10 text-sm outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)]"
+                        className="block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 pr-10 text-sm outline-none focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)]"
                       />
                       <button
                         type="button"
@@ -578,7 +578,7 @@ export default function SettingsPage() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder={t("auth.passwordMinChars")}
-                        className="block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 pr-10 text-sm outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)]"
+                        className="block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 pr-10 text-sm outline-none focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)]"
                       />
                       <button
                         type="button"
@@ -609,7 +609,7 @@ export default function SettingsPage() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder={t("auth.confirmPlaceholder")}
-                        className="block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 pr-10 text-sm outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)]"
+                        className="block w-full rounded-lg border border-[var(--card-border)] px-3 py-2.5 pr-10 text-sm outline-none focus:border-[var(--foreground)] focus:ring-1 focus:ring-[var(--foreground)]"
                       />
                       <button
                         type="button"
@@ -634,7 +634,7 @@ export default function SettingsPage() {
                   <button
                     onClick={handleSavePassword}
                     disabled={savingPassword}
-                    className="w-full rounded-lg border border-[var(--brand)] px-4 py-2.5 text-sm font-bold text-[var(--brand)] transition-all hover:bg-[var(--brand-light)] disabled:opacity-50"
+                    className="w-full rounded-lg bg-[var(--foreground)] px-4 py-2.5 text-sm font-bold text-[var(--background)] transition-all hover:opacity-85 active:scale-[0.98] disabled:opacity-50"
                   >
                     {savingPassword ? t("settings.saving") : t("settings.changePassword")}
                   </button>
@@ -642,9 +642,9 @@ export default function SettingsPage() {
               </div>
             ) : (
               <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--background)] p-6">
-                <h2 className="text-lg font-extrabold">{t("settings.changePassword")}</h2>
-                <div className="mt-3 flex items-start gap-3 rounded-lg bg-[var(--brand-light)]/50 px-4 py-3">
-                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <h2 className="text-base font-bold text-[var(--foreground)]">{t("settings.changePassword")}</h2>
+                <div className="mt-3 flex items-start gap-3 rounded-lg bg-[var(--card-border)]/20 px-4 py-3">
+                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-[var(--muted)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                   </svg>
                   <p className="text-sm text-[var(--muted)]">
@@ -658,7 +658,7 @@ export default function SettingsPage() {
             <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-extrabold">{t("settings.theme")}</h2>
+                  <h2 className="text-base font-bold text-[var(--foreground)]">{t("settings.theme")}</h2>
                   <p className="mt-0.5 text-xs text-[var(--muted)]">
                     {isDark ? t("settings.darkThemeActive") : t("settings.lightThemeActive")}
                   </p>
@@ -680,17 +680,17 @@ export default function SettingsPage() {
                       setIsDark(true);
                     }
                   }}
-                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isDark ? 'bg-[var(--brand)]' : 'bg-gray-200'}`}
+                  className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${isDark ? 'bg-[var(--foreground)]' : 'bg-[var(--muted)]/40'}`}
                 >
                   <span
-                    className={`pointer-events-none relative inline-flex h-6 w-6 transform items-center justify-center rounded-full bg-white shadow-sm ring-0 transition-all duration-200 ease-in-out ${isDark ? 'translate-x-5' : 'translate-x-0'}`}
+                    className={`pointer-events-none relative inline-flex h-6 w-6 transform items-center justify-center rounded-full bg-[var(--background)] shadow-sm ring-0 transition-all duration-200 ease-in-out ${isDark ? 'translate-x-5' : 'translate-x-0'}`}
                   >
                     {isDark ? (
-                      <svg className="h-3.5 w-3.5 text-[var(--brand)]" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-3.5 w-3.5 text-[var(--foreground)]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
                       </svg>
                     ) : (
-                      <svg className="h-3.5 w-3.5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-3.5 w-3.5 text-[var(--muted)]" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
                       </svg>
                     )}
@@ -699,14 +699,14 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* ── Logout ───────────────────────────────── */}
+            {/* ── Logout (native: netral, bukan merah) ──────── */}
             <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
               <SignOutButton />
             </div>
 
             {/* ── Delete Account ──────────────────────────── */}
             <div className="card-app rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-950/20">
-              <h2 className="text-lg font-extrabold text-red-700 dark:text-red-400">{t("settings.deleteAccount")}</h2>
+              <h2 className="text-base font-bold text-red-700 dark:text-red-400">{t("settings.deleteAccount")}</h2>
               <p className="mt-1 text-xs leading-relaxed text-red-600 dark:text-red-400/80">
                 {t("settings.deleteAccountDesc")}
               </p>
@@ -721,7 +721,7 @@ export default function SettingsPage() {
               ) : (
                 <div className="mt-4 space-y-3 rounded-lg border border-red-200 bg-white p-4 dark:border-red-900/50 dark:bg-red-950/30">
                   <p className="text-xs font-medium text-red-700 dark:text-red-300">
-                    {t("settings.typeUsername")} <strong className="font-mono text-sm text-[var(--brand)]">@{sessionUser?.username}</strong> {t("settings.toConfirm")}
+                    {t("settings.typeUsername")} <strong className="font-mono text-sm text-red-700 dark:text-red-300">@{sessionUser?.username}</strong> {t("settings.toConfirm")}
                   </p>
 
                   <input

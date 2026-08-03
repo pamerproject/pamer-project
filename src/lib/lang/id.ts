@@ -9,6 +9,9 @@ const id = {
   // ── Navbar ─────────────────────────────────────────
   nav: {
     back: "Kembali",
+    home: "Beranda",
+    freelance: "Freelance",
+    news: "Berita",
     searchPlaceholder: "Cari project...",
     notifications: "Notifikasi",
     newNotif: "baru",

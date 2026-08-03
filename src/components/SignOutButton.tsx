@@ -33,7 +33,7 @@ export default function SignOutButton() {
       type="button"
       onClick={handleLogout}
       disabled={loading}
-      className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-3 text-sm font-semibold text-red-600 transition-all hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--card-border)] px-4 py-3 text-sm font-semibold text-[var(--foreground)] transition-all hover:bg-[var(--background)] disabled:cursor-not-allowed disabled:opacity-60"
     >
       {loading ? (
         <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
