@@ -10,7 +10,7 @@ import ImageCarousel from "@/components/ui/ImageCarousel";
 import EmojiPicker, { isOnlyEmoji } from "@/components/ui/EmojiPicker";
 import StickerPicker from "@/components/ui/StickerPicker";
 import EmojiStickerSheet from "@/components/ui/EmojiStickerSheet";
-import { useInfiniteScroll } from "@/lib/hooks";
+import { useInfiniteScroll, useKeepAboveKeyboard } from "@/lib/hooks";
 import renderContent from "@/lib/renderContent";
 import Breadcrumb from "@/components/Breadcrumb";
 import { translateApiError } from "@/lib/helpers";
@@ -293,7 +293,7 @@ function CommentTextarea({
       {mentionActive && filtered.length > 0 && (
         <div
           ref={mentionRef}
-          className="absolute bottom-full left-0 z-50 mb-1 w-60 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
+          className="absolute bottom-full left-0 z-50 mb-1 w-60 max-h-[40vh] overflow-y-auto rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
         >
           {filtered.map((u, i) => (
             <button
@@ -654,7 +654,7 @@ function CommentItem({
           {replyMentionActive && replyFiltered.length > 0 && (
             <div
               ref={replyMentionRef}
-              className="absolute bottom-full left-0 z-50 mb-1 w-60 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
+              className="absolute bottom-full left-0 z-50 mb-1 w-60 max-h-[40vh] overflow-y-auto rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
             >
               {replyFiltered.map((u, i) => (
                 <button
@@ -910,6 +910,10 @@ export default function PostDetailPage() {
   // Mobile state
   const [sheetMode, setSheetMode] = useState<"emoji" | "sticker" | null>(null);
   const mobileInputRef = useRef<HTMLTextAreaElement>(null);
+  const [mobileInputFocused, setMobileInputFocused] = useState(false);
+
+  // Bar komentar tetap menempel di atas keyboard (VisualViewport API)
+  const setMobileBarEl = useKeepAboveKeyboard(mobileInputFocused);
 
   // Mobile mention state
   const [mobileMentionActive, setMobileMentionActive] = useState(false);
@@ -1547,7 +1551,11 @@ export default function PostDetailPage() {
 
       {/* ── Mobile Fixed Comment Bar ── */}
       {session && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] pb-6 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden" style={{ transform: "translateY(24px)" }}>
+        <div
+          ref={setMobileBarEl}
+          className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] pb-6 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden"
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1.5rem)" }}
+        >
           {replyingTo && (
             <div className="flex items-center gap-1.5 border-b border-[var(--card-border)] bg-[var(--brand-light)]/50 px-3 py-1.5">
               <button
@@ -1572,7 +1580,7 @@ export default function PostDetailPage() {
             {mobileMentionActive && mobileFiltered.length > 0 && (
               <div
                 ref={mobileMentionRef}
-                className="absolute bottom-full left-2 right-2 z-[60] mb-2 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
+                className="absolute bottom-full left-2 right-2 z-[60] mb-2 max-h-[40vh] overflow-y-auto rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
               >
                 {mobileFiltered.map((u, i) => (
                   <button
@@ -1599,6 +1607,8 @@ export default function PostDetailPage() {
             <div className="flex items-center gap-1.5">
               <textarea
                 ref={mobileInputRef}
+                onFocus={() => setMobileInputFocused(true)}
+                onBlur={() => setMobileInputFocused(false)}
                 value={commentText}
                 onChange={(e) => handleMobileCommentChange(e.target.value)}
                 onKeyDown={(e) => {

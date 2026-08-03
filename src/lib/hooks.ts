@@ -53,6 +53,60 @@ export function useInfiniteScroll(
 }
 
 /**
+ * Hook agar elemen (bar input mobile) tetap menempel di atas keyboard saat
+ * input sedang fokus. iOS/Android mengubah ukuran visual viewport saat
+ * keyboard naik/turun — `position:fixed; bottom:0` saja tidak cukup karena
+ * posisinya dihitung terhadap layout viewport (jadi terlihat ikut scroll
+ * saat keyboard terbuka). Hook ini mendengarkan event resize/scroll pada
+ * `window.visualViewport` dan menyesuaikan `bottom` elemen secara real-time.
+ *
+ * Hanya aktif saat `focused` true (input difokus) — menghindari salah
+ * menganggap URL bar iOS sebagai keyboard saat scroll biasa, yang membuat
+ * bar melayang di atas dasar layar.
+ *
+ * Gunakan sebagai callback ref: <div ref={setEl}>. Otomatis aktif saat
+ * elemen di-mount (termasuk mount terlambat karena kondisi session) dan
+ * bersih saat unmount.
+ */
+export function useKeepAboveKeyboard(focused: boolean) {
+  const [el, setEl] = useState<HTMLElement | null>(null);
+
+  // Pasang listener hanya saat input fokus (keyboard terbuka)
+  useEffect(() => {
+    if (!el || !focused) return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const update = () => {
+      // Area yang tertutup keyboard = layout viewport - visual viewport
+      const keyboardHeight = Math.max(
+        0,
+        window.innerHeight - vv.height - vv.offsetTop
+      );
+      el.style.bottom = `${keyboardHeight}px`;
+    };
+
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    update();
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [el, focused]);
+
+  // Saat input tidak fokus, kembalikan bar ke dasar layar
+  useEffect(() => {
+    if (!el) return;
+    if (!focused) el.style.bottom = "0px";
+  }, [el, focused]);
+
+  return setEl;
+}
+
+/**
  * Custom hook untuk pagination tak terbatas (load 10 per batch).
  * Memberikan state dan fungsi untuk memuat data secara bertahap.
  */

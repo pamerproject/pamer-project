@@ -329,6 +329,47 @@ function renderUrlsOnNodes(parts: React.ReactNode[], withPreview = false): React
   });
 }
 
+/**
+ * Resolve teks setelah '@' menjadi (username, nama tampilan, sisa teks).
+ * - Cari nama TERPANJANG di nameToUsername yang cocok sebagai awalan raw
+ *   (case-insensitive, dengan batas kata), jadi "@Ketut Dana gimana" tetap
+ *   resolve ke nama penuh "Ketut Dana" → username "ketutdana", sisa " gimana"
+ *   di-render sebagai teks biasa (tidak ikut ter-link).
+ * - Fallback: anggap kata pertama sebagai username (cth: ketik @joko manual).
+ */
+export function resolveMention(
+  raw: string,
+  nameToUsername?: Map<string, string>
+): { name: string; username: string; leftover: string } {
+  if (nameToUsername) {
+    const lower = raw.toLowerCase();
+    let bestName = "";
+    let bestUsername = "";
+    for (const [name, username] of nameToUsername.entries()) {
+      const nameLower = name.toLowerCase();
+      if (lower === nameLower || lower.startsWith(nameLower + " ")) {
+        if (name.length > bestName.length) {
+          bestName = name;
+          bestUsername = username;
+        }
+      }
+    }
+    if (bestName) {
+      return {
+        name: bestName,
+        username: bestUsername,
+        leftover: raw.slice(bestName.length),
+      };
+    }
+  }
+  const firstWord = raw.split(/[ \t]+/)[0];
+  return {
+    name: firstWord,
+    username: firstWord.toLowerCase(),
+    leftover: raw.slice(firstWord.length),
+  };
+}
+
 function renderMentions(
   parts: React.ReactNode[],
   mentionMap?: Map<string, string>,
@@ -356,29 +397,10 @@ function renderMentions(
             const trailing = trailingPunctMatch ? trailingPunctMatch[0] : "";
 
             const raw = body.slice(1);
-            // Cari username dari nama — coba nama penuh dulu, lalu kata pertama
-            let name = raw;
-            let username = nameToUsername?.get(raw);
-            let leftover = trailing;
-            if (!username) {
-              const firstWord = raw.split(/[ \t]+/)[0];
-              const firstLower = firstWord.toLowerCase();
-              const mapped =
-                nameToUsername?.get(firstWord) || nameToUsername?.get(firstLower);
-              if (mapped) {
-                username = mapped;
-                name = firstWord;
-                leftover = raw.slice(firstWord.length) + trailing;
-              } else {
-                // Fallback: anggap kata pertama sebagai username (cth: ketik @joko manual),
-                // sisanya tetap di-render sebagai teks biasa agar tidak hilang
-                username = firstLower;
-                name = firstWord;
-                leftover = raw.slice(firstWord.length) + trailing;
-              }
-            }
-            const displayName = mentionMap?.get(username) || name;
-            const isAll = username.toLowerCase() === "all";
+            const resolved = resolveMention(raw, nameToUsername);
+            const leftover = resolved.leftover + trailing;
+            const displayName = mentionMap?.get(resolved.username) || resolved.name;
+            const isAll = resolved.username.toLowerCase() === "all";
             return (
               <React.Fragment key={j}>
                 <span
@@ -389,7 +411,7 @@ function renderMentions(
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!isAll) window.location.href = `/u/${username}`;
+                    if (!isAll) window.location.href = `/u/${resolved.username}`;
                   }}
                 >
                   @{displayName}
