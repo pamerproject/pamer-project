@@ -313,24 +313,7 @@ export default function FeedItem({
         )
       ) : (
         <>
-          {/* Content text for cerita */}
-          {isLoggedIn ? (
-            <Link href={qs(`/post/${slug || id}`, refPath)} className="block">
-              <div className="px-3 pb-2 md:px-4">
-                <div className="text-sm leading-relaxed text-[var(--foreground)] line-clamp-4 whitespace-pre-wrap break-words">
-                  {renderContent(content, true)}
-                </div>
-              </div>
-            </Link>
-          ) : (
-            <div className="px-3 pb-2 md:px-4">
-              <div className="text-sm leading-relaxed text-[var(--foreground)] line-clamp-4 whitespace-pre-wrap break-words">
-                {renderContent(content, true)}
-              </div>
-            </div>
-          )}
-
-          {/* Image carousel */}
+          {/* Image carousel — di ATAS, sama seperti project (carousel aktif jika >1 gambar) */}
           {hasImages && (
             isLoggedIn ? (
               <Link href={qs(`/post/${slug || id}`, refPath)} className="block border-y border-[var(--card-border)]">
@@ -341,6 +324,23 @@ export default function FeedItem({
                 <ImageCarousel images={images!} maxHeight={300} />
               </div>
             )
+          )}
+
+          {/* Content text for cerita — di BAWAH gambar */}
+          {isLoggedIn ? (
+            <Link href={qs(`/post/${slug || id}`, refPath)} className="block">
+              <div className="px-3 pt-3 pb-2 md:px-4">
+                <div className="text-sm leading-relaxed text-[var(--foreground)] line-clamp-4 whitespace-pre-wrap break-words">
+                  {renderContent(content, true)}
+                </div>
+              </div>
+            </Link>
+          ) : (
+            <div className="px-3 pt-3 pb-2 md:px-4">
+              <div className="text-sm leading-relaxed text-[var(--foreground)] line-clamp-4 whitespace-pre-wrap break-words">
+                {renderContent(content, true)}
+              </div>
+            </div>
           )}
 
           {/* Cerita links */}

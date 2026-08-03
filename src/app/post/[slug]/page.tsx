@@ -127,6 +127,7 @@ function CommentTextarea({
   const [showStickers, setShowStickers] = useState(false);
 
   // ── Mention ──
+  const [mentionActive, setMentionActive] = useState(false);
   const [mentionQuery, setMentionQuery] = useState("");
   const [mentionIndex, setMentionIndex] = useState(-1);
   const mentionRef = useRef<HTMLDivElement>(null);
@@ -134,7 +135,7 @@ function CommentTextarea({
   const filtered = mentionUsers
     ? mentionUsers.filter((u) => {
         const q = mentionQuery.toLowerCase();
-        return (u.name || u.username).toLowerCase().includes(q) && !u.username.startsWith(q);
+        return (u.name || u.username).toLowerCase().includes(q);
       })
     : [];
 
@@ -145,30 +146,36 @@ function CommentTextarea({
     const atIdx = before.lastIndexOf("@");
     if (atIdx >= 0 && (atIdx === 0 || before[atIdx - 1] === " ")) {
       const q = before.slice(atIdx + 1);
-      if (q.length > 0 && !q.includes(" ")) {
+      if (!q.includes(" ")) {
+        // Aktif bahkan saat query kosong (baru ketik @) → tampilkan semua user
+        setMentionActive(true);
         setMentionQuery(q);
         setMentionIndex(0);
       } else {
+        setMentionActive(false);
         setMentionQuery("");
         setMentionIndex(-1);
       }
     } else {
+      setMentionActive(false);
       setMentionQuery("");
       setMentionIndex(-1);
     }
   };
 
-  const insertMention = (username: string) => {
+  const insertMention = (user: { name: string | null; username: string }) => {
     const pos = textareaRef.current?.selectionStart ?? value.length;
     const before = value.slice(0, pos);
     const atIdx = before.lastIndexOf("@");
     const after = value.slice(pos);
-    const newVal = before.slice(0, atIdx) + "@" + username + " " + after;
+    const label = user.name || user.username;
+    const newVal = before.slice(0, atIdx) + "@" + label + " " + after;
     onChange(newVal);
+    setMentionActive(false);
     setMentionQuery("");
     setMentionIndex(-1);
     setTimeout(() => {
-      const newPos = atIdx + username.length + 2;
+      const newPos = atIdx + label.length + 2;
       textareaRef.current?.setSelectionRange(newPos, newPos);
       textareaRef.current?.focus();
     }, 0);
@@ -178,6 +185,7 @@ function CommentTextarea({
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (mentionRef.current && !mentionRef.current.contains(e.target as Node)) {
+        setMentionActive(false);
         setMentionQuery("");
         setMentionIndex(-1);
       }
@@ -194,7 +202,7 @@ function CommentTextarea({
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           onKeyDown={(e) => {
-            if (mentionQuery && filtered.length > 0) {
+            if (mentionActive && filtered.length > 0) {
               if (e.key === "ArrowDown") {
                 e.preventDefault();
                 setMentionIndex((i) => (i + 1) % filtered.length);
@@ -203,8 +211,9 @@ function CommentTextarea({
                 setMentionIndex((i) => (i - 1 + filtered.length) % filtered.length);
               } else if (e.key === "Enter" || e.key === "Tab") {
                 e.preventDefault();
-                insertMention(filtered[mentionIndex >= 0 ? mentionIndex : 0].username);
+                insertMention(filtered[mentionIndex >= 0 ? mentionIndex : 0]);
               } else if (e.key === "Escape") {
+                setMentionActive(false);
                 setMentionQuery("");
                 setMentionIndex(-1);
               }
@@ -281,7 +290,7 @@ function CommentTextarea({
       </div>
 
       {/* ── Mention dropdown ── */}
-      {mentionQuery && filtered.length > 0 && (
+      {mentionActive && filtered.length > 0 && (
         <div
           ref={mentionRef}
           className="absolute bottom-full left-0 z-50 mb-1 w-60 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
@@ -289,7 +298,7 @@ function CommentTextarea({
           {filtered.map((u, i) => (
             <button
               key={u.username}
-              onMouseDown={(e) => { e.preventDefault(); insertMention(u.username); }}
+              onMouseDown={(e) => { e.preventDefault(); insertMention(u); }}
               className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
                 i === mentionIndex ? "bg-[var(--brand-light)]" : "hover:bg-[var(--brand-light)]"
               }`}
@@ -328,6 +337,8 @@ function CommentItem({
   saveEdit,
   cancelEdit,
   mentionUsers,
+  mentionDisplayMap,
+  mentionNameToUsername,
   t,
 }: {
   comment: CommentData;
@@ -350,6 +361,8 @@ function CommentItem({
   saveEdit: () => void;
   cancelEdit: () => void;
   mentionUsers?: { name: string | null; username: string }[];
+  mentionDisplayMap?: Map<string, string>;
+  mentionNameToUsername?: Map<string, string>;
   t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   const isReplying = replyingTo === comment.id;
@@ -360,6 +373,7 @@ function CommentItem({
   const [showReplyStickers, setShowReplyStickers] = useState(false);
 
   // ── Reply mention ──
+  const [replyMentionActive, setReplyMentionActive] = useState(false);
   const [replyMentionQuery, setReplyMentionQuery] = useState("");
   const [replyMentionIndex, setReplyMentionIndex] = useState(-1);
   const replyTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -368,7 +382,7 @@ function CommentItem({
   const replyFiltered = mentionUsers
     ? mentionUsers.filter((u) => {
         const q = replyMentionQuery.toLowerCase();
-        return (u.name || u.username).toLowerCase().includes(q) && !u.username.startsWith(q);
+        return (u.name || u.username).toLowerCase().includes(q);
       })
     : [];
 
@@ -379,30 +393,36 @@ function CommentItem({
     const atIdx = before.lastIndexOf("@");
     if (atIdx >= 0 && (atIdx === 0 || before[atIdx - 1] === " ")) {
       const q = before.slice(atIdx + 1);
-      if (q.length > 0 && !q.includes(" ")) {
+      if (!q.includes(" ")) {
+        // Aktif bahkan saat query kosong (baru ketik @) → tampilkan semua user
+        setReplyMentionActive(true);
         setReplyMentionQuery(q);
         setReplyMentionIndex(0);
       } else {
+        setReplyMentionActive(false);
         setReplyMentionQuery("");
         setReplyMentionIndex(-1);
       }
     } else {
+      setReplyMentionActive(false);
       setReplyMentionQuery("");
       setReplyMentionIndex(-1);
     }
   };
 
-  const insertReplyMention = (username: string) => {
+  const insertReplyMention = (user: { name: string | null; username: string }) => {
     const pos = replyTextareaRef.current?.selectionStart ?? replyText.length;
     const before = replyText.slice(0, pos);
     const atIdx = before.lastIndexOf("@");
     const after = replyText.slice(pos);
-    const newVal = before.slice(0, atIdx) + "@" + username + " " + after;
+    const label = user.name || user.username;
+    const newVal = before.slice(0, atIdx) + "@" + label + " " + after;
     setReplyText(newVal);
+    setReplyMentionActive(false);
     setReplyMentionQuery("");
     setReplyMentionIndex(-1);
     setTimeout(() => {
-      const newPos = atIdx + username.length + 2;
+      const newPos = atIdx + label.length + 2;
       replyTextareaRef.current?.setSelectionRange(newPos, newPos);
       replyTextareaRef.current?.focus();
     }, 0);
@@ -411,6 +431,7 @@ function CommentItem({
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (replyMentionRef.current && !replyMentionRef.current.contains(e.target as Node)) {
+        setReplyMentionActive(false);
         setReplyMentionQuery("");
         setReplyMentionIndex(-1);
       }
@@ -485,7 +506,7 @@ function CommentItem({
               <span className="inline-block text-5xl leading-none sm:text-6xl">{comment.content.trim()}</span>
             </div>
           ) : (
-            <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap break-words">{renderContent(comment.content, true)}</div>
+            <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap break-words">{renderContent(comment.content, true, mentionDisplayMap, mentionNameToUsername)}</div>
           )}
 
           {/* Actions */}
@@ -548,7 +569,7 @@ function CommentItem({
               value={replyText}
               onChange={(e) => handleReplyChange(e.target.value)}
               onKeyDown={(e) => {
-                if (replyMentionQuery && replyFiltered.length > 0) {
+                if (replyMentionActive && replyFiltered.length > 0) {
                   if (e.key === "ArrowDown") {
                     e.preventDefault();
                     setReplyMentionIndex((i) => (i + 1) % replyFiltered.length);
@@ -557,8 +578,9 @@ function CommentItem({
                     setReplyMentionIndex((i) => (i - 1 + replyFiltered.length) % replyFiltered.length);
                   } else if (e.key === "Enter" || e.key === "Tab") {
                     e.preventDefault();
-                    insertReplyMention(replyFiltered[replyMentionIndex >= 0 ? replyMentionIndex : 0].username);
+                    insertReplyMention(replyFiltered[replyMentionIndex >= 0 ? replyMentionIndex : 0]);
                   } else if (e.key === "Escape") {
+                    setReplyMentionActive(false);
                     setReplyMentionQuery("");
                     setReplyMentionIndex(-1);
                   }
@@ -629,7 +651,7 @@ function CommentItem({
               </div>
             </div>
           </div>
-          {replyMentionQuery && replyFiltered.length > 0 && (
+          {replyMentionActive && replyFiltered.length > 0 && (
             <div
               ref={replyMentionRef}
               className="absolute bottom-full left-0 z-50 mb-1 w-60 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
@@ -637,7 +659,7 @@ function CommentItem({
               {replyFiltered.map((u, i) => (
                 <button
                   key={u.username}
-                  onMouseDown={(e) => { e.preventDefault(); insertReplyMention(u.username); }}
+                  onMouseDown={(e) => { e.preventDefault(); insertReplyMention(u); }}
                   className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
                     i === replyMentionIndex ? "bg-[var(--brand-light)]" : "hover:bg-[var(--brand-light)]"
                   }`}
@@ -707,7 +729,7 @@ function CommentItem({
                     <span className="inline-block text-4xl leading-none sm:text-5xl">{reply.content.trim()}</span>
                   </div>
                 ) : (
-                  <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap break-words">{renderContent(reply.content, true)}</div>
+                  <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap break-words">{renderContent(reply.content, true, mentionDisplayMap, mentionNameToUsername)}</div>
                 )}
                 {!reply.deleted && (
             <div className="mt-4 flex items-center gap-3">
@@ -787,6 +809,19 @@ export default function PostDetailPage() {
     });
     return Array.from(map.values());
   }, [comments]);
+
+  // Maps untuk render @mention: username→nama (display) & nama→username (link /u/username)
+  const mentionDisplayMap = useMemo(() => {
+    const m = new Map<string, string>();
+    mentionUsers.forEach((u) => { if (u.name) m.set(u.username, u.name); });
+    return m;
+  }, [mentionUsers]);
+
+  const mentionNameToUsername = useMemo(() => {
+    const m = new Map<string, string>();
+    mentionUsers.forEach((u) => { if (u.name) m.set(u.name, u.username); });
+    return m;
+  }, [mentionUsers]);
 
   const loadMoreComments = useCallback(async () => {
     if (!slug || commentsLoadingMore || !commentHasMore) return;
@@ -876,6 +911,12 @@ export default function PostDetailPage() {
   const [sheetMode, setSheetMode] = useState<"emoji" | "sticker" | null>(null);
   const mobileInputRef = useRef<HTMLTextAreaElement>(null);
 
+  // Mobile mention state
+  const [mobileMentionActive, setMobileMentionActive] = useState(false);
+  const [mobileMentionQuery, setMobileMentionQuery] = useState("");
+  const [mobileMentionIndex, setMobileMentionIndex] = useState(-1);
+  const mobileMentionRef = useRef<HTMLDivElement>(null);
+
   // Auto-grow textarea: expand up to 2 lines, scroll beyond
   useEffect(() => {
     const el = mobileInputRef.current;
@@ -883,6 +924,75 @@ export default function PostDetailPage() {
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 64) + "px";
   }, [commentText]);
+
+  // Mobile mention: deteksi @, filter user, insert nama
+  const mobileFiltered = mentionUsers
+    ? mentionUsers.filter((u) => {
+        const q = mobileMentionQuery.toLowerCase();
+        return (u.name || u.username).toLowerCase().includes(q);
+      })
+    : [];
+
+  const handleMobileCommentChange = (v: string) => {
+    setCommentError(null);
+    setCommentText(v);
+    const el = mobileInputRef.current;
+    if (el) {
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 64) + "px";
+    }
+    const pos = mobileInputRef.current?.selectionStart ?? v.length;
+    const before = v.slice(0, pos);
+    const atIdx = before.lastIndexOf("@");
+    if (atIdx >= 0 && (atIdx === 0 || before[atIdx - 1] === " ")) {
+      const q = before.slice(atIdx + 1);
+      if (!q.includes(" ")) {
+        // Aktif bahkan saat query kosong (baru ketik @) → tampilkan semua user
+        setMobileMentionActive(true);
+        setMobileMentionQuery(q);
+        setMobileMentionIndex(0);
+      } else {
+        setMobileMentionActive(false);
+        setMobileMentionQuery("");
+        setMobileMentionIndex(-1);
+      }
+    } else {
+      setMobileMentionActive(false);
+      setMobileMentionQuery("");
+      setMobileMentionIndex(-1);
+    }
+  };
+
+  const insertMobileMention = (user: { name: string | null; username: string }) => {
+    const pos = mobileInputRef.current?.selectionStart ?? commentText.length;
+    const before = commentText.slice(0, pos);
+    const atIdx = before.lastIndexOf("@");
+    const after = commentText.slice(pos);
+    const label = user.name || user.username;
+    const newVal = before.slice(0, atIdx) + "@" + label + " " + after;
+    setCommentText(newVal);
+    setMobileMentionActive(false);
+    setMobileMentionQuery("");
+    setMobileMentionIndex(-1);
+    setTimeout(() => {
+      const newPos = atIdx + label.length + 2;
+      mobileInputRef.current?.setSelectionRange(newPos, newPos);
+      mobileInputRef.current?.focus();
+    }, 0);
+  };
+
+  // Close mobile mention on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (mobileMentionRef.current && !mobileMentionRef.current.contains(e.target as Node)) {
+        setMobileMentionActive(false);
+        setMobileMentionQuery("");
+        setMobileMentionIndex(-1);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   // Store previous state for optimistic rollback
   const prevCommentsRef = useRef<CommentData[]>([]);
@@ -1457,7 +1567,27 @@ export default function PostDetailPage() {
               </span>
             </div>
           )}
-          <div className="px-2 pt-4 pb-1.5">
+          <div className="relative px-2 pt-4 pb-1.5">
+            {/* ── Mobile mention dropdown ── */}
+            {mobileMentionActive && mobileFiltered.length > 0 && (
+              <div
+                ref={mobileMentionRef}
+                className="absolute bottom-full left-2 right-2 z-[60] mb-2 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] py-1 shadow-lg"
+              >
+                {mobileFiltered.map((u, i) => (
+                  <button
+                    key={u.username}
+                    onMouseDown={(e) => { e.preventDefault(); insertMobileMention(u); }}
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
+                      i === mobileMentionIndex ? "bg-[var(--brand-light)]" : "hover:bg-[var(--brand-light)]"
+                    }`}
+                  >
+                    <span className="font-medium text-[var(--foreground)]">{u.name || u.username}</span>
+                    <span className="text-xs text-[var(--muted)]">@{u.username}</span>
+                  </button>
+                ))}
+              </div>
+            )}
             {commentError && (
               <p className="mb-2 flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 dark:bg-red-950/30 dark:text-red-400">
                 <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -1470,13 +1600,24 @@ export default function PostDetailPage() {
               <textarea
                 ref={mobileInputRef}
                 value={commentText}
-                onChange={(e) => {
-                  setCommentError(null);
-                  setCommentText(e.target.value);
-                  // Auto-resize height
-                  const el = e.target;
-                  el.style.height = "auto";
-                  el.style.height = Math.min(el.scrollHeight, 64) + "px";
+                onChange={(e) => handleMobileCommentChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (mobileMentionActive && mobileFiltered.length > 0) {
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setMobileMentionIndex((i) => (i + 1) % mobileFiltered.length);
+                    } else if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setMobileMentionIndex((i) => (i - 1 + mobileFiltered.length) % mobileFiltered.length);
+                    } else if (e.key === "Enter" || e.key === "Tab") {
+                      e.preventDefault();
+                      insertMobileMention(mobileFiltered[mobileMentionIndex >= 0 ? mobileMentionIndex : 0]);
+                    } else if (e.key === "Escape") {
+                      setMobileMentionActive(false);
+                      setMobileMentionQuery("");
+                      setMobileMentionIndex(-1);
+                    }
+                  }
                 }}
                 placeholder={t("project.addComment")}
                 maxLength={160}
@@ -1576,6 +1717,8 @@ export default function PostDetailPage() {
                 saveEdit={saveEdit}
                 cancelEdit={cancelEdit}
                 mentionUsers={mentionUsers}
+                mentionDisplayMap={mentionDisplayMap}
+                mentionNameToUsername={mentionNameToUsername}
                 t={t}
               />
             ))}

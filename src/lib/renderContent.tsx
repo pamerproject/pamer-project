@@ -329,35 +329,73 @@ function renderUrlsOnNodes(parts: React.ReactNode[], withPreview = false): React
   });
 }
 
-function renderMentions(parts: React.ReactNode[], mentionMap?: Map<string, string>): React.ReactNode[] {
+function renderMentions(
+  parts: React.ReactNode[],
+  mentionMap?: Map<string, string>,
+  nameToUsername?: Map<string, string>
+): React.ReactNode[] {
   return parts.map((part, i) => {
     if (typeof part !== "string") return part;
 
-    const segments = part.split(/(@\w+)/g);
+    // @ diikuti 1+ kata — dukung nama multi-kata (cth: "@Joko Widodo").
+    // Tanda baca (koma, titik, seru, dst) sengaja TIDAK dimasukkan ke token,
+    // jadi "@Joko, apa kabar" tetap ter-link ke /u/joko (koma jadi teks biasa).
+    const segments = part.split(/(@[^\s@.,;:!?()\[\]"'<>]+(?:[ \t]+[^\s@.,;:!?()\[\]"'<>]+)*)/g);
     if (segments.length === 1) return part;
 
     return (
       <React.Fragment key={`m-${i}`}>
         {segments.map((seg, j) => {
           if (seg.startsWith("@") && seg.length > 1) {
-            const username = seg.slice(1);
-            const displayName = mentionMap?.get(username);
+            // Pisahkan tanda baca di akhir mention (koma, titik, seru, dst) dari nama
+            // agar tidak ikut ter-link (cth: "@Joko," → link ke /u/joko, bukan /u/Joko,)
+            const trailingPunctMatch = seg.match(/[,.!?;:)\]"'>]+$/);
+            const body = trailingPunctMatch
+              ? seg.slice(0, seg.length - trailingPunctMatch[0].length)
+              : seg;
+            const trailing = trailingPunctMatch ? trailingPunctMatch[0] : "";
+
+            const raw = body.slice(1);
+            // Cari username dari nama — coba nama penuh dulu, lalu kata pertama
+            let name = raw;
+            let username = nameToUsername?.get(raw);
+            let leftover = trailing;
+            if (!username) {
+              const firstWord = raw.split(/[ \t]+/)[0];
+              const firstLower = firstWord.toLowerCase();
+              const mapped =
+                nameToUsername?.get(firstWord) || nameToUsername?.get(firstLower);
+              if (mapped) {
+                username = mapped;
+                name = firstWord;
+                leftover = raw.slice(firstWord.length) + trailing;
+              } else {
+                // Fallback: anggap kata pertama sebagai username (cth: ketik @joko manual),
+                // sisanya tetap di-render sebagai teks biasa agar tidak hilang
+                username = firstLower;
+                name = firstWord;
+                leftover = raw.slice(firstWord.length) + trailing;
+              }
+            }
+            const displayName = mentionMap?.get(username) || name;
             const isAll = username.toLowerCase() === "all";
             return (
-              <span
-                key={j}
-                className={`cursor-pointer font-semibold hover:underline ${
-                  isAll
-                    ? "rounded bg-yellow-100 px-1 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                    : "text-[var(--brand)]"
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (!isAll) window.location.href = `/u/${username}`;
-                }}
-              >
-                @{displayName || username}
-              </span>
+              <React.Fragment key={j}>
+                <span
+                  className={`cursor-pointer font-semibold hover:underline ${
+                    isAll
+                      ? "rounded bg-yellow-100 px-1 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                      : "text-[var(--brand)]"
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isAll) window.location.href = `/u/${username}`;
+                  }}
+                >
+                  @{displayName}
+                </span>
+                {leftover}
+              </React.Fragment>
             );
           }
           return seg;
@@ -376,8 +414,14 @@ function renderMentions(parts: React.ReactNode[], mentionMap?: Map<string, strin
  *                         Jika false, URL hanya render sebagai blue clickable link.
  *                         Gunakan false untuk komentar karena CommentOgPreview sudah handle OG card.
  * @param mentionMap - Map<username, displayName> untuk menampilkan nama asli @mention di chat.
+ * @param nameToUsername - Map<name, username> agar @nama (bukan @username) tetap bisa di-link ke /u/username.
  */
-export default function renderContent(text: string, showLinkPreview = true, mentionMap?: Map<string, string>): React.ReactNode {
+export default function renderContent(
+  text: string,
+  showLinkPreview = true,
+  mentionMap?: Map<string, string>,
+  nameToUsername?: Map<string, string>
+): React.ReactNode {
   if (!text) return null;
 
   // Step 1: Split by code blocks (``` ... ```)
@@ -396,7 +440,7 @@ export default function renderContent(text: string, showLinkPreview = true, ment
       const withInlineCode = renderInlineCode(node);
       const withYoutube = renderYouTubeOnNodes(withInlineCode);
       const withUrls = renderUrlsOnNodes(withYoutube, showLinkPreview);
-      return renderMentions(withUrls, mentionMap);
+      return renderMentions(withUrls, mentionMap, nameToUsername);
     });
   });
 

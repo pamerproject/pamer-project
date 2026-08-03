@@ -762,7 +762,7 @@ export default function ProfilePage() {
                     <>
                       <button
                         onClick={() => setShowPostModal(true)}
-                        className="mb-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-3 text-sm font-medium text-[var(--foreground)] transition-all hover:border-[var(--brand)] hover:text-[var(--brand)]"
+                        className="mb-6 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-3 text-sm font-medium text-[var(--foreground)] transition-all hover:border-[var(--brand)] hover:text-[var(--brand)]"
                       >
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
