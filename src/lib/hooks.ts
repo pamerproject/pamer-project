@@ -47,7 +47,7 @@ export function useInfiniteScroll(
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [hasMore, loading, options?.threshold]); // loadMore di-ref, tidak perlu di deps
+  }, [hasMore, loading, options?.threshold]);
 
   return { sentinelRef };
 }
@@ -60,25 +60,30 @@ export function useInfiniteScroll(
  * saat keyboard terbuka). Hook ini mendengarkan event resize/scroll pada
  * `window.visualViewport` dan menyesuaikan `bottom` elemen secara real-time.
  *
- * Hanya aktif saat `focused` true (input difokus) — menghindari salah
- * menganggap URL bar iOS sebagai keyboard saat scroll biasa, yang membuat
- * bar melayang di atas dasar layar.
+ * Untuk mencegah bar melayang di atas dasar layar saat scroll biasa (URL bar
+ * iOS berubah), hook hanya aktif saat `focused` true.
+ * Saat `focused` berubah ke false, hook langsung mereset bottom ke "0px"
+ * dalam satu siklus effect yang sama — menghindari race condition antar dua
+ * effect terpisah yang bisa menyebabkan bar tidak kembali ke posisi flush.
  *
- * Gunakan sebagai callback ref: <div ref={setEl}>. Otomatis aktif saat
- * elemen di-mount (termasuk mount terlambat karena kondisi session) dan
- * bersih saat unmount.
+ * Gunakan sebagai callback ref: <div ref={setEl}>.
  */
 export function useKeepAboveKeyboard(focused: boolean) {
   const [el, setEl] = useState<HTMLElement | null>(null);
 
-  // Pasang listener hanya saat input fokus (keyboard terbuka)
   useEffect(() => {
-    if (!el || !focused) return;
+    if (!el) return;
+
+    // Saat tidak fokus, reset bar ke dasar layar dan jangan pasang listener
+    if (!focused) {
+      el.style.bottom = "0px";
+      return;
+    }
+
     const vv = window.visualViewport;
     if (!vv) return;
 
     const update = () => {
-      // Area yang tertutup keyboard = layout viewport - visual viewport
       const keyboardHeight = Math.max(
         0,
         window.innerHeight - vv.height - vv.offsetTop
@@ -90,17 +95,14 @@ export function useKeepAboveKeyboard(focused: boolean) {
     vv.addEventListener("scroll", update);
     window.addEventListener("resize", update);
     update();
+
     return () => {
       vv.removeEventListener("resize", update);
       vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      // Cleanup: kembalikan ke bottom 0 saat effect dibersihkan
+      el.style.bottom = "0px";
     };
-  }, [el, focused]);
-
-  // Saat input tidak fokus, kembalikan bar ke dasar layar
-  useEffect(() => {
-    if (!el) return;
-    if (!focused) el.style.bottom = "0px";
   }, [el, focused]);
 
   return setEl;

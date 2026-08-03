@@ -195,7 +195,7 @@ export default function EventDetailPage() {
     <div className="space-y-4 pb-12 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
-      <div className="sticky top-0 z-[65] flex items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 py-2 md:hidden">
+      <div className="sticky top-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
         <button
           onClick={() => window.history.back()}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"

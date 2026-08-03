@@ -185,7 +185,7 @@ export default function FeedItem({
 
           {/* Project cover image — FULL kiri-kanan (tanpa padding), carousel jika >1 */}
           {(project.image || (images && images.length > 0)) && (
-            <div className="-mx-2 w-full overflow-hidden md:mx-0">
+            <div className="-mx-2 w-[calc(100%+1rem)] overflow-hidden md:mx-0 md:w-full">
               {images && images.length > 1 ? (
                 <ImageCarousel images={images} maxHeight={300} />
               ) : (
@@ -267,7 +267,7 @@ export default function FeedItem({
               <h3 className="text-sm leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
             </div>
             {(project.image || (images && images.length > 0)) && (
-              <div className="-mx-2 w-full overflow-hidden md:mx-0">
+              <div className="-mx-2 w-[calc(100%+1rem)] overflow-hidden md:mx-0 md:w-full">
                 {images && images.length > 1 ? (
                   <ImageCarousel images={images} maxHeight={300} />
                 ) : (
