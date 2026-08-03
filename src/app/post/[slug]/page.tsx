@@ -998,6 +998,25 @@ export default function PostDetailPage() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Saat input fokus di mobile, kunci scroll body agar halaman tidak ikut
+  // bergerak saat keyboard terbuka — bar komentar tetap diam di atas keyboard.
+  useEffect(() => {
+    if (mobileInputFocused) {
+      const scrollY = window.scrollY;
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      return () => {
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [mobileInputFocused]);
+
   // Store previous state for optimistic rollback
   const prevCommentsRef = useRef<CommentData[]>([]);
 
@@ -1555,7 +1574,7 @@ export default function PostDetailPage() {
         <div
           ref={setMobileBarEl}
           className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden"
-          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.5rem)" }}
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}
         >
           {replyingTo && (
             <div className="flex items-center gap-1.5 border-b border-[var(--card-border)] bg-[var(--brand-light)]/50 px-3 py-1.5">
