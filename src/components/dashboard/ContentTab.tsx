@@ -131,7 +131,7 @@ export default function ContentTab() {
             <div key={i} className="h-9 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
           ))}
         </div>
-        <div className="h-64 animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)]" />
+        <div className="card-app h-64 animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)]" />
       </div>
     );
   }

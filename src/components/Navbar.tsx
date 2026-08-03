@@ -250,7 +250,7 @@ export default function Navbar() {
 
                   {/* Mobile: bottom sheet — Desktop: full modal */}
                   <div
-                    className="fixed inset-x-0 bottom-0 top-[10%] z-[71] m-0 w-full animate-slide-up rounded-t-2xl border border-[var(--card-border)] bg-white dark:bg-[#1a1a2e] shadow-2xl
+                    className="fixed inset-x-0 bottom-0 top-[10%] z-[71] m-0 w-full animate-slide-up rounded-t-2xl border border-l-0 border-r-0 border-[var(--card-border)] bg-white dark:bg-[#1a1a2e] shadow-2xl
                                 md:inset-0 md:top-0 md:flex md:animate-none md:rounded-none md:border-0 md:bg-black/40 dark:md:bg-black/60 md:backdrop-blur-sm"
                   >
                     {/* Desktop: container tengah — solid card */}

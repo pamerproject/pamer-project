@@ -280,7 +280,7 @@ export default function SettingsPage() {
               </svg>
               {t("settings.backToProfile")}
             </Link>
-            <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
+            <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
               {/* ── Cover ────────────────────────────── */}
               <div className="group relative h-48 overflow-hidden md:rounded-t-xl">
                 {coverImage ? (
@@ -335,7 +335,7 @@ export default function SettingsPage() {
             </div>
 
             {/* ── Profile Form ─────────────────────────── */}
-            <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+            <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
               <h2 className="text-lg font-extrabold">{t("settings.profileInfo")}</h2>
 
               {error && <ErrorAlert message={error} />}
@@ -529,7 +529,7 @@ export default function SettingsPage() {
 
             {/* ── Password ─────────────────────────────── */}
             {hasPassword ? (
-              <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+              <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
                 <h2 className="text-lg font-extrabold">{t("settings.changePassword")}</h2>
 
                 {passwordError && <ErrorAlert message={passwordError} />}
@@ -639,7 +639,7 @@ export default function SettingsPage() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-[var(--card-border)] bg-[var(--background)] p-6">
+              <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--background)] p-6">
                 <h2 className="text-lg font-extrabold">{t("settings.changePassword")}</h2>
                 <div className="mt-3 flex items-start gap-3 rounded-lg bg-[var(--brand-light)]/50 px-4 py-3">
                   <svg className="mt-0.5 h-5 w-5 shrink-0 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -653,7 +653,7 @@ export default function SettingsPage() {
             )}
 
             {/* ── Theme ────────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+            <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-extrabold">{t("settings.theme")}</h2>
@@ -698,12 +698,12 @@ export default function SettingsPage() {
             </div>
 
             {/* ── Logout ───────────────────────────────── */}
-            <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+            <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
               <SignOutButton />
             </div>
 
             {/* ── Delete Account ──────────────────────────── */}
-            <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-950/20">
+            <div className="card-app rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900/50 dark:bg-red-950/20">
               <h2 className="text-lg font-extrabold text-red-700 dark:text-red-400">{t("settings.deleteAccount")}</h2>
               <p className="mt-1 text-xs leading-relaxed text-red-600 dark:text-red-400/80">
                 {t("settings.deleteAccountDesc")}

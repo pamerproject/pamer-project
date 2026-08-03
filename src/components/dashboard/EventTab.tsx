@@ -397,7 +397,7 @@ export default function EventTab() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[1, 2].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+            <div key={i} className="card-app animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
               <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700" />
               <div className="mt-3 h-24 w-full rounded-lg bg-gray-100 dark:bg-gray-700" />
             </div>
@@ -423,7 +423,7 @@ export default function EventTab() {
           />
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
+        <div className="card-app rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand-light)]">
             <svg className="h-6 w-6 text-[var(--brand)]" fill="currentColor" viewBox="0 0 24 24">
               <path d="M16 6l2.29 2.29-9.88 9.88-4-4L6 13.17 8.41 10.59 11 13.17 16 6m0-4l-6 7-4-4-4 4 6 7 8-11z" />
@@ -474,7 +474,7 @@ export default function EventTab() {
       {eventsLoading ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {[1, 2].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
+            <div key={i} className="card-app animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700" />
                 <div className="flex-1 space-y-2">
@@ -486,7 +486,7 @@ export default function EventTab() {
           ))}
         </div>
       ) : events.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
+        <div className="card-app rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
           <p className="text-sm font-bold text-[var(--foreground)]">{t("event.noEvents")}</p>
           <p className="mt-1 text-xs text-[var(--muted)]">{t("event.noEventsDesc")}</p>
         </div>
@@ -495,7 +495,7 @@ export default function EventTab() {
           {events.map((ev) => (
             <article
               key={ev.id}
-              className="group overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md"
+              className="card-app group overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md"
             >
               {/* Cover image */}
               {ev.image ? (

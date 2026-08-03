@@ -115,7 +115,7 @@ function ArticleCard({ article, onClick }: { article: TechNewsItem; onClick: () 
   const { t } = useTranslation();
   return (
     <button onClick={onClick} className="group w-full text-left">
-      <article className="flex overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md active:scale-[0.99]">
+      <article className="card-app flex overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md active:scale-[0.99]">
         <div className="relative h-28 w-28 shrink-0 overflow-hidden bg-gray-100 sm:h-36 sm:w-36 dark:bg-gray-800">
           {article.image ? (
             <img src={article.image} alt="" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
@@ -169,7 +169,7 @@ function LoadingSkeleton() {
   return (
     <div className="space-y-4">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="animate-pulse overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
+        <div key={i} className="card-app animate-pulse overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
           <div className="flex">
             <div className="h-32 w-32 shrink-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 sm:h-40 sm:w-40" />
             <div className="flex-1 space-y-2 p-4">

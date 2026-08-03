@@ -44,7 +44,7 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-5">
+    <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-5">
       <div className="flex items-center gap-3">
         <div
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
@@ -72,7 +72,7 @@ function TrendChart({
 }) {
   const tickCount = Math.min(6, data.length);
   return (
-    <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-5">
+    <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-5">
       <h3 className="text-sm font-bold text-[var(--foreground)]">{title}</h3>
       <div className="mt-4 h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">

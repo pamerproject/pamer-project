@@ -223,7 +223,7 @@ export default function SeoTab() {
     return (
       <div className="space-y-4">
         <div className="h-5 w-40 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-        <div className="h-64 animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)]" />
+        <div className="card-app h-64 animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--card)]" />
       </div>
     );
   }

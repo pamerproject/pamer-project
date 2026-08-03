@@ -126,7 +126,7 @@ export default function Feed() {
           ))}
         </div>
       ) : error && posts.length > 0 ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">
+        <div className="card-app rounded-xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">
           Gagal memuat postingan lainnya
         </div>
       ) : posts.length === 0 ? (

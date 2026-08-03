@@ -64,7 +64,7 @@ export default function EmojiStickerSheet({
 
       {/* Sheet */}
       <div
-        className="absolute bottom-0 left-0 right-0 animate-slide-up rounded-t-2xl border border-[var(--card-border)] bg-[var(--card)] shadow-xl"
+        className="absolute bottom-0 left-0 right-0 animate-slide-up rounded-t-2xl border border-l-0 border-r-0 border-[var(--card-border)] bg-[var(--card)] shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Tab bar */}

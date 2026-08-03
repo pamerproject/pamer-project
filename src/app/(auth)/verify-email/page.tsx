@@ -70,7 +70,7 @@ function VerifyEmailContent() {
 
   return (
     <div className="mx-auto mt-12 max-w-2xl px-4 md:mt-20">
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 shadow-sm md:p-12">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 shadow-sm md:p-12">
         <div className="text-center">
           {status === "loading" && (
             <>

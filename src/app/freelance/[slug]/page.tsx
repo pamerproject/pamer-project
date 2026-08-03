@@ -125,7 +125,7 @@ export default function FreelanceDetailPage() {
         { label: job.title }
       ]} />
 
-      <article className="overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
+      <article className="card-app overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
         {job.image && (
           <div className="aspect-video w-full overflow-hidden">
             <img

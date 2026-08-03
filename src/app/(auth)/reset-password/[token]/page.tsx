@@ -62,7 +62,7 @@ export default function ResetPasswordPage() {
   if (success) {
     return (
       <div className="mx-auto mt-12 max-w-2xl px-4 md:mt-20">
-        <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 shadow-sm md:p-12">
+        <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 shadow-sm md:p-12">
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
               <svg className="h-8 w-8 text-green-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="mx-auto mt-12 max-w-2xl px-4 md:mt-20">
-      <div className="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 shadow-sm md:p-12">
+      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-8 shadow-sm md:p-12">
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--brand-light)]">
