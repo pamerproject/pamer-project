@@ -178,25 +178,27 @@ export default function FeedItem({
       {isProject && project ? (
         isLoggedIn ? (
         <Link href={qs(`/project/${project.slug || project.id}`, refPath)} className="block">
-          <div className="mx-3 mb-2 overflow-hidden md:mx-4">
+          <div className="mb-1 px-3 md:px-4">
             {/* Title — above image */}
             <h3 className="text-sm leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
+          </div>
 
-            {/* Project cover image — carousel jika >1, single image jika 1 */}
-            {(project.image || (images && images.length > 0)) && (
-              <div className="mt-2 w-full overflow-hidden rounded-xl">
-                {images && images.length > 1 ? (
-                  <ImageCarousel images={images} maxHeight={300} />
-                ) : (
-                  <img
-                    src={project.image || images![0]}
-                    alt={project.title}
-                    className="h-full w-full object-cover"
-                  />
-                )}
-              </div>
-            )}
+          {/* Project cover image — FULL kiri-kanan (tanpa padding), carousel jika >1 */}
+          {(project.image || (images && images.length > 0)) && (
+            <div className="-mx-2 w-full overflow-hidden md:mx-0">
+              {images && images.length > 1 ? (
+                <ImageCarousel images={images} maxHeight={300} />
+              ) : (
+                <img
+                  src={project.image || images![0]}
+                  alt={project.title}
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </div>
+          )}
 
+          <div className="px-3 md:px-4">
             {/* Description */}
             {project.description && (
               <div className="mt-2 text-sm leading-relaxed text-[var(--muted)] line-clamp-3 whitespace-pre-wrap break-words">
@@ -261,21 +263,23 @@ export default function FeedItem({
         </Link>
         ) : (
           <div className="block">
-            <div className="mx-3 mb-2 overflow-hidden md:mx-4">
+            <div className="mb-1 px-3 md:px-4">
               <h3 className="text-sm leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
-              {(project.image || (images && images.length > 0)) && (
-                <div className="mt-2 w-full overflow-hidden rounded-xl">
-                  {images && images.length > 1 ? (
-                    <ImageCarousel images={images} maxHeight={300} />
-                  ) : (
-                    <img
-                      src={project.image || images![0]}
-                      alt={project.title}
-                      className="h-full w-full object-cover"
-                    />
-                  )}
-                </div>
-              )}
+            </div>
+            {(project.image || (images && images.length > 0)) && (
+              <div className="-mx-2 w-full overflow-hidden md:mx-0">
+                {images && images.length > 1 ? (
+                  <ImageCarousel images={images} maxHeight={300} />
+                ) : (
+                  <img
+                    src={project.image || images![0]}
+                    alt={project.title}
+                    className="h-full w-full object-cover"
+                  />
+                )}
+              </div>
+            )}
+            <div className="px-3 md:px-4">
               {project.description && (
                 <div className="mt-2 text-sm leading-relaxed text-[var(--muted)] line-clamp-3 whitespace-pre-wrap break-words">
                   {renderContent(project.description, true)}
@@ -316,11 +320,11 @@ export default function FeedItem({
           {/* Image carousel — di ATAS, sama seperti project (carousel aktif jika >1 gambar) */}
           {hasImages && (
             isLoggedIn ? (
-              <Link href={qs(`/post/${slug || id}`, refPath)} className="block border-y border-[var(--card-border)]">
+              <Link href={qs(`/post/${slug || id}`, refPath)} className="block -mx-2 border-y border-[var(--card-border)] md:mx-0">
                 <ImageCarousel images={images!} maxHeight={300} />
               </Link>
             ) : (
-              <div className="border-y border-[var(--card-border)]">
+              <div className="-mx-2 border-y border-[var(--card-border)] md:mx-0">
                 <ImageCarousel images={images!} maxHeight={300} />
               </div>
             )

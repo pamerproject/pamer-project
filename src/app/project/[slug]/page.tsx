@@ -1332,7 +1332,8 @@ export default function ProjectDetailPage() {
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
       <div className="space-y-4 pb-12 md:pb-0">
       {/* ── Mobile Back Button ── */}
-      <div className="flex items-center gap-3 px-4 md:hidden">
+      {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
+      <div className="sticky top-0 z-[65] flex items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 py-2 md:hidden">
         <button
           onClick={() => window.history.back()}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
@@ -1514,8 +1515,8 @@ export default function ProjectDetailPage() {
       {session && (
         <div
           ref={setMobileBarEl}
-          className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] pb-6 shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden"
-          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1.5rem)" }}
+          className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden"
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.5rem)" }}
         >
           {replyingTo && (
             <div className="flex items-center gap-1.5 border-b border-[var(--card-border)] bg-[var(--brand-light)]/50 px-3 py-1.5">

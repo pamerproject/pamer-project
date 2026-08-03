@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/lang";
 import Avatar from "./ui/Avatar";
@@ -181,8 +182,36 @@ export default function Navbar() {
     return () => window.removeEventListener("open-search", handler);
   }, []);
 
+  // ── Hide-on-scroll (mobile, hanya halaman detail feed) ──
+  // Saat scroll ke bawah di halaman detail (post/project/event), navbar ikut
+  // naik & menghilang — tombol back sticky di halaman menggantikan posisinya.
+  // Pakai `top` (bukan transform) agar dropdown notif yang position:fixed
+  // di dalam header tetap ter-anchor ke viewport, bukan ke header.
+  const pathname = usePathname();
+  const isDetailFeed = /^\/(post|project|event)\/.+/.test(pathname || "");
+  const [navbarHidden, setNavbarHidden] = useState(false);
+
+  useEffect(() => {
+    if (!isDetailFeed) {
+      setNavbarHidden(false);
+      return;
+    }
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      if (window.innerWidth >= 768) return;
+      const y = window.scrollY;
+      if (y > lastY && y > 56) setNavbarHidden(true);
+      else if (y < lastY) setNavbarHidden(false);
+      lastY = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isDetailFeed]);
+
   return (
-    <header className="fixed top-0 z-[60] w-full border-b border-[var(--card-border)] bg-[var(--card)]">
+    <header
+      className={`fixed top-0 z-[60] w-full border-b border-[var(--card-border)] bg-[var(--card)] transition-[top] duration-300 ease-out ${navbarHidden ? "-top-16" : "top-0"}`}
+    >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
           {/* ── Logo / Site title ───────────────────────── */}
