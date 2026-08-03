@@ -280,7 +280,7 @@ export default function SettingsPage() {
               </svg>
               {t("settings.backToProfile")}
             </Link>
-            <div className="card-app rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
+            <div className="card-app overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
               {/* ── Cover ────────────────────────────── */}
               <div className="group relative h-48 overflow-hidden md:rounded-t-xl">
                 {coverImage ? (

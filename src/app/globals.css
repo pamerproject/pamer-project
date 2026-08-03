@@ -74,16 +74,15 @@ body {
    (px-4). Radius di-nol-kan di mobile agar garis separator lurus penuh,
    mirip list item app. Desktop tetap border penuh + rounded. */
 @media (max-width: 767px) {
-  /* Pakai !important + properti fisik DAN logis: memastikan menang atas
-     utility Tailwind .border-l/.border-r (border-left-width:1px) di semua
-     browser termasuk in-app browser — cascade/urutan rule tidak bisa
-     menggagalkan override ini. */
+  /* Facebook-native mobile: card putih di atas background abu-abu.
+     TANPA border sama sekali — pemisah antar card = gap background
+     (seperti feed Facebook native). Sudut membulat 12px. Pakai
+     !important agar menang atas utility Tailwind di semua browser.
+     Desktop tidak terpengaruh (rule hanya untuk layar < md). */
   .card-app {
-    border-left-width: 0 !important;
-    border-right-width: 0 !important;
-    border-inline-start-width: 0 !important;
-    border-inline-end-width: 0 !important;
-    border-radius: 0 !important;
+    border-width: 0 !important;
+    border-inline-width: 0 !important;
+    border-radius: 0.75rem !important;
   }
 }
 

@@ -618,7 +618,7 @@ export default function ProfilePage() {
 
               {/* ── Tab: Cerita ──────────────────────────── */}
               {activeTab === "cerita" && (
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-2.5 md:space-y-4">
                   {allPosts.filter((p) => p.type === "cerita").map((post, index) => {
                     const parsed = parsePostImage(post.image);
                     return (
@@ -696,7 +696,7 @@ export default function ProfilePage() {
 
               {/* ── Tab: Project ── */}
               {activeTab === "project" && (
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-2.5 md:space-y-4">
                   {allPosts.filter((p) => p.type === "project").map((post, index) => {
                     const parsed = parsePostImage(post.image);
                     const projectData = post.project ? {
