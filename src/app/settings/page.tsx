@@ -36,6 +36,7 @@ export default function SettingsPage() {
   const [linkName, setLinkName] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [editingLinkIndex, setEditingLinkIndex] = useState<number | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   // ─── Theme ────────────────────────────────────────────────
   const [isDark, setIsDark] = useState(false);
@@ -100,6 +101,7 @@ export default function SettingsPage() {
     setLinks([...links, { name, url }]);
     setLinkName("");
     setLinkUrl("");
+    setShowAddForm(false);
   };
 
   const removeLink = (index: number) => {
@@ -114,6 +116,7 @@ export default function SettingsPage() {
 
   const startEditLink = (index: number) => {
     setEditingLinkIndex(index);
+    setShowAddForm(false);
     setLinkName(links[index].name);
     setLinkUrl(links[index].url);
   };
@@ -132,6 +135,7 @@ export default function SettingsPage() {
 
   const cancelEdit = () => {
     setEditingLinkIndex(null);
+    setShowAddForm(false);
     setLinkName("");
     setLinkUrl("");
   };
@@ -401,17 +405,19 @@ export default function SettingsPage() {
 
                 {/* Links */}
                 <div className="px-4 py-4 md:px-6">
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">{t("settings.links")}</label>
+                  <div className="flex items-center justify-between gap-3">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">{t("settings.links")}</label>
+                    {links.length > 0 && (
+                      <span className="rounded-full bg-[var(--brand-light)] px-2 py-0.5 text-[11px] font-bold text-[var(--brand)]">{links.length}</span>
+                    )}
+                  </div>
                   <p className="mt-0.5 text-xs text-[var(--muted)]">{t("settings.linkDescription")}</p>
 
-                  {/* Existing links */}
+                  {/* Existing links — panel list dengan divider */}
                   {links.length > 0 && (
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-3 divide-y divide-[var(--card-border)] overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--background)]">
                       {links.map((link, i) => (
-                        <div
-                          key={i}
-                          className="group flex items-center gap-3 rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3.5 py-2.5 transition-all hover:border-[var(--brand)]/30"
-                        >
+                        <div key={i} className="flex items-center gap-3 px-3.5 py-3">
                           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-light)]">
                             <svg className="h-4 w-4 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
@@ -421,10 +427,10 @@ export default function SettingsPage() {
                             <span className="block truncate text-sm font-medium text-[var(--foreground)]">{link.name}</span>
                             <span className="block truncate text-xs text-[var(--muted)]">{link.url}</span>
                           </div>
-                          <div className="flex shrink-0 items-center gap-1 opacity-100 transition-all md:opacity-0 md:group-hover:opacity-100">
+                          <div className="flex shrink-0 items-center gap-0.5">
                             <button
                               onClick={() => startEditLink(i)}
-                              className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--muted)] transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)] active:scale-95"
                               title={t("settings.editLinkTitle")}
                             >
                               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -433,7 +439,7 @@ export default function SettingsPage() {
                             </button>
                             <button
                               onClick={() => removeLink(i)}
-                              className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-red-50 hover:text-red-500"
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--muted)] transition-all hover:bg-red-50 hover:text-red-500 active:scale-95"
                               title={t("settings.deleteLinkTitle")}
                             >
                               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -446,73 +452,112 @@ export default function SettingsPage() {
                     </div>
                   )}
 
-                  {/* Add/Edit link form */}
-                  <div className="mt-3 rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--background)] p-3.5 transition-all focus-within:border-[var(--brand)]/50">
-                    {editingLinkIndex !== null ? (
-                      <p className="mb-2.5 text-xs font-semibold text-[var(--brand)]">{t("settings.editLinkLabel")}</p>
-                    ) : (
-                      <p className="mb-2.5 text-xs font-semibold text-[var(--muted)]">{t("settings.addLinkLabel")}</p>
-                    )}
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                      <div className="flex-1 space-y-2 sm:space-y-0 sm:flex sm:gap-2">
+                  {/* Tombol tambah link — buka form */}
+                  {!showAddForm && editingLinkIndex === null && (
+                    <button
+                      onClick={() => setShowAddForm(true)}
+                      className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-[var(--card-border)] px-4 py-2.5 text-sm font-semibold text-[var(--muted)] transition-all hover:border-[var(--brand)] hover:text-[var(--brand)] active:scale-[0.99]"
+                    >
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      {t("settings.addLinkLabel")}
+                    </button>
+                  )}
+
+                  {/* Form tambah link */}
+                  {showAddForm && editingLinkIndex === null && (
+                    <div className="mt-3 rounded-xl border border-[var(--brand)]/30 bg-[var(--brand-light)]/20 p-3.5">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-bold uppercase tracking-wider text-[var(--brand)]">{t("settings.addLinkLabel")}</p>
+                        <button
+                          onClick={() => { setShowAddForm(false); setLinkName(""); setLinkUrl(""); }}
+                          className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--muted)] transition-all hover:bg-[var(--card)] hover:text-[var(--foreground)]"
+                          title={t("settings.cancelEdit")}
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="mt-2.5 space-y-2">
                         <input
                           type="text"
                           value={linkName}
                           onChange={(e) => setLinkName(e.target.value)}
                           placeholder={t("settings.linkNamePlaceholder")}
-                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] sm:w-1/3"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              if (editingLinkIndex !== null) saveEditLink();
-                              else addLink();
-                            }
-                          }}
+                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/20"
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addLink(); } }}
                         />
                         <input
                           type="url"
                           value={linkUrl}
                           onChange={(e) => setLinkUrl(e.target.value)}
                           placeholder="https://example.com"
-                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] sm:flex-1"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              if (editingLinkIndex !== null) saveEditLink();
-                              else addLink();
-                            }
-                          }}
+                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/20"
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addLink(); } }}
                         />
                       </div>
-                      <div className="flex gap-2 sm:shrink-0">
-                        {editingLinkIndex !== null ? (
-                          <>
-                            <button
-                              onClick={saveEditLink}
-                              disabled={!linkName.trim() || !linkUrl.trim()}
-                              className="flex-1 rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] active:scale-[0.98] disabled:opacity-50 sm:flex-none"
-                            >
-                              {t("settings.saveLink")}
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="flex-1 rounded-lg border border-[var(--card-border)] px-4 py-2.5 text-sm font-bold text-[var(--muted)] transition-all hover:bg-[var(--background)] active:scale-[0.98] sm:flex-none"
-                            >
-                              {t("settings.cancelEdit")}
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={addLink}
-                            disabled={!linkName.trim() || !linkUrl.trim()}
-                            className="flex-1 rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] active:scale-[0.98] disabled:opacity-50 sm:flex-none"
-                          >
-                            {t("settings.addLink")}
-                          </button>
-                        )}
+                      <button
+                        onClick={addLink}
+                        disabled={!linkName.trim() || !linkUrl.trim()}
+                        className="mt-3 w-full rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] active:scale-[0.98] disabled:opacity-50"
+                      >
+                        {t("settings.addLink")}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Form edit link */}
+                  {editingLinkIndex !== null && (
+                    <div className="mt-3 rounded-xl border border-[var(--brand)]/30 bg-[var(--brand-light)]/20 p-3.5">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-bold uppercase tracking-wider text-[var(--brand)]">{t("settings.editLinkLabel")}</p>
+                        <button
+                          onClick={cancelEdit}
+                          className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--muted)] transition-all hover:bg-[var(--card)] hover:text-[var(--foreground)]"
+                          title={t("settings.cancelEdit")}
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="mt-2.5 space-y-2">
+                        <input
+                          type="text"
+                          value={linkName}
+                          onChange={(e) => setLinkName(e.target.value)}
+                          placeholder={t("settings.linkNamePlaceholder")}
+                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/20"
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveEditLink(); } }}
+                        />
+                        <input
+                          type="url"
+                          value={linkUrl}
+                          onChange={(e) => setLinkUrl(e.target.value)}
+                          placeholder="https://example.com"
+                          className="block w-full rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-3 py-2.5 text-sm outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/20"
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveEditLink(); } }}
+                        />
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          onClick={cancelEdit}
+                          className="flex-1 rounded-lg border border-[var(--card-border)] bg-[var(--card)] px-4 py-2.5 text-sm font-semibold text-[var(--muted)] transition-all hover:bg-[var(--background)] active:scale-[0.98]"
+                        >
+                          {t("settings.cancelEdit")}
+                        </button>
+                        <button
+                          onClick={saveEditLink}
+                          disabled={!linkName.trim() || !linkUrl.trim()}
+                          className="flex-1 rounded-lg bg-[var(--brand)] px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] active:scale-[0.98] disabled:opacity-50"
+                        >
+                          {t("settings.saveLink")}
+                        </button>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Save */}
