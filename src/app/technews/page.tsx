@@ -287,7 +287,7 @@ export default function TechNewsPage() {
   // ── Loading ──
   if (loading) {
     return (
-      <div>
+      <div className="px-4 md:px-0">
         <div className="mb-6 animate-pulse">
           <div className="h-8 w-56 rounded-lg bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
           <div className="mt-2 h-4 w-80 rounded bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700" />
@@ -315,7 +315,22 @@ export default function TechNewsPage() {
   // ── Empty ──
   if (devtoArticles.length === 0 && hnArticles.length === 0 && lokalArticles.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
+      <div className="px-4 md:px-0">
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--brand)]">
+              <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight">TechNews <span className="text-[var(--brand)]">Info</span></h1>
+              <p className="mt-0.5 text-sm text-[var(--muted)]">Berita teknologi global &amp; Indonesia</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center py-20">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
           <svg className="h-8 w-8 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
@@ -323,12 +338,13 @@ export default function TechNewsPage() {
         </div>
         <h2 className="text-lg font-bold">Belum ada berita</h2>
         <button onClick={() => fetchNews(1, false)} className="mt-4 rounded-xl bg-[var(--brand)] px-6 py-2 text-sm font-semibold text-white hover:bg-[var(--brand-hover)] transition-all">Muat Ulang</button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="px-4 md:px-0">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3">

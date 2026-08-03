@@ -465,7 +465,7 @@ export default function ProfilePage() {
               {isOwnProfile && (
                 <button
                   onClick={() => setEditTarget("cover")}
-                  className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-black/50 px-3 py-1.5 text-xs font-medium text-white opacity-0 backdrop-blur-sm transition-all hover:bg-black/70 group-hover:opacity-100"
+                  className="absolute right-3 top-3 flex items-center gap-1.5 rounded-lg bg-black/50 px-3 py-1.5 text-xs font-medium text-white opacity-100 backdrop-blur-sm transition-all hover:bg-black/70 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -500,7 +500,7 @@ export default function ProfilePage() {
                 {isOwnProfile && (
                   <button
                     onClick={() => setEditTarget("avatar")}
-                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-all hover:opacity-100"
+                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-100 transition-all md:opacity-0 md:hover:opacity-100"
                   >
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -630,7 +630,7 @@ export default function ProfilePage() {
                           <div className="absolute right-2 top-2 z-20">
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenMenuPostId(openMenuPostId === post.id ? null : post.id); }}
-                              className="rounded-lg p-1.5 text-[var(--muted)] opacity-0 transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)] group-hover:opacity-100"
+                              className="rounded-lg p-1.5 text-[var(--muted)] opacity-100 transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)] md:opacity-0 md:group-hover:opacity-100"
                             >
                               <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
@@ -716,7 +716,7 @@ export default function ProfilePage() {
                           <div className="absolute right-2 top-2 z-20">
                             <button
                               onClick={(e) => { e.stopPropagation(); setOpenMenuPostId(openMenuPostId === post.id ? null : post.id); }}
-                              className="rounded-lg p-1.5 text-[var(--muted)] opacity-0 transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)] group-hover:opacity-100"
+                              className="rounded-lg p-1.5 text-[var(--muted)] opacity-100 transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)] md:opacity-0 md:group-hover:opacity-100"
                             >
                               <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
@@ -1045,7 +1045,7 @@ export default function ProfilePage() {
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent pb-1 pt-3" />
                         <button
                           onClick={() => setEditImages((prev) => prev.filter((_, i) => i !== idx))}
-                          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-lg opacity-0 transition-all hover:scale-110 group-hover:opacity-100"
+                          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-lg opacity-100 transition-all hover:scale-110 md:opacity-0 md:group-hover:opacity-100"
                         >
                           <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

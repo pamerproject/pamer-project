@@ -271,15 +271,17 @@ export default function SettingsPage() {
     <>
       <div className="space-y-8">
             {/* ── Back to Profile ──────────────────────── */}
-            <Link
-              href={`/u/${sessionUser?.username || ""}`}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-              </svg>
-              {t("settings.backToProfile")}
-            </Link>
+            <div className="mt-4 px-4 md:px-0">
+              <Link
+                href={`/u/${sessionUser?.username || ""}`}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                {t("settings.backToProfile")}
+              </Link>
+            </div>
             <div className="card-app overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
               {/* ── Cover ────────────────────────────── */}
               <div className="group relative h-48 overflow-hidden md:rounded-t-xl">
@@ -319,7 +321,7 @@ export default function SettingsPage() {
                   )}
                   <button
                     onClick={() => setEditTarget("avatar")}
-                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-all hover:opacity-100"
+                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-100 transition-all md:opacity-0 md:hover:opacity-100"
                   >
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -424,7 +426,7 @@ export default function SettingsPage() {
                               {link.url}
                             </span>
                           </div>
-                          <div className="flex shrink-0 items-center gap-1 opacity-0 transition-all group-hover:opacity-100">
+                          <div className="flex shrink-0 items-center gap-1 opacity-100 transition-all md:opacity-0 md:group-hover:opacity-100">
                             <button
                               onClick={() => startEditLink(i)}
                               className="rounded-lg p-1.5 text-[var(--muted)] transition-all hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"

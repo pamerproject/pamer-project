@@ -16,12 +16,14 @@ export default function StaticPageView({ pageKey, title, content, published }: S
 
   return (
     <div className="space-y-4">
-      <Breadcrumb
-        segments={[
-          { label: t("sidebar.home"), href: "/" },
-          { label: title || t(`contentTab.${pageKey}`) },
-        ]}
-      />
+      <div className="px-4 md:px-0">
+        <Breadcrumb
+          segments={[
+            { label: t("sidebar.home"), href: "/" },
+            { label: title || t(`contentTab.${pageKey}`) },
+          ]}
+        />
+      </div>
 
       <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] overflow-hidden">
         {/* Header */}

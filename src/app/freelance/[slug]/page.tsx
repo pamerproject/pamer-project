@@ -119,11 +119,13 @@ export default function FreelanceDetailPage() {
 
   return (
     <div>
-      <Breadcrumb segments={[
-        searchParams.get("ref")?.startsWith("u/") ? { label: t("mobileNav.profile"), href: `/${searchParams.get("ref")}` } : { label: t("sidebar.home"), href: "/" },
-        { label: t("sidebar.freelance"), href: "/freelance" },
-        { label: job.title }
-      ]} />
+      <div className="px-4 md:px-0">
+        <Breadcrumb segments={[
+          searchParams.get("ref")?.startsWith("u/") ? { label: t("mobileNav.profile"), href: `/${searchParams.get("ref")}` } : { label: t("sidebar.home"), href: "/" },
+          { label: t("sidebar.freelance"), href: "/freelance" },
+          { label: job.title }
+        ]} />
+      </div>
 
       <article className="card-app overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
         {job.image && (

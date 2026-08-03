@@ -93,7 +93,7 @@ export default function EventsPage() {
 
   if (loading) {
     return (
-      <div>
+      <div className="px-4 md:px-0">
         <div className="mb-6 animate-pulse">
           <div className="h-8 w-48 rounded-lg bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
           <div className="mt-2 h-4 w-72 rounded bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700" />
@@ -115,7 +115,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div>
+    <div className="px-4 md:px-0">
       <Breadcrumb segments={[{ label: t("sidebar.home"), href: "/" }, { label: t("event.pageTitle") }]} />
 
       {/* Header */}

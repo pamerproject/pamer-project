@@ -194,16 +194,16 @@ export default function EventDetailPage() {
   return (
     <div className="space-y-4 pb-12 md:pb-0">
       {/* ── Mobile Back Button ── */}
-      <div className="flex items-center gap-3 px-1 md:hidden">
+      <div className="flex items-center gap-3 px-4 md:hidden">
         <button
           onClick={() => window.history.back()}
-          className="flex items-center gap-1 text-sm font-semibold text-[var(--foreground)] transition-all hover:text-[var(--brand)]"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
         >
           <svg
-            className="h-5 w-5"
+            className="h-4 w-4"
             fill="none"
             stroke="currentColor"
-            strokeWidth={2.5}
+            strokeWidth={2}
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />

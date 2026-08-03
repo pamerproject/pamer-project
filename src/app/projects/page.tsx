@@ -93,7 +93,7 @@ export default function ProjectsPage() {
   // ── Loading skeleton ──
   if (loading) {
     return (
-      <div>
+      <div className="px-4 md:px-0">
         {/* Header skeleton */}
         <div className="mb-6 animate-pulse">
           <div className="h-8 w-48 rounded-lg bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800" />
@@ -131,8 +131,10 @@ export default function ProjectsPage() {
   // ── Error ──
   if (error) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">
-        {error}
+      <div className="px-4 md:px-0">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-center text-sm text-red-600">
+          {error}
+        </div>
       </div>
     );
   }
@@ -140,7 +142,19 @@ export default function ProjectsPage() {
   // ── Empty ──
   if (projects.length === 0) {
     return (
-      <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-12 text-center">
+      <div className="px-4 md:px-0">
+        <Breadcrumb segments={[{ label: t("sidebar.home"), href: "/" }, { label: t("project.title") }]} />
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-black tracking-tight md:text-3xl">
+            <span className="text-[var(--brand)]">{t("project.title")}</span>
+          </h1>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            {t("project.subtitle")}
+          </p>
+        </div>
+
+        <div className="card-app rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-12 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
           <svg
             className="h-8 w-8 text-[var(--brand)]"
@@ -160,12 +174,13 @@ export default function ProjectsPage() {
         <p className="mt-1 text-sm text-[var(--muted)]">
           {t("project.noProjectsDesc")}
         </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="px-4 md:px-0">
       <Breadcrumb segments={[{ label: t("sidebar.home"), href: "/" }, { label: t("project.title") }]} />
       {/* Header */}
       <div className="mb-6">
