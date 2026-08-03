@@ -947,25 +947,6 @@ export default function ProjectDetailPage() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Saat input fokus di mobile, kunci scroll body agar halaman tidak ikut
-  // bergerak saat keyboard terbuka — bar komentar tetap diam di atas keyboard.
-  useEffect(() => {
-    if (mobileInputFocused) {
-      const scrollY = window.scrollY;
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
-      return () => {
-        document.body.style.overflow = "";
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.width = "";
-        window.scrollTo(0, scrollY);
-      };
-    }
-  }, [mobileInputFocused]);
-
   // Store previous state for optimistic rollback
   const prevCommentsRef = useRef<CommentData[]>([]);
 
@@ -1556,7 +1537,7 @@ export default function ProjectDetailPage() {
               </span>
             </div>
           )}
-          <div className="relative px-2 pt-4 pb-1.5">
+          <div className="relative px-2 pt-2 pb-1">
             {/* ── Mobile mention dropdown ── */}
             {mobileMentionActive && mobileFiltered.length > 0 && (
               <div
