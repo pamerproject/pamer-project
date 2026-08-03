@@ -87,12 +87,16 @@ export function useKeepAboveKeyboard(focused: boolean) {
 
     // Keyboard sudah menutupi area home-indicator → kecilkan padding bawah
     // agar tidak ada sisa ruang kosong antara input dan keyboard.
-    el.style.paddingBottom = "4px";
+    el.style.paddingBottom = "2px";
 
+    // Hitung jarak dari dasar layout viewport ke tepi atas keyboard.
+    // Penting: offsetTop bisa NEGATIF di iOS (visual viewport terangkat untuk
+    // menampilkan input) — kalau ikut dikurangi, bottom jadi terlalu besar
+    // dan bar melayang di atas keyboard. Clamp ke 0 agar tidak over-estimate.
     const update = () => {
       const keyboardHeight = Math.max(
         0,
-        window.innerHeight - vv.height - vv.offsetTop
+        window.innerHeight - vv.height - Math.max(0, vv.offsetTop)
       );
       el.style.bottom = `${keyboardHeight}px`;
     };
@@ -102,17 +106,15 @@ export function useKeepAboveKeyboard(focused: boolean) {
     window.addEventListener("resize", update);
     update();
 
-    // iOS: animasi keyboard naik butuh waktu — rehitung beberapa kali
-    // setelah fokus agar posisi bar tidak tertinggal (menyisakan gap).
-    const t1 = window.setTimeout(update, 150);
-    const t2 = window.setTimeout(update, 400);
+    // Pemantauan berkala selama fokus — menjamin bar selalu menempel di atas
+    // keyboard apa pun perilaku browser/timing (iOS sering telat resize).
+    const interval = window.setInterval(update, 120);
 
     return () => {
       vv.removeEventListener("resize", update);
       vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
+      window.clearInterval(interval);
       // Cleanup: kembalikan ke bottom 0 & padding asli
       el.style.bottom = "0px";
       el.style.paddingBottom = "";
