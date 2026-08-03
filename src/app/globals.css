@@ -76,13 +76,13 @@ body {
 @media (max-width: 767px) {
   /* Facebook-native mobile: card putih di atas background abu-abu.
      TANPA border sama sekali — pemisah antar card = gap background
-     (seperti feed Facebook native). Sudut membulat 12px. Pakai
-     !important agar menang atas utility Tailwind di semua browser.
-     Desktop tidak terpengaruh (rule hanya untuk layar < md). */
+     (seperti feed Facebook native). Sudut persegi penuh (tanpa
+     lengkungan). Pakai !important agar menang atas utility Tailwind
+     di semua browser. Desktop tidak terpengaruh (rule hanya < md). */
   .card-app {
     border-width: 0 !important;
     border-inline-width: 0 !important;
-    border-radius: 0.75rem !important;
+    border-radius: 0 !important;
   }
 }
 
