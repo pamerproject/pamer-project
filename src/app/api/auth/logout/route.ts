@@ -98,13 +98,16 @@ function buildLogoutHtml(dest: string): string {
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="refresh" content="0;url=${safeDest}" />
-  <title>Keluar...</title>
+  <title></title>
   <style>
     body { font-family: system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; margin: 0; color: #444; background: #fafafa; }
+    /* Spinner loading — bahasa-netral, tanpa teks (mendukung id & en) */
+    .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #dc2626; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <p>Sedang keluar...</p>
+  <div class="spinner" role="status" aria-label="Loading"></div>
   <script>
     try {
       localStorage.setItem(
