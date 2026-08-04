@@ -1511,6 +1511,9 @@ export default function ProjectDetailPage() {
         </div>
       )}
 
+      </div>
+      <div className="pb-24 md:pb-0" />
+
       {/* ── Mobile Fixed Comment Bar ── */}
       {session && (
         <div
@@ -1710,10 +1713,7 @@ export default function ProjectDetailPage() {
               </div>
             )}
           </>
-        )}
-      </div>
-    </div>
-    <div className="pb-24 md:pb-0" />
+        )}      </div>
     </>
   );
 }

@@ -1550,6 +1550,9 @@ export default function PostDetailPage() {
         </div>
       )}
 
+      </div>
+      <div className="pb-24 md:pb-0" />
+
       {/* ── Mobile Fixed Comment Bar ── */}
       {session && (
         <div
@@ -1747,10 +1750,7 @@ export default function PostDetailPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
           </div>
-        )}
-      </div>
-    </div>
-    <div className="pb-24 md:pb-0" />
+        )}      </div>
     </>
   );
 }
