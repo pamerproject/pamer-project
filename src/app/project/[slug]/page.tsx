@@ -1328,13 +1328,13 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="space-y-0 md:space-y-4">
+    <div className="space-y-1 md:space-y-4">
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
       <style>{`@media (max-width: 767px) { .project-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
-      <div className="project-detail-container space-y-0 pb-0 pt-14 md:space-y-4 md:pb-0 md:pt-0">
+      <div className="project-detail-container space-y-0 pb-0 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
-      <div className="fixed top-0 left-0 right-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
+      <div className="sticky top-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
         <button
           onClick={() => window.history.back()}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
