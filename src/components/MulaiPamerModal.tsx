@@ -74,9 +74,10 @@ function extractGithubHandle(raw: string): string {
   // Link non-github (ada protokol http/https atau domain lain) — tolak
   if (/^(https?:\/\/|www\.|\w+\.\w{2,}\/)/i.test(v)) return "";
 
-  // Handle polos: username/repo (tanpa spasi & karakter aneh)
+  // Handle polos: username/repo (tanpa spasi & karakter aneh).
+  // Izinkan trailing slash ("user/") & segment parsial selama ketik.
   const plain = v.replace(/\s+/g, "");
-  if (/^[\w.-]+(?:\/[\w.-]+)*$/.test(plain)) return plain;
+  if (/^[\w.-]+(?:\/[\w.-]*)*\/?$/.test(plain)) return plain.replace(/\/+$/, "");
   return "";
 }
 
@@ -150,6 +151,11 @@ export default function MulaiPamerModal({
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [showGithubInput, setShowGithubInput] = useState(false);
   const [githubUrl, setGithubUrl] = useState("");
+  // Draft mentah saat user mengetik di input GitHub — value input SELALU ikut
+  // draft (tidak dinormalisasi per keystroke) supaya tidak pernah kehapus
+  // saat user mengetik karakter antara seperti "/". Normalisasi hanya terjadi
+  // saat submit / menutup input.
+  const [githubDraft, setGithubDraft] = useState("");
   const [images, setImages] = useState<PreviewImage[]>([]);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -181,6 +187,7 @@ export default function MulaiPamerModal({
       setTags([]);
       setLinkUrl("");
       setGithubUrl("");
+      setGithubDraft("");
       setShowLinkInput(false);
       setShowGithubInput(false);
       setImages([]);
@@ -785,8 +792,11 @@ export default function MulaiPamerModal({
               </button>
               <button
                 onClick={() => {
-                  setShowGithubInput(!showGithubInput);
+                  const opening = !showGithubInput;
+                  setShowGithubInput(opening);
                   setShowLinkInput(false);
+                  // Saat membuka input, isi draft dengan handle dari githubUrl saat ini
+                  if (opening) setGithubDraft(extractGithubHandle(githubUrl));
                   setTimeout(() => githubInputRef.current?.focus(), 50);
                 }}
                 className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-[var(--brand)] hover:bg-[var(--brand-light)]"
@@ -937,12 +947,19 @@ export default function MulaiPamerModal({
                 autoCapitalize="none"
                 autoCorrect="off"
                 spellCheck={false}
-                value={extractGithubHandle(githubUrl)}
-                onChange={(e) => setGithubUrl(buildGithubUrl(e.target.value))}
+                value={githubDraft}
+                onChange={(e) => {
+                  // Simpan draft mentah apa adanya — input tidak pernah ter-reset
+                  setGithubDraft(e.target.value);
+                  // Sinkronkan githubUrl (normalisasi) supaya chip & submit benar
+                  setGithubUrl(buildGithubUrl(e.target.value));
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     setShowGithubInput(false);
-                    if (!githubUrl) setGithubUrl("");
+                    // Komit draft yang valid; kalau kosong, hapus githubUrl
+                    setGithubUrl(buildGithubUrl(githubDraft));
+                    if (!buildGithubUrl(githubDraft)) setGithubDraft("");
                   }
                 }}
                 placeholder="username/repo"
@@ -998,7 +1015,7 @@ export default function MulaiPamerModal({
               </span>
             </div>
             <button
-              onClick={() => { setGithubUrl(""); setShowGithubInput(false); }}
+              onClick={() => { setGithubUrl(""); setGithubDraft(""); setShowGithubInput(false); }}
               className="rounded p-1 text-[var(--muted)] hover:bg-red-50 hover:text-red-500"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
