@@ -17,6 +17,7 @@ import MyJobsList from "@/components/MyJobsList";
 import AdsCard from "@/components/AdsCard";
 import EmailVerifyBanner from "@/components/EmailVerifyBanner";
 const PostJobModal = dynamic(() => import("@/components/PostJobModal"));
+import MulaiPamerModal, { type PostEditData } from "@/components/MulaiPamerModal";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 // ─── Types ──────────────────────────────────────────────────────
@@ -104,17 +105,6 @@ export default function ProfilePage() {
   const [editingPost, setEditingPost] = useState<ProfilePost | null>(null);
   const [deletingPost, setDeletingPost] = useState<ProfilePost | null>(null);
   const [deletingLoading, setDeletingLoading] = useState(false);
-  const [editContent, setEditContent] = useState("");
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-  const [editImages, setEditImages] = useState<string[]>([]);
-  const [editImageUploading, setEditImageUploading] = useState(false);
-  const [editLinkUrl, setEditLinkUrl] = useState("");
-  const [editGithubUrl, setEditGithubUrl] = useState("");
-  const [editTags, setEditTags] = useState<string[]>([]);
-  const [editTagsInput, setEditTagsInput] = useState("");
-  const [editVisibility, setEditVisibility] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
-  const [editSaving, setEditSaving] = useState(false);
   const [openMenuPostId, setOpenMenuPostId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -128,45 +118,6 @@ export default function ProfilePage() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-
-  const handleEditPost = async () => {
-    if (editingPost?.type === "cerita" && !editContent.trim()) return;
-    if (editingPost?.type === "project" && !editTitle.trim()) return;
-    setEditSaving(true);
-    const postId = editingPost!.id;
-    try {
-      const body: Record<string, unknown> = {};
-      if (editingPost?.type === "cerita") body.content = editContent.trim();
-      else {
-        body.title = editTitle.trim();
-        body.description = editDescription.trim() || null;
-        body.content = "";
-      }
-      body.images = editImages;
-      body.linkUrl = editLinkUrl || null;
-      body.githubUrl = editGithubUrl || null;
-      if (editingPost?.type === "project") {
-        body.tags = editTags;
-        body.visibility = editVisibility;
-      }
-      const slug = editingPost!.slug;
-      const editUrl = slug && slug !== "null" ? `/api/posts/${slug}` : `/api/posts/_?postId=${postId}`;
-      const res = await fetch(editUrl, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAllPosts((prev) => prev.map((p) =>
-          p.id === postId ? { ...p, ...data.post } : p
-        ));
-        setEditingPost(null);
-      }
-    } catch {} finally {
-      setEditSaving(false);
-    }
-  };
 
   const handleDeletePost = async () => {
     if (!deletingPost || deletingLoading) return;
@@ -227,37 +178,27 @@ export default function ProfilePage() {
   };
 
   const openEditModal = (post: ProfilePost) => {
-    const parsed = parsePostImage(post.image);
     setEditingPost(post);
-    setEditContent(post.content || "");
-    setEditTitle(post.project?.title || "");
-    setEditDescription(post.project?.description || "");
-    setEditImages(parsed.images);
-    setEditLinkUrl(parsed.linkUrl || "");
-    setEditGithubUrl(parsed.githubUrl || "");
-    setEditTags(post.project?.tags || []);
-    setEditTagsInput("");
-    setEditVisibility(post.project?.visibility === "PRIVATE" ? "PRIVATE" : "PUBLIC");
     setOpenMenuPostId(null);
   };
 
-  const handleEditUploadImage = async () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-      setEditImageUploading(true);
-      try {
-        const fd = new FormData(); fd.append("file", file);
-        const res = await fetch("/api/upload", { method: "POST", body: fd });
-        const data = await res.json();
-        if (data?.preview) setEditImages((prev) => [...prev, data.preview]);
-      } catch {} finally { setEditImageUploading(false); }
+  /** Ubah ProfilePost → PostEditData untuk mode edit MulaiPamerModal. */
+  const buildEditData = useCallback((post: ProfilePost): PostEditData => {
+    const parsed = parsePostImage(post.image);
+    return {
+      id: post.id,
+      slug: post.slug && post.slug !== "null" ? post.slug : null,
+      type: post.type === "cerita" ? "cerita" : "project",
+      content: post.content || "",
+      title: post.project?.title || "",
+      description: post.project?.description || "",
+      tags: post.project?.tags || [],
+      visibility: post.project?.visibility === "PRIVATE" ? "PRIVATE" : "PUBLIC",
+      linkUrl: parsed.linkUrl || "",
+      githubUrl: parsed.githubUrl || "",
+      images: parsed.images,
     };
-    input.click();
-  };
+  }, []);
 
   // Pinned projects state
   const [pinnedProjects, setPinnedProjects] = useState<PinnedProject[]>([]);
@@ -832,251 +773,18 @@ export default function ProfilePage() {
             </div>
         </div>
 
-      {/* ── Edit Post Modal ─────────────────────────────────── */}
-      {editingPost && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/50" onClick={() => setEditingPost(null)}>
-          <div
-            className="mx-2 w-full max-w-2xl rounded-2xl border border-[var(--card-border)] bg-[var(--card)] shadow-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-[var(--card-border)] px-4 py-3">
-              <h3 className="text-base font-bold">
-                {editingPost.type === "project" ? t("profile.editProjectTitle") : t("profile.editPostTitle")}
-              </h3>
-              <button onClick={() => setEditingPost(null)} className="rounded-lg p-1.5 text-[var(--muted)] hover:bg-[var(--brand-light)] hover:text-[var(--brand)]">
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="max-h-[65vh] overflow-y-auto p-4">
-              {editingPost.type === "project" && (
-                <div className="space-y-3">
-                  <input
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    placeholder={t("createPost.projectTitle")}
-                    className="w-full rounded-xl border border-[var(--card-border)] bg-transparent px-4 py-3 text-sm outline-none placeholder:text-[var(--muted)] focus:border-[var(--brand)]"
-                  />
-                  <textarea
-                    value={editDescription}
-                    onChange={(e) => setEditDescription(e.target.value)}
-                    placeholder={t("createPost.projectDesc")}
-                    rows={3}
-                    className="w-full resize-none rounded-xl border border-[var(--card-border)] bg-transparent px-4 py-3 text-sm leading-relaxed outline-none placeholder:text-[var(--muted)] focus:border-[var(--brand)]"
-                  />
-
-                  {/* Tags */}
-                  <div>
-                    <input
-                      type="text"
-                      value={editTagsInput}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setEditTagsInput(val);
-                        if (val.endsWith(",") || val.endsWith(" ")) {
-                          const newTag = val.replace(/[, ]+$/, "").trim();
-                          if (newTag && !editTags.includes(newTag)) {
-                            setEditTags([...editTags, newTag]);
-                          }
-                          setEditTagsInput("");
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === "Tab") {
-                          e.preventDefault();
-                          const val = editTagsInput.trim();
-                          if (val && !editTags.includes(val)) {
-                            setEditTags([...editTags, val]);
-                          }
-                          setEditTagsInput("");
-                        }
-                        if (e.key === "Backspace" && !editTagsInput && editTags.length > 0) {
-                          setEditTags(editTags.slice(0, -1));
-                        }
-                      }}
-                      placeholder={t("createPost.tags")}
-                      className="w-full rounded-xl border border-[var(--card-border)] bg-transparent px-4 py-3 text-sm outline-none placeholder:text-[var(--muted)] focus:border-[var(--brand)]"
-                    />
-                    {editTags.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {editTags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center gap-1 rounded-full bg-[var(--brand-light)] px-3 py-1 text-xs font-medium text-[var(--brand)]"
-                          >
-                            #{tag}
-                            <button
-                              onClick={() => setEditTags(editTags.filter((t) => t !== tag))}
-                              className="hover:text-red-500"
-                            >
-                              <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Visibility toggle */}
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-[var(--muted)]">{t("profile.visibility")}:</span>
-                    <button
-                      type="button"
-                      onClick={() => setEditVisibility("PUBLIC")}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-bold transition-all ${
-                        editVisibility === "PUBLIC"
-                          ? "border-[var(--brand)] bg-[var(--brand-light)] text-[var(--brand)]"
-                          : "border-[var(--card-border)] text-[var(--muted)]"
-                      }`}
-                    >
-                      {t("profile.public")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditVisibility("PRIVATE")}
-                      className={`rounded-lg border px-3 py-1.5 text-xs font-bold transition-all ${
-                        editVisibility === "PRIVATE"
-                          ? "border-[var(--brand)] bg-[var(--brand-light)] text-[var(--brand)]"
-                          : "border-[var(--card-border)] text-[var(--muted)]"
-                      }`}
-                    >
-                      {t("profile.private")}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {editingPost.type === "cerita" && (
-                <div>
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => {
-                      if (e.target.value.length <= 1000) setEditContent(e.target.value);
-                    }}
-                    placeholder={t("createPost.placeholder")}
-                    rows={5}
-                    className="w-full resize-none border-none bg-transparent text-base leading-relaxed outline-none placeholder:text-[var(--muted)]"
-                  />
-                  <div className="mt-1 text-right text-xs text-[var(--muted)]">
-                    {1000 - editContent.length}/1000
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Toolbar & Images */}
-            <div className="border-y border-[var(--card-border)]">
-              <div className="px-4 py-3">
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={handleEditUploadImage}
-                    disabled={editImageUploading || editImages.length >= 3}
-                    className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-[var(--brand)] hover:bg-[var(--brand-light)] disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                    {editImageUploading ? t("profile.uploading") : t("profile.addImages")}
-                  </button>
-                  {editImages.length > 0 && (
-                    <span className="ml-1 text-xs font-medium text-[var(--muted)]">
-                      {editImages.length}/3
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Image previews */}
-              {editImages.length > 0 && (
-                <div className="border-t border-[var(--card-border)] px-4 py-3">
-                  <div className="flex flex-wrap gap-3">
-                    {editImages.map((img, idx) => (
-                      <div
-                        key={idx}
-                        className="group relative h-24 w-24 overflow-hidden rounded-xl border-2 border-[var(--card-border)] bg-[var(--background)] transition-all hover:border-[var(--brand)] hover:shadow-md"
-                      >
-                        <Image src={img} alt="" fill className="object-cover" sizes="96px" />
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent pb-1 pt-3" />
-                        <button
-                          onClick={() => setEditImages((prev) => prev.filter((_, i) => i !== idx))}
-                          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-lg opacity-100 transition-all hover:scale-110 md:opacity-0 md:group-hover:opacity-100"
-                        >
-                          <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                        {editImageUploading && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                            <svg className="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Link & GitHub URLs */}
-            <div className="px-4 py-3 space-y-2">
-              <div className="relative">
-                <input
-                  value={editLinkUrl}
-                  onChange={(e) => setEditLinkUrl(e.target.value)}
-                  placeholder={t("createPost.liveUrl")}
-                  className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3 py-2.5 text-sm outline-none focus:border-[var(--brand)]"
-                />
-              </div>
-              <div className="relative">
-                <input
-                  value={editGithubUrl}
-                  onChange={(e) => setEditGithubUrl(e.target.value)}
-                  placeholder={t("createPost.repoUrl")}
-                  className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3 py-2.5 text-sm outline-none focus:border-[var(--brand)]"
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="border-t border-[var(--card-border)] px-4 py-4">
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  onClick={() => setEditingPost(null)}
-                  className="rounded-lg border border-[var(--card-border)] px-5 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"
-                >
-                  {t("profile.cancel")}
-                </button>
-                <button
-                  onClick={handleEditPost}
-                  disabled={editSaving || (editingPost.type === "cerita" && !editContent.trim()) || (editingPost.type === "project" && !editTitle.trim())}
-                  className="rounded-lg bg-[var(--brand)] px-6 py-2 text-sm font-bold text-white hover:bg-[var(--brand-hover)] disabled:opacity-40"
-                >
-                  {editSaving ? (
-                    <span className="flex items-center gap-2">
-                      <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      {t("profile.saving")}
-                    </span>
-                  ) : (
-                    t("profile.save")
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── Edit Post Modal ── pakai MulaiPamerModal mode edit (form identik create di home).
+          WAJIB di-render selalu (isOpen={!!editingPost}) — pola yang sama dengan create,
+          supaya guard prevOpen di dalam modal berjalan & form terisi data post. */}
+      <MulaiPamerModal
+        isOpen={!!editingPost}
+        editPost={editingPost ? buildEditData(editingPost) : null}
+        onClose={() => setEditingPost(null)}
+        onSuccess={() => {
+          setEditingPost(null);
+          setRefreshKey((k) => k + 1);
+        }}
+      />
 
       {/* ── Delete Post Confirmation ────────────────────────── */}
       <ConfirmDialog

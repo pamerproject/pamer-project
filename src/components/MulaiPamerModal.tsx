@@ -10,10 +10,30 @@ import ErrorAlert from "@/components/ui/ErrorAlert";
 
 type PostType = "cerita" | "project";
 
+/**
+ * Data awal untuk mode edit — form diisi dari post yang sudah ada,
+ * lalu submit memakai PATCH ke endpoint update.
+ */
+export interface PostEditData {
+  id: string;
+  slug: string | null;
+  type: PostType;
+  content: string;
+  title: string;
+  description: string;
+  tags: string[];
+  visibility: "PUBLIC" | "PRIVATE";
+  linkUrl: string | null;
+  githubUrl: string | null;
+  images: string[];
+}
+
 interface MulaiPamerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  /** Jika diisi, modal berfungsi sebagai EDIT (PATCH) dengan form terisi data post. */
+  editPost?: PostEditData | null;
 }
 
 // Shared image upload logic (same as before)
@@ -57,9 +77,11 @@ export default function MulaiPamerModal({
   isOpen,
   onClose,
   onSuccess,
+  editPost,
 }: MulaiPamerModalProps) {
   const { t } = useTranslation();
   const { data: session, update } = useSession();
+  const isEdit = !!editPost;
 
   // Refresh session when profile is updated (e.g. avatar change)
   // JWT callback akan membaca data terbaru langsung dari database
@@ -123,35 +145,61 @@ export default function MulaiPamerModal({
       setImages([]);
       setError("");
 
-      // Pulihkan draft dari localStorage (isi form tidak hilang saat reload)
-      try {
-        const raw = localStorage.getItem(DRAFT_KEY);
-        if (raw) {
-          const d = JSON.parse(raw) as DraftData;
-          // eslint-disable-next-line react-hooks/set-state-in-effect -- restore draft dari localStorage saat mount
-          if (d.postType === "cerita" || d.postType === "project") setPostType(d.postType);
-          setText(d.text || "");
-          setTitle(d.title || "");
-          setDescription(d.description || "");
-          setTags(Array.isArray(d.tags) ? d.tags : []);
-          if (d.visibility === "PUBLIC" || d.visibility === "PRIVATE") setVisibility(d.visibility);
-          setLinkUrl(d.linkUrl || "");
-          setGithubUrl(d.githubUrl || "");
-          setImages(
-            Array.isArray(d.images)
-              ? d.images.map((img) => ({
-                  id: Math.random().toString(36).slice(2),
-                  url: img.url,
-                  name: img.name,
-                  sizeKB: img.sizeKB,
-                  originalSizeKB: img.sizeKB,
-                  uploading: false,
-                }))
-              : []
-          );
+      if (editPost) {
+        // Mode edit: isi form dari data post yang diedit (tidak pakai draft)
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- prefill form saat modal edit dibuka
+        setPostType(editPost.type);
+        setText(editPost.content || "");
+        setTitle(editPost.title || "");
+        setDescription(editPost.description || "");
+        setTags(Array.isArray(editPost.tags) ? editPost.tags : []);
+        if (editPost.visibility === "PUBLIC" || editPost.visibility === "PRIVATE") {
+          setVisibility(editPost.visibility);
         }
-      } catch {
-        // Abaikan draft korup / localStorage tidak tersedia
+        setLinkUrl(editPost.linkUrl || "");
+        setGithubUrl(editPost.githubUrl || "");
+        setImages(
+          Array.isArray(editPost.images)
+            ? editPost.images.map((url) => ({
+                id: Math.random().toString(36).slice(2),
+                url,
+                name: url.split("/").pop() || "image",
+                sizeKB: 0,
+                originalSizeKB: 0,
+                uploading: false,
+              }))
+            : []
+        );
+      } else {
+        // Pulihkan draft dari localStorage (isi form tidak hilang saat reload)
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          if (raw) {
+            const d = JSON.parse(raw) as DraftData;
+            setPostType(d.postType === "cerita" || d.postType === "project" ? d.postType : "project");
+            setText(d.text || "");
+            setTitle(d.title || "");
+            setDescription(d.description || "");
+            setTags(Array.isArray(d.tags) ? d.tags : []);
+            if (d.visibility === "PUBLIC" || d.visibility === "PRIVATE") setVisibility(d.visibility);
+            setLinkUrl(d.linkUrl || "");
+            setGithubUrl(d.githubUrl || "");
+            setImages(
+              Array.isArray(d.images)
+                ? d.images.map((img) => ({
+                    id: Math.random().toString(36).slice(2),
+                    url: img.url,
+                    name: img.name,
+                    sizeKB: img.sizeKB,
+                    originalSizeKB: img.sizeKB,
+                    uploading: false,
+                  }))
+                : []
+            );
+          }
+        } catch {
+          // Abaikan draft korup / localStorage tidak tersedia
+        }
       }
 
       const timer = setTimeout(() => titleInputRef.current?.focus(), 100);
@@ -165,11 +213,12 @@ export default function MulaiPamerModal({
       revokeObjectUrls();
       prevOpen.current = false;
     }
-  }, [isOpen, revokeObjectUrls]);
+  }, [isOpen, revokeObjectUrls, editPost]);
 
-  // Autosave draft ke localStorage setiap ada perubahan form
+  // Autosave draft ke localStorage setiap ada perubahan form (mode create saja —
+  // mode edit tidak boleh menimpa draft create yang belum terkirim)
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || isEdit) return;
     try {
       const draft: DraftData = {
         postType,
@@ -189,7 +238,7 @@ export default function MulaiPamerModal({
     } catch {
       // localStorage penuh / tidak tersedia — abaikan
     }
-  }, [isOpen, postType, text, title, description, tags, visibility, linkUrl, githubUrl, images]);
+  }, [isOpen, isEdit, postType, text, title, description, tags, visibility, linkUrl, githubUrl, images]);
 
   const uploadToServer = useCallback(
     async (file: File): Promise<PreviewImage> => {
@@ -400,11 +449,14 @@ export default function MulaiPamerModal({
 
     try {
       const body: Record<string, unknown> = {
-        type: postType,
         images: images.map((i) => i.url),
         linkUrl: linkUrl || null,
         githubUrl: githubUrl || null,
       };
+
+      if (!isEdit) {
+        body.type = postType;
+      }
 
       if (postType === "cerita") {
         body.content = text;
@@ -415,8 +467,17 @@ export default function MulaiPamerModal({
         body.visibility = visibility;
       }
 
-      const res = await fetch("/api/posts", {
-        method: "POST",
+      // Mode edit → PATCH ke post yang ada (pakai slug kalau ada, fallback postId)
+      // Mode create → POST ke /api/posts
+      const editUrl =
+        editPost && editPost.slug && editPost.slug !== "null"
+          ? `/api/posts/${editPost.slug}`
+          : editPost
+            ? `/api/posts/_?postId=${editPost.id}`
+            : null;
+
+      const res = await fetch(editUrl || "/api/posts", {
+        method: isEdit ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -428,11 +489,13 @@ export default function MulaiPamerModal({
 
       onSuccess?.();
       window.dispatchEvent(new CustomEvent("post-created"));
-      // Hapus draft setelah berhasil submit
-      try {
-        localStorage.removeItem(DRAFT_KEY);
-      } catch {
-        // abaikan
+      if (!isEdit) {
+        // Hapus draft hanya di mode create
+        try {
+          localStorage.removeItem(DRAFT_KEY);
+        } catch {
+          // abaikan
+        }
       }
       onClose();
     } catch (err: unknown) {
@@ -470,28 +533,34 @@ export default function MulaiPamerModal({
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="flex items-center gap-1 rounded-xl border border-[var(--card-border)] p-0.5">
-            <button
-              onClick={() => { setPostType("project"); setTimeout(() => titleInputRef.current?.focus(), 100); }}
-              className={`rounded-lg px-4 py-1.5 text-sm font-bold transition-all ${
-                postType === "project"
-                  ? "bg-[var(--brand)] text-white shadow-sm"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
-              }`}
-            >
-              {t("createPost.projectType")}
-            </button>
-            <button
-              onClick={() => { setPostType("cerita"); setTimeout(() => textareaRef.current?.focus(), 100); }}
-              className={`rounded-lg px-4 py-1.5 text-sm font-bold transition-all ${
-                postType === "cerita"
-                  ? "bg-[var(--brand)] text-white shadow-sm"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
-              }`}
-            >
-              {t("createPost.ceritaType")}
-            </button>
-          </div>
+          {isEdit ? (
+            <h3 className="text-base font-bold">
+              {postType === "project" ? t("profile.editProjectTitle") : t("profile.editPostTitle")}
+            </h3>
+          ) : (
+            <div className="flex items-center gap-1 rounded-xl border border-[var(--card-border)] p-0.5">
+              <button
+                onClick={() => { setPostType("project"); setTimeout(() => titleInputRef.current?.focus(), 100); }}
+                className={`rounded-lg px-4 py-1.5 text-sm font-bold transition-all ${
+                  postType === "project"
+                    ? "bg-[var(--brand)] text-white shadow-sm"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                {t("createPost.projectType")}
+              </button>
+              <button
+                onClick={() => { setPostType("cerita"); setTimeout(() => textareaRef.current?.focus(), 100); }}
+                className={`rounded-lg px-4 py-1.5 text-sm font-bold transition-all ${
+                  postType === "cerita"
+                    ? "bg-[var(--brand)] text-white shadow-sm"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                }`}
+              >
+                {t("createPost.ceritaType")}
+              </button>
+            </div>
+          )}
           <button
             onClick={() => setFullscreen((f) => !f)}
             title={fullscreen ? t("createPost.exitFullscreen") : t("createPost.fullscreen")}
@@ -751,8 +820,8 @@ export default function MulaiPamerModal({
 
                       {/* Gradient overlay with info badges */}
                       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/70 to-transparent px-2 pb-1 pt-4">
-                        <span                        className="rounded bg-black/50 px-1.5 text-[10px] font-medium text-white">
-                          {img.sizeKB}KB
+                        <span className="rounded bg-black/50 px-1.5 text-[10px] font-medium text-white">
+                          {img.sizeKB > 0 ? `${img.sizeKB}KB` : "IMG"}
                         </span>
                         <span className="rounded bg-black/50 px-1.5 text-[10px] font-medium text-white">
                           {index + 1}/{MAX_IMAGES}
@@ -899,10 +968,10 @@ export default function MulaiPamerModal({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                {t("createPost.saving")}
+                {isEdit ? t("profile.saving") : t("createPost.saving")}
               </span>
             ) : (
-              t("createPost.post")
+              isEdit ? t("profile.save") : t("createPost.post")
             )}
           </button>
         </div>
