@@ -114,6 +114,11 @@ export function useKeepAboveKeyboard(focused: boolean) {
     vv.addEventListener("resize", update);
     vv.addEventListener("scroll", update);
     window.addEventListener("resize", update);
+    // PENTING: saat keyboard terbuka di iOS dan user scroll halaman, scroll
+    // dokumen memicu event `window.scroll` (visualViewport.scroll TIDAK
+    // selalu terpicu di iOS). Tanpa listener ini, offsetTop tidak ter-update
+    // sehingga bar ikut naik-turun mengikuti scroll.
+    window.addEventListener("scroll", update);
     update();
 
     // Fallback lambat untuk browser yang tidak memicu resize saat keyboard
@@ -125,6 +130,7 @@ export function useKeepAboveKeyboard(focused: boolean) {
       vv.removeEventListener("resize", update);
       vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update);
       window.clearInterval(interval);
       el.style.bottom = "0px";
     };
