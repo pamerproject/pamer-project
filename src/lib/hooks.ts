@@ -54,68 +54,55 @@ export function useInfiniteScroll(
 
 /**
  * Hook agar elemen (bar input mobile) tetap menempel di atas keyboard saat
- * input sedang fokus. iOS/Android mengubah ukuran visual viewport saat
- * keyboard naik/turun.
+ * input sedang fokus, dan menempel di dasar layar saat tidak fokus.
  *
  * Gunakan sebagai callback ref: <div ref={setEl}>
  *
- * Masalah: saat keyboard terbuka dan user scroll, `visualViewport.offsetTop`
- * berubah (negatif) — ini membuat perhitungan `bottom` jadi over-estimate
- * dan bar melayang di atas keyboard. Solusi: clamp offsetTop ke 0.
- *
- * Masalah kedua: `visualViewport.scroll` event dipicu terus-menerus saat
- * scroll, dan interval 120ms terus mengoreksi — menyebabkan bar naik-turun
- * (bergetar). Solusi: hanya update `bottom` jika perubahan keyboardHeight
- * lebih dari 5px (debounce dengan threshold).
+ * Prinsip:
+ * - `position: fixed` SUDAH membuat bar tidak ikut scroll halaman. Jadi
+ *   kita TIDAK perlu mendengarkan event scroll atau memakai offsetTop —
+ *   justru itu yang membuat bar naik-turun mengikuti halaman.
+ * - Keyboard TERTUTUP → `bottom: 0px` (bar menempel di dasar layar).
+ * - Keyboard TERBUKA → `bottom = max(0, innerHeight - vv.height)` = tinggi
+ *   keyboard (layout viewport - visual viewport). Nilai KONSTAN, tidak
+ *   berubah saat user scroll → bar tetap diam di atas keyboard.
+ * - Android yang me-resize layout saat keyboard naik: `innerHeight` ikut
+ *   menyusut → hasilnya ~0 → bar diam di dasar (sudah di atas keyboard).
  */
 export function useKeepAboveKeyboard(focused: boolean) {
   const [el, setEl] = useState<HTMLElement | null>(null);
-  const lastBottomRef = useRef(0);
 
   useEffect(() => {
     if (!el) return;
 
     if (!focused) {
       el.style.bottom = "0px";
-      el.style.paddingBottom = "";
-      lastBottomRef.current = 0;
       return;
     }
 
     const vv = window.visualViewport;
     if (!vv) return;
 
-    el.style.paddingBottom = "2px";
-
     const update = () => {
-      const keyboardHeight = Math.max(
-        0,
-        window.innerHeight - vv.height - Math.max(0, vv.offsetTop)
-      );
-      // Hanya update jika ada perubahan signifikan (≥5px) — mencegah
-      // bar naik-turun saat scroll (offsetTop berfluktuasi kecil).
-      if (Math.abs(keyboardHeight - lastBottomRef.current) >= 5) {
-        el.style.bottom = `${keyboardHeight}px`;
-        lastBottomRef.current = keyboardHeight;
-      }
+      // Tinggi keyboard = layout viewport - visual viewport.
+      // TANPA offsetTop: offsetTop berubah saat scroll & membuat bar goyang.
+      const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
+      el.style.bottom = `${keyboardHeight}px`;
     };
 
     vv.addEventListener("resize", update);
-    vv.addEventListener("scroll", update);
     window.addEventListener("resize", update);
     update();
 
-    // Interval diperlambat jadi 300ms agar tidak terlalu agresif saat scroll
-    const interval = window.setInterval(update, 300);
+    // Fallback lambat untuk browser yang tidak memicu resize saat keyboard
+    // naik. Nilainya stabil (tanpa offsetTop) sehingga tidak membuat goyang.
+    const interval = window.setInterval(update, 500);
 
     return () => {
       vv.removeEventListener("resize", update);
-      vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
       window.clearInterval(interval);
       el.style.bottom = "0px";
-      el.style.paddingBottom = "";
-      lastBottomRef.current = 0;
     };
   }, [el, focused]);
 
