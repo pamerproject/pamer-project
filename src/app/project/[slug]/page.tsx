@@ -1328,10 +1328,10 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="bg-[var(--background)] space-y-1 md:space-y-4">
+    <div className="bg-[var(--background)] space-y-2.5 md:space-y-4">
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
       <style>{`@media (max-width: 767px) { .project-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
-      <div className="project-detail-container pt-14 md:pt-0 space-y-0 pb-0 md:space-y-4 md:pb-0">
+      <div className="project-detail-container pt-2 md:pt-0 space-y-0 pb-0 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Fixed di atas, menggantikan posisi navbar */}
       <div className="fixed left-0 right-0 top-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
