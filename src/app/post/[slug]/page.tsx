@@ -1380,7 +1380,8 @@ export default function PostDetailPage() {
   return (
     <>
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
-      <div className="space-y-0 pb-12 md:space-y-4 md:pb-0">
+      <style>{`@media (max-width: 767px) { .post-detail-container > :not(:first-child) { margin-top: 0 !important; } .post-detail-container + .card-app, .post-detail-container + div + .card-app { margin-top: 0 !important; } }`}</style>
+      <div className="post-detail-container space-y-0 pb-12 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
       <div className="sticky top-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
