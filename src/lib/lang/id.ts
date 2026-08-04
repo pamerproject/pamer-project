@@ -136,6 +136,7 @@ const id = {
     cancel: "Batal",
     fullscreen: "Layar Penuh",
     exitFullscreen: "Keluar Layar Penuh",
+    githubHint: "Ketik nama user/repo saja — link GitHub otomatis terbentuk.",
   },
 
   // ── Auth Pages ─────────────────────────────────────

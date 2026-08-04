@@ -136,6 +136,7 @@ const en = {
     cancel: "Cancel",
     fullscreen: "Fullscreen",
     exitFullscreen: "Exit fullscreen",
+    githubHint: "Type username/repo only — the GitHub link is built automatically.",
   },
 
   // ── Auth Pages ─────────────────────────────────────

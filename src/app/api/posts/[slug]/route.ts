@@ -154,6 +154,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
 
     const { images, linkUrl, githubUrl, tags, visibility } = body;
 
+    // Link GitHub wajib https://github.com/... — tolak bentuk lain
+    const safeGithubUrl =
+      typeof githubUrl === "string" && /^https:\/\/github\.com\/[\w.-]+(?:\/[\w.-]+)*\/?$/i.test(githubUrl.trim())
+        ? githubUrl.trim()
+        : null;
+
     // Update project tags & visibility if provided
     if (tags !== undefined && post.projectId) {
       await prisma.project.update({
@@ -172,7 +178,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
       const data: { imgs?: string[]; lnk?: string; gh?: string } = {};
       if (imgArr.length > 0) data.imgs = imgArr;
       if (linkUrl) data.lnk = linkUrl;
-      if (githubUrl) data.gh = githubUrl;
+      if (safeGithubUrl) data.gh = safeGithubUrl;
       updateData.image = Object.keys(data).length > 0 ? JSON.stringify(data) : null;
 
       // Update project image too

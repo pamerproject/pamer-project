@@ -224,8 +224,14 @@ export async function POST(req: Request) {
     const imgArr: string[] = images || [];
     const postType = type === "project" ? "project" : "cerita";
 
+    // Link GitHub wajib https://github.com/... — tolak bentuk lain
+    const safeGithubUrl =
+      typeof githubUrl === "string" && /^https:\/\/github\.com\/[\w.-]+(?:\/[\w.-]+)*\/?$/i.test(githubUrl.trim())
+        ? githubUrl.trim()
+        : null;
+
     if (postType === "cerita") {
-      if (!body.content?.trim() && imgArr.length === 0 && !linkUrl && !githubUrl) {
+      if (!body.content?.trim() && imgArr.length === 0 && !linkUrl && !safeGithubUrl) {
         return NextResponse.json(
           { message: "auth.contentRequired" },
           { status: 400 }
@@ -242,11 +248,11 @@ export async function POST(req: Request) {
 
     // Simpan gambar & metadata sebagai JSON di field image
     let imageValue: string | null = null;
-    if (imgArr.length > 0 || linkUrl || githubUrl) {
+    if (imgArr.length > 0 || linkUrl || safeGithubUrl) {
       const data: { imgs?: string[]; lnk?: string; gh?: string } = {};
       if (imgArr.length > 0) data.imgs = imgArr;
       if (linkUrl) data.lnk = linkUrl;
-      if (githubUrl) data.gh = githubUrl;
+      if (safeGithubUrl) data.gh = safeGithubUrl;
       imageValue = JSON.stringify(data);
     }
 
@@ -323,7 +329,7 @@ export async function POST(req: Request) {
               tags: body.tags || [],
               image: imgArr.length > 0 ? imgArr[0] : null,
               liveUrl: linkUrl || null,
-              repoUrl: githubUrl || null,
+              repoUrl: safeGithubUrl,
               status: "PUBLISHED",
               visibility: visibility === "PRIVATE" ? "PRIVATE" : "PUBLIC",
               userId: session.user.id,

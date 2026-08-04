@@ -49,6 +49,47 @@ function extractHostname(url: string) {
 const MAX_IMAGES = 3;
 const MAX_FILE_SIZE = 512 * 1024;
 
+// Prefix tetap untuk link GitHub — user cukup mengetik username/repo,
+// hasil akhir selalu https://github.com/username/repo (tidak bisa link lain).
+const GITHUB_PREFIX = "https://github.com/";
+
+/**
+ * Ekstrak handle (username/repo) dari input mentah user.
+ * - Terima bentuk: username/repo, github.com/username/repo,
+ *   https://github.com/username/repo (dengan/tanpa www)
+ * - TOLAK link lain (bukan github.com) — return ""
+ */
+function extractGithubHandle(raw: string): string {
+  const v = raw.trim();
+  if (!v) return "";
+
+  // Full URL github.com — ambil bagian setelah github.com/
+  const fullMatch = v.match(/^https?:\/\/(?:www\.)?github\.com\/([\w.-]+(?:\/[\w.-]+)*)\/?$/i);
+  if (fullMatch) return fullMatch[1];
+
+  // Tanpa protokol: github.com/username/repo
+  const bareMatch = v.match(/^github\.com\/([\w.-]+(?:\/[\w.-]+)*)\/?$/i);
+  if (bareMatch) return bareMatch[1];
+
+  // Link non-github (ada protokol http/https atau domain lain) — tolak
+  if (/^(https?:\/\/|www\.|\w+\.\w{2,}\/)/i.test(v)) return "";
+
+  // Handle polos: username/repo (tanpa spasi & karakter aneh)
+  const plain = v.replace(/\s+/g, "");
+  if (/^[\w.-]+(?:\/[\w.-]+)*$/.test(plain)) return plain;
+  return "";
+}
+
+/**
+ * Bangun URL GitHub final dari input mentah user.
+ * Return string kosong jika input bukan link GitHub yang valid.
+ */
+function buildGithubUrl(raw: string): string {
+  const handle = extractGithubHandle(raw);
+  if (!handle) return "";
+  return `${GITHUB_PREFIX}${handle}`;
+}
+
 // Kunci localStorage untuk draft form — isi form tidak hilang saat reload
 const DRAFT_KEY = "pamer-draft";
 
@@ -451,7 +492,8 @@ export default function MulaiPamerModal({
       const body: Record<string, unknown> = {
         images: images.map((i) => i.url),
         linkUrl: linkUrl || null,
-        githubUrl: githubUrl || null,
+        // Pastikan githubUrl selalu valid github.com — abaikan link lain
+        githubUrl: buildGithubUrl(githubUrl || "") || null,
       };
 
       if (!isEdit) {
@@ -884,21 +926,33 @@ export default function MulaiPamerModal({
 
         {showGithubInput && (
           <div className="px-4 pb-3">
-            <input
-              ref={githubInputRef}
-              type="url"
-              value={githubUrl}
-              onChange={(e) => setGithubUrl(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Escape") {
-                  setShowGithubInput(false);
-                  if (!githubUrl) setGithubUrl("");
-                }
-              }}
-              placeholder="https://github.com/user/repo"
-              className="w-full rounded-xl border border-[var(--card-border)] bg-[var(--background)] px-3 py-2 text-sm outline-none focus:border-[var(--brand)]"
-              autoFocus
-            />
+            <div className="flex items-center overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--background)] focus-within:border-[var(--brand)]">
+              <span className="shrink-0 select-none border-r border-[var(--card-border)] bg-[var(--brand-light)]/50 px-3 py-2 text-sm font-medium text-[var(--brand)]">
+                {GITHUB_PREFIX}
+              </span>
+              <input
+                ref={githubInputRef}
+                type="text"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                value={extractGithubHandle(githubUrl)}
+                onChange={(e) => setGithubUrl(buildGithubUrl(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setShowGithubInput(false);
+                    if (!githubUrl) setGithubUrl("");
+                  }
+                }}
+                placeholder="username/repo"
+                className="w-full min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-[var(--muted)]"
+                autoFocus
+              />
+            </div>
+            <p className="mt-1.5 text-[11px] text-[var(--muted)]">
+              {t("createPost.githubHint")}
+            </p>
           </div>
         )}
 
