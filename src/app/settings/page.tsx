@@ -403,7 +403,7 @@ export default function SettingsPage() {
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     placeholder={t("settings.profileInfo")}
-                    rows={2}
+                    rows={4}
                     maxLength={500}
                     className="mt-1.5 w-full resize-none border-0 border-b border-[var(--card-border)] bg-transparent px-0 pb-1.5 pt-0.5 text-sm leading-relaxed text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-[var(--brand)]"
                   />
