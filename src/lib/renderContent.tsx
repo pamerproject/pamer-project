@@ -283,7 +283,7 @@ function renderUrls(text: string, withPreview = false): React.ReactNode[] {
             />
             {isSticker && (
               <div className="pointer-events-none absolute bottom-1 right-1.5 select-none">
-                <span className="text-[9px] font-medium tracking-wide text-white/40 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+                <span className="text-[9px] font-medium tracking-wide text-white/40">
                   giphy.com
                 </span>
               </div>

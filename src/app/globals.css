@@ -67,6 +67,16 @@ html {
   .text-\[11px\] { font-size: 12px; }
 }
 
+/* ── Flat design: hapus SEMUA shadow ──────────────────
+   Menetralkan semua box-shadow (shadow-sm/md/lg/xl/2xl, shadow arbitrary,
+   dan ring-* yang di Tailwind berbasis box-shadow) di seluruh elemen.
+   Fokus input tetap terlihat via focus:border-*. */
+*,
+::before,
+::after {
+  box-shadow: none !important;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
