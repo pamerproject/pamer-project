@@ -58,16 +58,18 @@ export function useInfiniteScroll(
  *
  * Gunakan sebagai callback ref: <div ref={setEl}>
  *
- * Prinsip:
- * - `position: fixed` SUDAH membuat bar tidak ikut scroll halaman. Jadi
- *   kita TIDAK perlu mendengarkan event scroll atau memakai offsetTop —
- *   justru itu yang membuat bar naik-turun mengikuti halaman.
+ * Prinsip per platform:
+ * - Android (default `interactive-widget: resizes-visual`): elemen `fixed`
+ *   diposisikan relatif ke VISUAL viewport — `bottom: 0` dari class Tailwind
+ *   SUDAH otomatis menempatkan bar tepat di atas keyboard. Menyetel `bottom`
+ *   via JS justru membuat bar melayang tinggi (gap di bawah bar) dan ikut
+ *   naik-turun saat scroll. Jadi di Android: JANGAN sentuh `bottom` sama sekali.
+ * - iOS Safari: elemen `fixed` diposisikan relatif ke LAYOUT viewport (yang
+ *   TIDAK menyusut saat keyboard naik) — `bottom: 0` membuat bar tersembunyi
+ *   di balik keyboard. Solusi: `bottom = keyboardHeight`, plus kompensasi
+ *   `visualViewport.offsetTop` agar bar tetap diam di atas keyboard saat
+ *   halaman di-scroll.
  * - Keyboard TERTUTUP → `bottom: 0px` (bar menempel di dasar layar).
- * - Keyboard TERBUKA → `bottom = max(0, innerHeight - vv.height)` = tinggi
- *   keyboard (layout viewport - visual viewport). Nilai KONSTAN, tidak
- *   berubah saat user scroll → bar tetap diam di atas keyboard.
- * - Android yang me-resize layout saat keyboard naik: `innerHeight` ikut
- *   menyusut → hasilnya ~0 → bar diam di dasar (sudah di atas keyboard).
  */
 export function useKeepAboveKeyboard(focused: boolean) {
   const [el, setEl] = useState<HTMLElement | null>(null);
@@ -83,23 +85,45 @@ export function useKeepAboveKeyboard(focused: boolean) {
     const vv = window.visualViewport;
     if (!vv) return;
 
+    // Deteksi iOS Safari (termasuk iPad dengan desktop mode).
+    const ua = navigator.userAgent;
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    // Android: biarkan `bottom: 0` dari class Tailwind bekerja sendiri —
+    // browser sudah menempelkan bar tepat di atas keyboard.
+    if (!isIOS) {
+      el.style.bottom = "0px";
+      return;
+    }
+
+    let raf = 0;
     const update = () => {
-      // Tinggi keyboard = layout viewport - visual viewport.
-      // TANPA offsetTop: offsetTop berubah saat scroll & membuat bar goyang.
-      const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
-      el.style.bottom = `${keyboardHeight}px`;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        // Tinggi keyboard = layout viewport - visual viewport.
+        const keyboardHeight = Math.max(0, window.innerHeight - vv.height);
+        // Kompensasi scroll: di iOS elemen fixed "ikut" layout viewport saat
+        // halaman di-scroll, kurangi offsetTop agar bar tetap di atas keyboard.
+        const bottom = Math.max(0, keyboardHeight - vv.offsetTop);
+        el.style.bottom = `${bottom}px`;
+      });
     };
 
     vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
     window.addEventListener("resize", update);
     update();
 
     // Fallback lambat untuk browser yang tidak memicu resize saat keyboard
-    // naik. Nilainya stabil (tanpa offsetTop) sehingga tidak membuat goyang.
-    const interval = window.setInterval(update, 500);
+    // naik/turun. Nilainya stabil (rAF + input konsisten) sehingga aman.
+    const interval = window.setInterval(update, 300);
 
     return () => {
+      cancelAnimationFrame(raf);
       vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
       window.clearInterval(interval);
       el.style.bottom = "0px";
