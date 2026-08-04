@@ -51,6 +51,22 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* ── Mobile: perbesar font 1 tingkat ──────────────────
+   Root di mobile (clamp) cuma ~14.4px sehingga semua teks rem-based
+   (text-xs, text-sm, heading) tampak kecil. Naikkan ke 16px + pindahkan
+   teks arbitrary px (text-[8px]–[11px]) naik 1 step agar seragam.
+   Desktop (>=768px) TIDAK berubah. */
+@media (max-width: 767px) {
+  html {
+    font-size: 16px;
+  }
+  /* text-[8px] → 9px, text-[9px] → 10px, dst (badge & label kecil) */
+  .text-\[8px\] { font-size: 9px; }
+  .text-\[9px\] { font-size: 10px; }
+  .text-\[10px\] { font-size: 11px; }
+  .text-\[11px\] { font-size: 12px; }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
