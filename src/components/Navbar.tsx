@@ -191,8 +191,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 z-[60] w-full border-b border-[var(--card-border)] bg-[var(--card)] ${isDetailFeed ? "md:block" : "top-0"}`}
-      style={{ display: isDetailFeed ? 'none' : undefined }}
+      className={`fixed top-0 z-[60] w-full border-b border-[var(--card-border)] bg-[var(--card)] ${isDetailFeed ? "hidden md:block" : "top-0"}`}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
