@@ -163,8 +163,8 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
   if (!session) {
     return (
       <>
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-        <div className="fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-6 shadow-2xl animate-fade-in text-center">
+        <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm" onClick={onClose} />
+        <div className="fixed left-1/2 top-1/2 z-[100] w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-6 shadow-2xl animate-fade-in text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--brand-light)]">
             <svg className="h-6 w-6 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
@@ -182,9 +182,9 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm" onClick={onClose} />
       {/* Full-screen di mobile, card centered di desktop */}
-      <div className="fixed inset-0 z-50 flex flex-col bg-[var(--card)] md:inset-auto md:left-1/2 md:top-1/2 md:h-auto md:max-h-[90vh] md:w-[90vw] md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl md:border md:border-[var(--card-border)] md:shadow-2xl animate-fade-in">
+      <div className="fixed inset-0 z-[100] flex flex-col bg-[var(--card)] md:inset-auto md:left-1/2 md:top-1/2 md:h-auto md:max-h-[90vh] md:w-[90vw] md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl md:border md:border-[var(--card-border)] md:shadow-2xl animate-fade-in">
         {/* Header — diberi safe-area top agar tidak tertutup notch/status bar */}
         <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-[var(--card-border)] bg-[var(--card)] px-5 pt-[max(env(safe-area-inset-top),1rem)] pb-4">
           <h2 className="text-lg font-bold text-[var(--foreground)]">{editJob ? t("freelance.editJob") : t("freelance.postJob")}</h2>
