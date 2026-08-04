@@ -110,6 +110,7 @@ const en = {
     projectBadge: "Project",
     linkProject: "View Project",
     linkGithub: "View GitHub",
+    pinned: "Pinned",
     pinnedByProject: "Project pinned by",
     pinnedByStory: "Story pinned by",
   },

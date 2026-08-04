@@ -110,6 +110,7 @@ const id = {
     projectBadge: "Project",
     linkProject: "Link Project",
     linkGithub: "Link GitHub",
+    pinned: "Disematkan",
     pinnedByProject: "Project di-pin oleh",
     pinnedByStory: "Cerita di-pin oleh",
   },
