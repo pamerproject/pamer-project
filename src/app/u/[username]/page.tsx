@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
-import Avatar from "@/components/ui/Avatar";
 import { parsePostImage, getTimeAgo, getObjPosition, getZoomLevel, translateApiError } from "@/lib/helpers";
 import renderContent from "@/lib/renderContent";
 import { useInfiniteScroll } from "@/lib/hooks";
@@ -365,10 +364,17 @@ export default function ProfilePage() {
   if (error || !user) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        {/* Avatar placeholder — komponen Avatar yang sama seperti di komentar */}
+        {/* Illustration — GIF Cry (unoptimized: GIF animasi GIPHY) */}
         <div className="relative mb-6">
-          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[var(--brand-light)] ring-4 ring-[var(--brand)]/10">
-            <Avatar src={null} name="?" size="xl" />
+          <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-[var(--card)] shadow-lg">
+            <Image
+              src="https://media.giphy.com/media/0eMumU6VJ01GPh9MI0/giphy.gif"
+              alt=""
+              width={96}
+              height={96}
+              unoptimized
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-white shadow-lg">
             ?
