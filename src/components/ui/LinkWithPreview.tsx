@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import { checkUrlSafety, type UrlSafetyResult } from "@/lib/urlSafety";
 
@@ -22,12 +23,16 @@ function LinkPreviewCard({ og }: { og: OgData }) {
       className="mt-1.5 flex w-full max-w-full cursor-pointer overflow-hidden rounded-xl bg-[var(--background)] transition-all hover:shadow-sm"
     >
       {og.image && (
-        <img
-          src={og.image}
-          alt=""
-          className="h-24 w-32 shrink-0 object-cover"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-        />
+        <div className="relative h-24 w-32 shrink-0 overflow-hidden">
+          <Image
+            src={og.image}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="128px"
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
+          />
+        </div>
       )}
       <div className="flex min-w-0 flex-col justify-center gap-0.5 px-3 py-2">
         {og.title && (
@@ -121,7 +126,6 @@ export default function LinkWithPreview({
   href: string;
   className: string;
 }) {
-  const { t } = useTranslation();
   const [og, setOg] = useState<OgData | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
@@ -133,6 +137,7 @@ export default function LinkWithPreview({
   // Always fetch link preview on mount — warning only affects display, not fetching
   useEffect(() => {
     let ignore = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset state sebelum fetch link preview (pola standar)
     setLoading(true);
     setFetched(false);
     fetch(`/api/link-preview?url=${encodeURIComponent(href)}`)

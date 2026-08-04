@@ -163,6 +163,7 @@ export default function Navbar() {
   };
 
   const timeAgo = (date: string) => {
+    // eslint-disable-next-line react-hooks/purity -- waktu relatif memang butuh Date.now() saat render
     const diff = Date.now() - new Date(date).getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return t("timeAgo.justNow");

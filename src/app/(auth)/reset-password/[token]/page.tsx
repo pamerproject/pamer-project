@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import { translateApiError } from "@/lib/helpers";
@@ -10,7 +10,6 @@ import ErrorAlert from "@/components/ui/ErrorAlert";
 export default function ResetPasswordPage() {
   const { t } = useTranslation();
   const params = useParams();
-  const router = useRouter();
   const token = params.token as string;
 
   const [password, setPassword] = useState("");

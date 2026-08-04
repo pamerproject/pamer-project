@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 
 interface ImageCarouselProps {
@@ -110,12 +111,15 @@ export default function ImageCarousel({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <img
+        <Image
           src={images[current]}
           alt={alt ? `${alt} ${current + 1}` : ""}
-          className="w-full select-none bg-[var(--background)]"
-          style={{ maxHeight, objectFit: "cover" }}
+          width={1200}
+          height={675}
           draggable={false}
+          className="w-full h-auto select-none bg-[var(--background)]"
+          style={{ maxHeight, objectFit: "cover" }}
+          sizes="100vw"
         />
 
         {/* Prev button — muncul pas hover di area gambar */}

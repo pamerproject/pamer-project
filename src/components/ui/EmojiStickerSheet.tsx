@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import type { Sticker } from "@/lib/stickers";
 import { STICKERS, STICKER_CATEGORIES } from "@/lib/stickers";
 
@@ -35,6 +36,7 @@ export default function EmojiStickerSheet({
 
   // Reset tab when sheet opens with a different defaultTab
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset tab saat sheet dibuka
     if (open) setTab(defaultTab);
   }, [open, defaultTab]);
 
@@ -153,11 +155,14 @@ export default function EmojiStickerSheet({
                     className="group relative flex aspect-square items-center justify-center rounded-xl bg-[var(--background)] transition-all hover:bg-[var(--brand-light)] hover:scale-105 active:scale-95"
                     title={sticker.name}
                   >
-                    <img
+                    {/* unoptimized: sticker adalah GIF animasi GIPHY, tak boleh dikonversi */}
+                    <Image
                       src={sticker.url}
                       alt={sticker.name}
+                      width={48}
+                      height={48}
+                      unoptimized
                       className="h-12 w-12 object-contain"
-                      loading="lazy"
                     />
                     <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 truncate rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
                       {sticker.name}

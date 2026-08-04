@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/lang";
@@ -347,9 +348,13 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
             />
             {image ? (
               <div className="relative mt-1 inline-block">
-                <img
+                {/* unoptimized: preview bisa berupa blob: URL saat masih uploading */}
+                <Image
                   src={image.url}
                   alt={t("settings.thumbnailAlt")}
+                  width={160}
+                  height={96}
+                  unoptimized
                   className="h-24 w-40 rounded-xl border border-[var(--card-border)] object-cover"
                 />
                 {image.uploading && (

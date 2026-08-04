@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/lang";
@@ -189,10 +190,13 @@ export default function FeedItem({
               {images && images.length > 1 ? (
                 <ImageCarousel images={images} maxHeight={300} />
               ) : (
-                <img
+                <Image
                   src={project.image || images![0]}
                   alt={project.title}
-                  className="h-full w-full object-cover"
+                  width={1200}
+                  height={675}
+                  className="w-full h-auto object-cover"
+                  sizes="100vw"
                 />
               )}
             </div>
@@ -271,10 +275,13 @@ export default function FeedItem({
                 {images && images.length > 1 ? (
                   <ImageCarousel images={images} maxHeight={300} />
                 ) : (
-                  <img
+                  <Image
                     src={project.image || images![0]}
                     alt={project.title}
-                    className="h-full w-full object-cover"
+                    width={1200}
+                    height={675}
+                    className="w-full h-auto object-cover"
+                    sizes="100vw"
                   />
                 )}
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import { useInfiniteScroll, usePaginatedFetch } from "@/lib/hooks";
@@ -72,7 +73,7 @@ export default function ProjectsPage() {
       const data = await res.json();
       return data.projects || [];
     },
-    []
+    [t]
   );
 
   const {
@@ -222,11 +223,12 @@ export default function ProjectsPage() {
                   <div className="overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)]">
                     {item.image ? (
                       <div className="relative aspect-video w-full overflow-hidden">
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.title}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
+                          fill
+                          className="object-cover"
+                          sizes="176px"
                         />
                         <div className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white shadow">
                           {item.rank}
@@ -278,11 +280,13 @@ export default function ProjectsPage() {
               <article className="card-app overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
                 {/* Image */}
                 {primaryImage ? (
-                  <div className="aspect-video w-full overflow-hidden">
-                    <img
+                  <div className="relative aspect-video w-full overflow-hidden">
+                    <Image
                       src={primaryImage}
                       alt={project.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 50vw, 25vw"
                     />
                   </div>
                 ) : (

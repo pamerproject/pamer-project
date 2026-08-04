@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import Breadcrumb from "@/components/Breadcrumb";
 import Avatar from "@/components/ui/Avatar";
@@ -80,6 +81,7 @@ export default function EventDetailPage() {
 
   useEffect(() => {
     let ignore = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset state sebelum fetch (pola standar)
     setLoading(true);
     setNotFound(false);
     setEvent(null);
@@ -230,7 +232,7 @@ export default function EventDetailPage() {
         {/* Cover image */}
         <div className="relative h-48 w-full overflow-hidden sm:h-64 md:h-72">
           {event.image ? (
-            <img src={event.image} alt={title} className="h-full w-full object-cover" loading="lazy" />
+            <Image src={event.image} alt={title} fill className="object-cover" sizes="100vw" />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[var(--brand)]/20 to-[var(--brand)]/5">
               <svg className="h-16 w-16 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">

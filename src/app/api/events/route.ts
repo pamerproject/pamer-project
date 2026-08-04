@@ -47,7 +47,7 @@ async function generateUniqueEventSlug(title: string): Promise<string> {
 }
 
 // GET /api/events — daftar event untuk sidebar (dengan jumlah peserta + status diikuti)
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const session = await auth();
     const userId = session?.user?.id;

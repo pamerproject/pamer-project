@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import CodeBlock from "@/components/ui/CodeBlock";
 import LinkWithPreview from "@/components/ui/LinkWithPreview";
 import { isImageUrl } from "@/lib/stickers";
@@ -259,19 +260,22 @@ function renderUrls(text: string, withPreview = false): React.ReactNode[] {
       href = "https://" + url;
     }
 
-    // Jika URL adalah gambar (.gif, .png, .jpg, .webp), render sebagai inline <img>
+    // Jika URL adalah gambar (.gif, .png, .jpg, .webp), render sebagai inline Image (unoptimized)
     if (isImageUrl(href)) {
       const isSticker = href.includes("giphy.com");
       parts.push(
         <span key={`img-${match.index}`} className="mx-0.5 inline-block max-w-full align-middle">
           <div className="relative inline-block">
-            <img
+            {/* unoptimized: URL bisa .gif animasi (giphy) & dimensi intrinsik tak diketahui */}
+            <Image
               src={href}
               alt=""
+              width={640}
+              height={400}
+              unoptimized
               className={`max-h-64 w-auto max-w-full rounded-xl object-contain transition-all ${
                 isSticker ? "" : "cursor-pointer hover:shadow-md"
               }`}
-              loading="lazy"
               onClick={isSticker ? undefined : (e: React.MouseEvent<HTMLImageElement>) => {
                 e.stopPropagation();
                 window.open(href, "_blank", "noopener,noreferrer");

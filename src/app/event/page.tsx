@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -148,7 +149,7 @@ export default function EventsPage() {
                 {/* Image */}
                 {ev.image ? (
                   <div className="relative aspect-video w-full overflow-hidden">
-                    <img src={ev.image} alt={ev.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <Image src={ev.image} alt={ev.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 25vw" />
                     {!ev.active && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                         <span className="inline-flex items-center gap-1.5 rounded-lg bg-black/60 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white backdrop-blur">

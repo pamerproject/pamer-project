@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import SignOutButton from "@/components/SignOutButton";
 import Link from "next/link";
@@ -42,6 +43,7 @@ export default function SettingsPage() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- baca tema dari DOM sekali saat mount (client-only)
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
@@ -167,7 +169,7 @@ export default function SettingsPage() {
     } finally {
       setSaving(false);
     }
-  }, [name, bio, links, updateSession]);
+  }, [name, bio, links, updateSession, t]);
 
   // ─── Save photo ──────────────────────────────────────────
   const handlePhotoSave = useCallback(
@@ -200,7 +202,7 @@ export default function SettingsPage() {
         setCoverPosition(position);
       }
     },
-    [editTarget]
+    [editTarget, t]
   );
 
   // ─── Save password ───────────────────────────────────────
@@ -246,7 +248,7 @@ export default function SettingsPage() {
     } finally {
       setSavingPassword(false);
     }
-  }, [currentPassword, newPassword, confirmPassword]);
+  }, [currentPassword, newPassword, confirmPassword, t]);
 
   // Hindari flash "Silakan login dulu" saat reload: tunggu session selesai dimuat
   // (status === "loading") dulu dengan menampilkan skeleton, baru cek login.
@@ -290,11 +292,13 @@ export default function SettingsPage() {
               {/* ── Cover ────────────────────────────── */}
               <div className="group relative h-48 overflow-hidden md:rounded-t-xl">
                 {coverImage ? (
-                  <img
+                  <Image
                     src={coverImage}
                     alt="Cover"
-                    className="h-full w-full transition-all duration-300"
+                    fill
+                    className="transition-all duration-300"
                     style={{ objectFit: "cover", objectPosition: getObjPosition(coverPosition) }}
+                    sizes="(max-width: 768px) 100vw, 900px"
                   />
                 ) : (
                   <div className="h-full w-full bg-gradient-to-br from-[var(--brand)]/20 to-[var(--background)]" />
@@ -312,9 +316,11 @@ export default function SettingsPage() {
               <div className="relative px-6 pb-6">
                 <div className="group/av relative -mt-16 inline-block md:-mt-20">
                   {avatar ? (
-                    <img
+                    <Image
                       src={avatar}
                       alt="Avatar"
+                      width={128}
+                      height={128}
                       className="h-28 w-28 rounded-full border-4 border-[var(--card)] object-cover shadow-lg md:h-32 md:w-32"
                       style={{ objectPosition: getObjPosition(avatarPosition) }}
                     />

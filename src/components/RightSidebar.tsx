@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import Link from "next/link";
 import renderContent from "@/lib/renderContent";
@@ -107,6 +108,7 @@ export default function RightSidebar() {
   // Fetch profile data when on a profile page
   useEffect(() => {
     if (!profileUsername) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset saat keluar halaman profil
       setProfileUser(null);
       return;
     }
@@ -217,9 +219,11 @@ export default function RightSidebar() {
               <>
                 <div className="flex items-center gap-3">
                   {profileUser.avatar ? (
-                    <img
+                    <Image
                       src={profileUser.avatar}
                       alt={profileUser.name || profileUser.username}
+                      width={40}
+                      height={40}
                       className="h-10 w-10 rounded-full object-cover ring-2 ring-white"
                     />
                   ) : (
@@ -299,7 +303,7 @@ export default function RightSidebar() {
                       className="flex items-center gap-2 rounded-lg p-2 transition-all hover:bg-[var(--brand-light)]"
                     >
                       {project.image ? (
-                        <img src={project.image} alt="" loading="lazy" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+                        <Image src={project.image} alt="" width={40} height={40} className="h-10 w-10 shrink-0 rounded-lg object-cover" />
                       ) : (
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand)]/20 to-[var(--brand)]/5 text-xs font-bold text-[var(--brand)]">
                           {project.title.charAt(0)}
@@ -401,10 +405,11 @@ export default function RightSidebar() {
                   }`}
                 >
                   {ev.image ? (
-                    <img
+                    <Image
                       src={ev.image}
                       alt={ev.title}
-                      loading="lazy"
+                      width={40}
+                      height={40}
                       className="h-10 w-10 shrink-0 rounded-lg object-cover"
                     />
                   ) : (
@@ -479,16 +484,17 @@ export default function RightSidebar() {
                 <Link
                   key={ev.id}
                   href={`/event/${ev.slug}`}
-                  className={`group block overflow-hidden rounded-xl border border-[var(--card-border)] transition-all hover:border-[var(--brand)] hover:shadow-md ${
+                  className={`group relative block overflow-hidden rounded-xl border border-[var(--card-border)] transition-all hover:border-[var(--brand)] hover:shadow-md ${
                     ev.active ? "" : "opacity-70 grayscale"
                   }`}
                 >
                   {ev.image ? (
-                    <img
+                    <Image
                       src={ev.image}
                       alt={ev.title}
-                      loading="lazy"
-                      className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 320px"
                     />
                   ) : (
                     <div className="flex h-44 w-full items-center justify-center bg-gradient-to-br from-[var(--brand)]/20 to-[var(--brand)]/5">

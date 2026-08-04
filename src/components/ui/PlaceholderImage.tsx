@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function PlaceholderImage({
   text,
   width = 640,
@@ -27,9 +29,13 @@ export default function PlaceholderImage({
     .replace(/"/g, "'");
 
   return (
-    <img
+    /* unoptimized: data URI SVG inline, tidak ada yang perlu dioptimasi */
+    <Image
       src={`data:image/svg+xml,${encoded}`}
       alt={text}
+      width={width}
+      height={height}
+      unoptimized
       className={className}
       style={{ width, height, maxHeight: height, objectFit: "cover" }}
     />

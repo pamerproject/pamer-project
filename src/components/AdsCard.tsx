@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 
 const AD_URL = "https://www.hostinger.com/id?REFERRALCODE=pamerproject";
@@ -43,12 +44,15 @@ export default function AdsCard() {
         rel="noopener noreferrer sponsored"
         className="block px-5 pt-4"
       >
-        <img
-          src={AD_IMAGE}
-          alt="Hostinger Reach"
-          loading="lazy"
-          className="aspect-[16/7] w-full rounded-lg object-cover transition-transform duration-300 hover:scale-[1.02]"
-        />
+        <div className="relative aspect-[16/7] w-full overflow-hidden rounded-lg">
+          <Image
+            src={AD_IMAGE}
+            alt="Hostinger Reach"
+            fill
+            className="object-cover transition-transform duration-300 hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+        </div>
       </a>
 
       <div className="p-5">

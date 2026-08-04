@@ -11,7 +11,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const { t, lang } = useTranslation();
+  const { lang } = useTranslation();
 
   useEffect(() => {
     console.error(error);

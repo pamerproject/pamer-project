@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { STICKERS, STICKER_CATEGORIES, type Sticker } from "@/lib/stickers";
 
 interface StickerPickerProps {
@@ -63,11 +64,14 @@ export default function StickerPicker({ onSelect, onClose, disableOutsideClick }
             className="group relative flex aspect-square items-center justify-center rounded-xl bg-[var(--background)] transition-all hover:bg-[var(--brand-light)] hover:scale-105 active:scale-95"
             title={sticker.name}
           >
-            <img
+            {/* unoptimized: sticker adalah GIF animasi GIPHY, tak boleh dikonversi */}
+            <Image
               src={sticker.url}
               alt={sticker.name}
+              width={48}
+              height={48}
+              unoptimized
               className="h-10 w-10 object-contain md:h-12 md:w-12"
-              loading="lazy"
             />
             <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 truncate rounded bg-black/60 px-1.5 py-0.5 text-[9px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
               {sticker.name}

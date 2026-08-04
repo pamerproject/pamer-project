@@ -32,6 +32,7 @@ export default function InstallApp() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- flag mount (client-only, aman SSR)
     setMounted(true);
     // Dismiss permanen disimpan di localStorage agar tombol tidak muncul lagi
     // setelah pengguna menutupnya (kecuali mereka install app-nya).

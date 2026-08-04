@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import { translateApiError } from "@/lib/helpers";
 
@@ -57,11 +58,9 @@ function ImageField({ label, hint, placeholder, value, onChange, onError, isFavi
         <div className="group relative mt-2 overflow-hidden rounded-xl border border-[var(--card-border)]">
           {isFavicon ? (
             <div className="flex items-center gap-3 bg-[var(--background)] p-3">
-              <img
-                src={value}
-                alt=""
-                className="h-12 w-12 shrink-0 rounded-lg border border-[var(--card-border)] object-contain"
-              />
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[var(--card-border)]">
+                <Image src={value} alt="" fill className="object-contain" sizes="48px" />
+              </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-medium text-[var(--foreground)]">{t("seo.faviconPreview")}</p>
                 <p className="truncate text-[10px] text-[var(--muted)]">{value}</p>
@@ -84,7 +83,7 @@ function ImageField({ label, hint, placeholder, value, onChange, onError, isFavi
               </div>
             </div>
           ) : (
-            <img src={value} alt="" className="h-32 w-full object-cover" />
+            <Image src={value} alt="" width={1200} height={450} className="h-32 w-full object-cover" />
           )}
           {!isFavicon && (
             <div className="absolute inset-x-0 bottom-0 flex items-center justify-end gap-2 bg-gradient-to-t from-black/60 to-transparent p-2">

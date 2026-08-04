@@ -59,6 +59,7 @@ export default function ContentTab() {
   // Setiap ganti tab, isi form dari data halaman tersebut (create & edit jadi 1)
   useEffect(() => {
     const page = pages[activeKey];
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- isi form dari data halaman saat ganti tab
     setTitle(page?.title || "");
     setContent(page?.content || "");
     setError("");
@@ -66,6 +67,7 @@ export default function ContentTab() {
 
   // Reset status sukses hanya saat ganti tab (bukan saat pages berubah akibat save)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset status sukses saat ganti tab
     setSuccess(false);
   }, [activeKey]);
 

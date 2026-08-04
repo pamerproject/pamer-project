@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import Avatar from "@/components/ui/Avatar";
 import { useInfiniteScroll, useKeepAboveKeyboard } from "@/lib/hooks";
@@ -120,13 +121,6 @@ function CommentTextarea({
   const [showEmoji, setShowEmoji] = useState(false);
   const [showStickers, setShowStickers] = useState(false);
 
-  // ── Scroll detection for back button border ──
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 0);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // ── Mention ──
   const [mentionActive, setMentionActive] = useState(false);
@@ -810,6 +804,7 @@ export default function ProjectDetailPage() {
 
   // ── Mounted flag untuk portal bar komentar (aman untuk SSR) ──
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- flag mount untuk portal bar (SSR-safe)
   useEffect(() => setMounted(true), []);
 
   const mentionUsers = useMemo(() => {
@@ -1100,7 +1095,7 @@ export default function ProjectDetailPage() {
       })
       .catch(() => setError(t("error.failedToLoad")))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, t]);
 
   // Fetch comments
   const fetchComments = useCallback(() => {
@@ -1421,11 +1416,14 @@ export default function ProjectDetailPage() {
             {project.images && project.images.length > 1 ? (
               <ImageCarousel images={project.images} maxHeight={420} />
             ) : (
-              <img
+              <Image
                 src={project.image}
                 alt={project.title}
-                className="w-full object-cover"
+                width={1200}
+                height={675}
+                className="w-full h-auto object-cover"
                 style={{ maxHeight: 420 }}
+                sizes="100vw"
               />
             )}
           </div>

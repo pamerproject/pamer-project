@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo, type ReactNode } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 
 /* ─── Types ──────────────────────────────────────────── */
@@ -118,7 +119,7 @@ function ArticleCard({ article, onClick }: { article: TechNewsItem; onClick: () 
       <article className="card-app flex overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md active:scale-[0.99]">
         <div className="relative h-28 w-28 shrink-0 overflow-hidden bg-gray-100 sm:h-36 sm:w-36 dark:bg-gray-800">
           {article.image ? (
-            <img src={article.image} alt="" className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+            <Image src={article.image} alt="" fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="144px" onError={(e) => { e.currentTarget.style.display = "none"; }} />
           ) : article.source === "hackernews" ? (
             <div className="flex h-full w-full flex-col items-center justify-center bg-[var(--brand-light)]">
               <svg className="h-6 w-6 text-[var(--brand)] sm:h-7 sm:w-7" viewBox="0 0 24 24" fill="currentColor">
@@ -267,8 +268,9 @@ export default function TechNewsPage() {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, []);
+  }, [t]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch awal saat mount (pola standar)
   useEffect(() => { fetchNews(1, false); }, [fetchNews]);
 
   const loadMore = useCallback(() => {

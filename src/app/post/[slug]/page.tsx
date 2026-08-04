@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import Avatar from "@/components/ui/Avatar";
@@ -813,6 +814,7 @@ export default function PostDetailPage() {
 
   // ── Mounted flag untuk portal bar komentar (aman untuk SSR) ──
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- flag mount untuk portal bar (SSR-safe)
   useEffect(() => setMounted(true), []);
 
   // Extract unique users from comments & replies for @mention
@@ -1146,7 +1148,7 @@ export default function PostDetailPage() {
         setError(t("error.failedToLoad"));
       })
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, t]);
 
   // Fetch comments — paginated
   const fetchComments = useCallback(() => {
@@ -1489,7 +1491,7 @@ export default function PostDetailPage() {
               </div>
             ) : post.project.image ? (
               <div className="w-full overflow-hidden rounded-2xl mb-3">
-                <img src={post.project.image} alt={post.project.title} className="w-full object-cover" loading="lazy" />
+                <Image src={post.project.image} alt={post.project.title} width={1200} height={675} className="w-full h-auto object-cover" sizes="100vw" />
               </div>
             ) : null}
             {post.project.description && <div className="text-sm leading-relaxed text-[var(--muted)] mb-2 whitespace-pre-wrap break-words">{renderContent(post.project.description, true)}</div>}

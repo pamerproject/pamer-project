@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Avatar({
   src,
   name,
@@ -14,12 +16,15 @@ export default function Avatar({
     lg: "h-14 w-14 text-lg",
     xl: "h-20 w-20 text-2xl",
   };
+  const sizePx = { xs: 24, sm: 32, md: 40, lg: 56, xl: 80 };
 
   if (src) {
     return (
-      <img
+      <Image
         src={src}
         alt={name || ""}
+        width={sizePx[size]}
+        height={sizePx[size]}
         className={`${sizeClass[size]} rounded-full object-cover ring-2 ring-white`}
       />
     );

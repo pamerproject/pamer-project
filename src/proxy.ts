@@ -20,34 +20,10 @@ const STATE_CHANGING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 // Skip CSRF check untuk route autentikasi (next-auth handle sendiri)
 const CSRF_EXEMPT_PATHS = ["/api/auth/"];
 
-// Halaman publik yang bisa diakses tanpa login
-const PUBLIC_PATHS = [
-  "/",
-  "/login",
-  "/register",
-  "/forgot-password",
-  // Alur reset password & verifikasi email — user yang klik link dari email
-  // SEDANG TIDAK LOGIN, jadi halaman ini wajib publik (fix B1).
-  "/reset-password",
-  "/verify-email",
-  "/check-email",
-  // Halaman statis (About, Privacy, Terms, Contact) — konten dikelola admin
-  "/about",
-  "/privacy",
-  "/terms",
-  "/contact",
-];
-
-function isPublicPath(pathname: string): boolean {
-  if (pathname.startsWith("/api/") || pathname.startsWith("/_next/")) return true;
-  return PUBLIC_PATHS.some((p) => {
-    // "/" harus exact — prefix-match akan membuat semua halaman publik
-    if (p === "/") return pathname === "/";
-    // Prefix match agar /reset-password/[token] & /verify-email?token=... ikut publik
-    return pathname === p || pathname.startsWith(p + "/");
-  });
-}
-
+// Mode halaman: PUBLIK read-only — semua halaman bisa dibuka tanpa login untuk
+// dilihat. Login tetap wajib untuk aksi mutasi (posting, komentar, like, dll.)
+// yang sudah dijaga di masing-masing API route (auth() + cek kepemilikan).
+// Jadi tidak ada auth-guard redirect di sini — hanya CSRF + security headers.
 function getAllowedHosts(): Set<string> {
   const hosts = new Set([
     "localhost:3000",
@@ -98,18 +74,6 @@ export function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const method = request.method;
-
-  // ── Auth Guard ────────────────────────────────────────
-  if (!isPublicPath(pathname)) {
-    const sessionCookie =
-      request.cookies.get("next-auth.session-token") ||
-      request.cookies.get("__Secure-next-auth.session-token");
-    if (!sessionCookie) {
-      // Cek juga callbackUrl dari next-auth (untuk form POST login)
-      const redirectUrl = new URL("/", request.url);
-      return NextResponse.redirect(redirectUrl);
-    }
-  }
 
   // ── Security Headers untuk SEMUA routes ──────────────
   response.headers.set("X-Content-Type-Options", "nosniff");

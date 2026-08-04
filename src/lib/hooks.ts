@@ -201,6 +201,7 @@ export function usePaginatedFetch<T>({
 
   // Reset ketika resetKey berubah
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset data saat resetKey berubah (pola standar)
     loadInitial();
   }, [loadInitial, resetKey]);
 

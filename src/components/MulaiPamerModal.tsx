@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Avatar from "./ui/Avatar";
 import { useTranslation } from "@/lib/lang";
@@ -67,7 +68,7 @@ export default function MulaiPamerModal({
     window.addEventListener("session-refresh", handler);
     return () => window.removeEventListener("session-refresh", handler);
   }, [update]);
-  const [postType, setPostType] = useState<"cerita" | "project">("project");
+  const [postType, setPostType] = useState<PostType>("project");
   const [fullscreen, setFullscreen] = useState(false);
 
   // Cerita fields
@@ -127,6 +128,7 @@ export default function MulaiPamerModal({
         const raw = localStorage.getItem(DRAFT_KEY);
         if (raw) {
           const d = JSON.parse(raw) as DraftData;
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- restore draft dari localStorage saat mount
           if (d.postType === "cerita" || d.postType === "project") setPostType(d.postType);
           setText(d.text || "");
           setTitle(d.title || "");
@@ -215,7 +217,7 @@ export default function MulaiPamerModal({
         uploading: false,
       };
     },
-    []
+    [t]
   );
 
   const handleImageUpload = useCallback(
@@ -305,7 +307,7 @@ export default function MulaiPamerModal({
 
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
-    [images.length, uploadToServer]
+    [images.length, uploadToServer, t]
   );
 
   const removeImage = (id: string) => {
@@ -722,10 +724,14 @@ export default function MulaiPamerModal({
                   >
                     {/* Selalu tampilkan gambar (local preview atau R2) */}
                     <>
-                      <img
+                      {/* unoptimized: preview bisa berupa blob: URL saat masih uploading */}
+                      <Image
                         src={img.url}
                         alt={img.name}
-                        className="h-full w-full object-cover"
+                        fill
+                        unoptimized
+                        className="object-cover"
+                        sizes="112px"
                       />
 
                       {/* Overlay spinner saat masih upload */}

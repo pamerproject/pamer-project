@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import Avatar from "@/components/ui/Avatar";
@@ -310,6 +311,7 @@ export default function ProfilePage() {
   // Fetch profile
   useEffect(() => {
     let ignore = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset state sebelum fetch profil (pola standar)
     setLoading(true);
 
     if (!isOwnProfile && session?.user?.id) {
@@ -352,7 +354,7 @@ export default function ProfilePage() {
     return () => {
       ignore = true;
     };
-  }, [username, refreshKey]);
+  }, [username, refreshKey, isOwnProfile, session?.user?.id, t]);
 
   // ─── Loading skeleton ───────────────────────────────────────
   if (loading) {
@@ -419,15 +421,17 @@ export default function ProfilePage() {
         {/* ── Cover Photo ─────────────────────────────── */}
             <div className="group relative h-48 overflow-hidden md:h-56 md:rounded-t-xl">
               {user.coverImage ? (
-                <img
+                <Image
                   src={user.coverImage}
                   alt="Cover"
-                  className="h-full w-full transition-all duration-300"
+                  fill
+                  className="transition-all duration-300"
                   style={{
                     objectFit: "cover",
                     objectPosition: getObjPosition(user.coverPosition),
                     transform: `scale(${getZoomLevel(user.coverPosition) / 100})`,
                   }}
+                  sizes="(max-width: 768px) 100vw, 900px"
                 />
               ) : (
                 <div className="h-full w-full bg-gradient-to-br from-[var(--brand)]/20 via-[var(--brand)]/10 to-[var(--background)]" />
@@ -440,15 +444,17 @@ export default function ProfilePage() {
               {/* Avatar */}
               <div className="group/av relative -mt-16 inline-block md:-mt-20">
                 {user.avatar ? (
-                  <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-[var(--card)] shadow-lg transition-all duration-200 md:h-32 md:w-32">
-                    <img
+                  <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-[var(--card)] shadow-lg transition-all duration-200 md:h-32 md:w-32">
+                    <Image
                       src={user.avatar}
                       alt={user.name || user.username}
-                      className="h-full w-full object-cover"
+                      fill
+                      className="object-cover"
                       style={{
                         objectPosition: getObjPosition(user.avatarPosition),
                         transform: `scale(${getZoomLevel(user.avatarPosition) / 100})`,
                       }}
+                      sizes="128px"
                     />
                   </div>
                 ) : (
@@ -989,7 +995,7 @@ export default function ProfilePage() {
                         key={idx}
                         className="group relative h-24 w-24 overflow-hidden rounded-xl border-2 border-[var(--card-border)] bg-[var(--background)] transition-all hover:border-[var(--brand)] hover:shadow-md"
                       >
-                        <img src={img} alt="" className="h-full w-full object-cover" loading="lazy" />
+                        <Image src={img} alt="" fill className="object-cover" sizes="96px" />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent pb-1 pt-3" />
                         <button
                           onClick={() => setEditImages((prev) => prev.filter((_, i) => i !== idx))}

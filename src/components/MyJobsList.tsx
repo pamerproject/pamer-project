@@ -58,6 +58,7 @@ export default function MyJobsList() {
   }, [userId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch data saat userId tersedia (pola standar)
     if (userId) fetchMyJobs();
   }, [userId, fetchMyJobs]);
 

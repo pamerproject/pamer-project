@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import { encodePositionZoom, translateApiError } from "@/lib/helpers";
@@ -53,6 +54,7 @@ export default function EditPhotoModal({
       const parts = currentPosition.split(":");
       if (parts.length > 1) {
         const z = parseInt(parts[1], 10);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- sinkronisasi state saat modal dibuka
         if (!isNaN(z)) setZoom(Math.max(50, Math.min(200, z)));
         else setZoom(100);
       } else {
@@ -64,6 +66,7 @@ export default function EditPhotoModal({
   // Reset state setiap modal dibuka
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sinkronisasi state saat modal dibuka
       setSelectedPosition(
         (["top", "center", "bottom"].includes(currentPosition)
           ? currentPosition
@@ -121,7 +124,7 @@ export default function EditPhotoModal({
         if (fileInputRef.current) fileInputRef.current.value = "";
       }
     },
-    [currentImage]
+    [currentImage, t]
   );
 
   const handleSave = async () => {
@@ -195,9 +198,13 @@ export default function EditPhotoModal({
                     : "h-36 w-full max-w-md rounded-xl"
                 }`}
               >
-                <img
+                {/* unoptimized: preview bisa berupa blob: URL (belum diupload) */}
+                <Image
                   src={previewUrl}
                   alt="Preview"
+                  width={256}
+                  height={256}
+                  unoptimized
                   className="h-full w-full transition-all duration-200"
                   style={{
                     objectFit: "cover",
@@ -298,9 +305,12 @@ export default function EditPhotoModal({
                 <div
                   className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-[var(--card-border)]"
                 >
-                  <img
+                  <Image
                     src={previewUrl}
                     alt="mini preview"
+                    width={48}
+                    height={48}
+                    unoptimized
                     className="h-full w-full"
                     style={{
                       objectFit: "cover",

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 
@@ -63,11 +64,13 @@ export default function JobCard({ job, children }: { job: JobCardJob; children?:
     <div className="card-app group overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
       <Link href={`/freelance/${job.slug || job.id}`} className="block">
         {job.image && (
-          <div className="aspect-video w-full overflow-hidden">
-            <img
+          <div className="relative aspect-video w-full overflow-hidden">
+            <Image
               src={job.image}
               alt={job.title}
-              className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
+              fill
+              className="object-cover transition-all duration-300 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 400px"
             />
           </div>
         )}

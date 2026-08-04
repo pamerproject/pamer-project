@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { STICKERS } from "@/lib/stickers";
 
 interface ErrorAlertProps {
@@ -51,11 +52,8 @@ export default function ErrorAlert({
       {/* Sticker icon */}
       {sticker && (
         <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-          <img
-            src={sticker.url}
-            alt=""
-            className="h-full w-full object-contain"
-          />
+          {/* unoptimized: sticker adalah GIF animasi GIPHY, tak boleh dikonversi */}
+          <Image src={sticker.url} alt="" width={32} height={32} unoptimized className="h-full w-full object-contain" />
         </div>
       )}
 

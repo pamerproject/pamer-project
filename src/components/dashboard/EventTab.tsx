@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import Avatar from "../ui/Avatar";
 import Link from "next/link";
@@ -48,7 +49,7 @@ function ItemPreview({ item }: { item: PinSearchItem }) {
     return (
       <div className="overflow-hidden rounded-lg border border-[var(--card-border)]">
         {item.image && (
-          <img src={item.image} alt={item.title || ""} className="h-28 w-full object-cover" />
+          <Image src={item.image} alt={item.title || ""} width={1200} height={450} className="h-28 w-full object-cover" />
         )}
         <div className="p-2.5">
           <div className="flex items-center justify-between gap-2">
@@ -349,7 +350,7 @@ export default function EventTab() {
                   {r.type === "project" ? (
                     <>
                       {r.image ? (
-                        <img src={r.image} alt="" className="h-9 w-9 shrink-0 rounded-lg object-cover" />
+                        <Image src={r.image} alt="" width={36} height={36} className="h-9 w-9 shrink-0 rounded-lg object-cover" />
                       ) : (
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-light)] text-[var(--brand)]">
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
@@ -499,7 +500,7 @@ export default function EventTab() {
             >
               {/* Cover image */}
               {ev.image ? (
-                <img src={ev.image} alt={ev.title} className="h-28 w-full object-cover" loading="lazy" />
+                <Image src={ev.image} alt={ev.title} width={1200} height={450} className="h-28 w-full object-cover" />
               ) : (
                 <div className="flex h-28 w-full items-center justify-center bg-gradient-to-br from-[var(--brand)]/20 to-[var(--brand)]/5">
                   <svg className="h-10 w-10 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">

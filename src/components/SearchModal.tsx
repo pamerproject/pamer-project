@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import Avatar from "./ui/Avatar";
@@ -121,7 +122,6 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [total, setTotal] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -152,9 +152,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         window.scrollTo(0, scrollY);
       };
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset state pencarian saat modal ditutup
     setQuery("");
     setResults([]);
-    setTotal(0);
     setHasMore(false);
     setHasSearched(false);
     setLoading(false);
@@ -172,7 +172,6 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const doSearch = useCallback(async (q: string) => {
     if (q.length < 3) {
       setResults([]);
-      setTotal(0);
       setHasMore(false);
       setHasSearched(false);
       setLoading(false);
@@ -197,7 +196,6 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
       // Double-check — hanya update kalau masih request terbaru
       if (currentReqId === reqIdRef.current) {
         setResults(data.results);
-        setTotal(data.total);
         setHasMore(data.hasMore);
         setLoading(false);
       }
@@ -233,7 +231,6 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
       if (currentReqId === reqIdRef.current) {
         setResults(data.results);
-        setTotal(data.total);
         setHasMore(data.hasMore);
         setLoadingMore(false);
       }
@@ -277,13 +274,14 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           {item.type === "user" ? (
             <Avatar src={item.image} name={item.title} size="sm" />
           ) : (
-            <div className="h-10 w-10 overflow-hidden rounded-lg border border-[var(--card-border)] bg-[var(--background)]">
+            <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-[var(--card-border)] bg-[var(--background)]">
               {item.image ? (
-                <img
+                <Image
                   src={item.image}
                   alt={item.title}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
+                  fill
+                  className="object-cover"
+                  sizes="40px"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">

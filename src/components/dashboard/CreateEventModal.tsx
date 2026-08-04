@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
 import { translateApiError } from "@/lib/helpers";
 
@@ -123,6 +124,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess, event }: 
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- isi form saat modal dibuka
       setTitle(event?.title || "");
       setDescription(event?.description || "");
       setImage(event?.image || null);
@@ -299,7 +301,7 @@ export default function CreateEventModal({ isOpen, onClose, onSuccess, event }: 
                 <p className="mb-2 text-xs font-bold text-[var(--foreground)]">{t("event.createImageLabel")}</p>
                 {image ? (
                   <div className="group relative overflow-hidden rounded-xl border border-[var(--card-border)]">
-                    <img src={image} alt="" className="h-44 w-full object-cover" />
+                    <Image src={image} alt="" width={1200} height={450} className="h-44 w-full object-cover" />
                     <div className="absolute inset-x-0 bottom-0 flex items-center justify-end gap-2 bg-gradient-to-t from-black/60 to-transparent p-2">
                       <button
                         type="button"

@@ -46,6 +46,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored === "en" || stored === "id") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- hidrasi preferensi bahasa dari localStorage (SSR-safe)
         setLangState(stored);
       }
     } catch {

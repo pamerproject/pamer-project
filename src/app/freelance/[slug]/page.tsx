@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PageSkeleton from "@/components/PageSkeleton";
@@ -129,11 +130,13 @@ export default function FreelanceDetailPage() {
 
       <article className="card-app overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
         {job.image && (
-          <div className="aspect-video w-full overflow-hidden">
-            <img
+          <div className="relative aspect-video w-full overflow-hidden">
+            <Image
               src={job.image}
               alt={job.title}
-              className="h-full w-full object-cover"
+              fill
+              className="object-cover"
+              sizes="100vw"
             />
           </div>
         )}
@@ -181,7 +184,7 @@ export default function FreelanceDetailPage() {
           <div className="mt-5 flex items-center gap-3 border-t border-[var(--card-border)] pt-4 text-xs text-[var(--muted)]">
             <div className="flex items-center gap-2">
               {job.user.avatar ? (
-                <img src={job.user.avatar} alt="" className="h-6 w-6 rounded-full object-cover" loading="lazy" />
+                <Image src={job.user.avatar} alt="" width={24} height={24} className="h-6 w-6 rounded-full object-cover" />
               ) : (
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--brand)] text-[10px] font-bold text-white">
                   {(job.user.name || job.user.username).charAt(0).toUpperCase()}
