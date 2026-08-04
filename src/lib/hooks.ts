@@ -79,7 +79,6 @@ export function useKeepAboveKeyboard(focused: boolean) {
 
     if (!focused) {
       el.style.bottom = "0px";
-      document.body.style.overflow = "";
       return;
     }
 
@@ -98,13 +97,6 @@ export function useKeepAboveKeyboard(focused: boolean) {
       el.style.bottom = "0px";
       return;
     }
-
-    // Kunci scroll halaman saat keyboard terbuka di iOS. Saat halaman
-    // di-scroll dengan keyboard terbuka, elemen `position: fixed` desync
-    // dengan visual viewport (offsetTop tidak ter-update selama gesture)
-    // sehingga bar komentar ikut naik-turun. Dengan membekukan scroll halaman,
-    // bar dijamin diam. Scroll pulih kembali saat input blur.
-    document.body.style.overflow = "hidden";
 
     let raf = 0;
     const update = () => {
@@ -141,7 +133,6 @@ export function useKeepAboveKeyboard(focused: boolean) {
       window.removeEventListener("scroll", update);
       window.clearInterval(interval);
       el.style.bottom = "0px";
-      document.body.style.overflow = "";
     };
   }, [el, focused]);
 

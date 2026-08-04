@@ -798,12 +798,18 @@ export default function PostDetailPage() {
   const [commentsLoadingMore, setCommentsLoadingMore] = useState(false);
 
   // ── Scroll detection for back button border ──
+  // Scroll terjadi di dalam kontainer (contentRef), bukan window.
+  const contentRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 0);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const el = contentRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 0);
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+    // Re-run saat post dimuat — kontainer baru dirender setelah loading selesai.
+  }, [post]);
 
   // ── Mounted flag untuk portal bar komentar (aman untuk SSR) ──
   const [mounted, setMounted] = useState(false);
@@ -924,6 +930,28 @@ export default function PostDetailPage() {
   const [sheetMode, setSheetMode] = useState<"emoji" | "sticker" | null>(null);
   const mobileInputRef = useRef<HTMLTextAreaElement>(null);
   const [mobileInputFocused, setMobileInputFocused] = useState(false);
+
+  // ── Sesuaikan tinggi kontainer saat keyboard terbuka (iOS) ──
+  // Supaya semua komentar tetap terjangkau di atas keyboard.
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    if (!mobileInputFocused) {
+      el.style.height = "";
+      return;
+    }
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const setHeight = () => {
+      if (vv.height > 0) el.style.height = `${vv.height}px`;
+    };
+    setHeight();
+    vv.addEventListener("resize", setHeight);
+    return () => {
+      vv.removeEventListener("resize", setHeight);
+      el.style.height = "";
+    };
+  }, [mobileInputFocused]);
 
   // Bar komentar tetap menempel di atas keyboard (VisualViewport API)
   const setMobileBarEl = useKeepAboveKeyboard(mobileInputFocused);
@@ -1391,9 +1419,12 @@ export default function PostDetailPage() {
   const ref = searchParams.get("ref");
 
   return (
-    <div className="bg-[var(--background)] space-y-2.5 md:space-y-4">
+    <div
+      ref={contentRef}
+      className="bg-[var(--background)] space-y-2.5 md:space-y-4 h-[100dvh] overflow-y-auto overscroll-contain pt-14 md:h-auto md:overflow-visible md:pt-0"
+    >
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
-      <style>{`@media (max-width: 767px) { .post-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
+      <style>{`@media (max-width: 767px) { html, body { overflow: hidden !important; } .layout-bottom-pad { padding-top: 0 !important; padding-bottom: 0 !important; } .layout-bottom-pad .max-w-7xl { padding-top: 0 !important; padding-bottom: 0 !important; } .post-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
       <div className="post-detail-container pt-2 md:pt-0 space-y-0 pb-0 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Fixed di atas, menggantikan posisi navbar */}
