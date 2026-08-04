@@ -72,9 +72,16 @@ export function useInfiniteScroll(
  * - Keyboard TERTUTUP → `bottom: 0px` (bar menempel di dasar layar).
  */
 export function useKeepAboveKeyboard(focused: boolean) {
-  const [el, setEl] = useState<HTMLElement | null>(null);
+  // Pakai ref + callback ref (bukan useState) — elemen DOM memang harus
+  // dimutasi langsung (style.bottom), dan mutasi nilai useState dilarang
+  // oleh aturan lint react-hooks/immutability.
+  const elRef = useRef<HTMLElement | null>(null);
+  const setEl = useCallback((node: HTMLElement | null) => {
+    elRef.current = node;
+  }, []);
 
   useEffect(() => {
+    const el = elRef.current;
     if (!el) return;
 
     if (!focused) {
@@ -134,7 +141,7 @@ export function useKeepAboveKeyboard(focused: boolean) {
       window.clearInterval(interval);
       el.style.bottom = "0px";
     };
-  }, [el, focused]);
+  }, [focused]);
 
   return setEl;
 }
