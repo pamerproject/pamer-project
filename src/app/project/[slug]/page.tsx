@@ -611,7 +611,7 @@ function CommentItem({
                     </svg>
                   </button>
                   {showReplyEmoji && (
-                    <div className="fixed inset-x-0 bottom-[20vh] z-[100] flex justify-center md:absolute md:bottom-full md:right-0 md:z-50 md:mb-2 md:block">
+                    <div className="fixed inset-x-0 bottom-[20vh] z-[100] flex justify-center md:bottom-[24vh]">
                       <EmojiPicker
                         onSelect={(emoji) => setReplyText(replyText + emoji)}
                         onClose={() => setShowReplyEmoji(false)}
@@ -632,7 +632,7 @@ function CommentItem({
                     </svg>
                   </button>
                   {showReplyStickers && (
-                    <div className="fixed inset-x-0 bottom-[20vh] z-[100] flex justify-center md:absolute md:bottom-full md:right-0 md:z-50 md:mb-2 md:block">
+                    <div className="fixed inset-x-0 bottom-[20vh] z-[100] flex justify-center md:bottom-[24vh]">
                   <StickerPicker
                     onSelect={(sticker) => {
                       setShowReplyStickers(false);
