@@ -292,6 +292,7 @@ const en = {
     noJobsDesc: "{name} has no job listings.",
     bioEmpty: "Bio is empty",
     settings: "Settings",
+    editProfile: "Edit Profile",
     website: "Website",
     github: "GitHub",
     linkedin: "LinkedIn",

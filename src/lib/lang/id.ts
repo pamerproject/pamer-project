@@ -292,6 +292,7 @@ const id = {
     noJobsDesc: "{name} belum memiliki lowongan.",
     bioEmpty: "Bio masih kosong",
     settings: "Pengaturan",
+    editProfile: "Edit Profil",
     website: "Website",
     github: "GitHub",
     linkedin: "LinkedIn",
