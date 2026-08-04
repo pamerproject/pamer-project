@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -801,6 +802,10 @@ export default function ProjectDetailPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // ── Mounted flag untuk portal bar komentar (aman untuk SSR) ──
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const mentionUsers = useMemo(() => {
     const map = new Map<string, { name: string | null; username: string }>();
     comments.forEach((c) => {
@@ -1531,11 +1536,14 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* ── Mobile Fixed Comment Bar ── */}
-      {session && (
+      {/* Di-portal ke <body> — keluar dari semua ancestor (transform/overflow/scroll
+          container) sehingga dijamin fixed: selalu menempel dasar layar, tidak ikut
+          scroll, dan tidak ada ruang kosong di bawahnya. */}
+      {mounted && session && createPortal(
         <div
           ref={setMobileBarEl}
           className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--card-border)] bg-[var(--card)] shadow-[0_-2px_10px_rgba(0,0,0,0.08)] md:hidden"
-          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.25rem)" }}
+          style={{ paddingBottom: 0 }}
         >
           {replyingTo && (
             <div className="flex items-center gap-1.5 border-b border-[var(--card-border)] bg-[var(--brand-light)]/50 px-3 py-1.5">
@@ -1652,7 +1660,8 @@ export default function ProjectDetailPage() {
             </div>
             <div className="mt-1 text-right text-[10px] text-[var(--muted)]">{commentText.length}/160</div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ── Emoji / Sticker Bottom Sheet (mobile) ── */}
