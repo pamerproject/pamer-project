@@ -64,11 +64,11 @@ export function useInfiniteScroll(
  *   SUDAH otomatis menempatkan bar tepat di atas keyboard. Menyetel `bottom`
  *   via JS justru membuat bar melayang tinggi (gap di bawah bar) dan ikut
  *   naik-turun saat scroll. Jadi di Android: JANGAN sentuh `bottom` sama sekali.
- * - iOS Safari: elemen `fixed` diposisikan relatif ke LAYOUT viewport (yang
- *   TIDAK menyusut saat keyboard naik) — `bottom: 0` membuat bar tersembunyi
- *   di balik keyboard. Solusi: `bottom = keyboardHeight`, plus kompensasi
- *   `visualViewport.offsetTop` agar bar tetap diam di atas keyboard saat
- *   halaman di-scroll.
+ * - iOS Safari: `position: fixed; bottom: 0` otomatis menempel di atas
+ *   keyboard. Saat halaman di-scroll dgn keyboard terbuka, `fixed` desync
+ *   dgn visual viewport (offsetTop stale selama gesture) → bar ikut
+ *   naik-turun. Solusi: scroll halaman DIKUNCI saat input fokus
+ *   (body overflow:hidden) sehingga bar dijamin diam; dipulihkan saat blur.
  * - Keyboard TERTUTUP → `bottom: 0px` (bar menempel di dasar layar).
  */
 export function useKeepAboveKeyboard(focused: boolean) {
@@ -79,6 +79,7 @@ export function useKeepAboveKeyboard(focused: boolean) {
 
     if (!focused) {
       el.style.bottom = "0px";
+      document.body.style.overflow = "";
       return;
     }
 
@@ -97,6 +98,13 @@ export function useKeepAboveKeyboard(focused: boolean) {
       el.style.bottom = "0px";
       return;
     }
+
+    // Kunci scroll halaman saat keyboard terbuka di iOS. Saat halaman
+    // di-scroll dengan keyboard terbuka, elemen `position: fixed` desync
+    // dengan visual viewport (offsetTop tidak ter-update selama gesture)
+    // sehingga bar komentar ikut naik-turun. Dengan membekukan scroll halaman,
+    // bar dijamin diam. Scroll pulih kembali saat input blur.
+    document.body.style.overflow = "hidden";
 
     let raf = 0;
     const update = () => {
@@ -133,6 +141,7 @@ export function useKeepAboveKeyboard(focused: boolean) {
       window.removeEventListener("scroll", update);
       window.clearInterval(interval);
       el.style.bottom = "0px";
+      document.body.style.overflow = "";
     };
   }, [el, focused]);
 
