@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 
@@ -8,22 +9,17 @@ export default function NotFoundContent() {
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-      {/* Illustration */}
+      {/* Illustration — GIF Cry (unoptimized: GIF animasi GIPHY) */}
       <div className="relative mb-8">
-        <div className="mx-auto flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-950/30 dark:to-amber-900/20">
-          <svg
-            className="h-16 w-16 text-amber-400 dark:text-amber-500"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.2}
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-            />
-          </svg>
+        <div className="mx-auto h-32 w-32 overflow-hidden rounded-full border-4 border-[var(--card)] shadow-lg">
+          <Image
+            src="https://media.giphy.com/media/0eMumU6VJ01GPh9MI0/giphy.gif"
+            alt=""
+            width={128}
+            height={128}
+            unoptimized
+            className="h-full w-full object-cover"
+          />
         </div>
         {/* Question mark overlay */}
         <div className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-lg font-bold text-white shadow-lg">

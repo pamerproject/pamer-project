@@ -15,19 +15,19 @@ const typeConfig: Record<
   { stickerId: string; bg: string; border: string; text: string }
 > = {
   error: {
-    stickerId: "s4", // Cry — satu ikon utk semua tipe (permintaan: ganti semua)
+    stickerId: "s10", // Sadge
     bg: "bg-red-50 dark:bg-red-950/20",
     border: "border-red-200 dark:border-red-900/50",
     text: "text-red-700 dark:text-red-300",
   },
   success: {
-    stickerId: "s4",
+    stickerId: "s1", // Party
     bg: "bg-green-50 dark:bg-green-950/20",
     border: "border-green-200 dark:border-green-900/50",
     text: "text-green-700 dark:text-green-300",
   },
   warning: {
-    stickerId: "s4",
+    stickerId: "s21", // MonkaS
     bg: "bg-amber-50 dark:bg-amber-950/20",
     border: "border-amber-200 dark:border-amber-900/50",
     text: "text-amber-700 dark:text-amber-300",
