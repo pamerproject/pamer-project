@@ -119,6 +119,14 @@ function CommentTextarea({
   const [showEmoji, setShowEmoji] = useState(false);
   const [showStickers, setShowStickers] = useState(false);
 
+  // ── Scroll detection for back button border ──
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // ── Mention ──
   const [mentionActive, setMentionActive] = useState(false);
   const [mentionQuery, setMentionQuery] = useState("");
@@ -785,6 +793,14 @@ export default function ProjectDetailPage() {
   const [commentHasMore, setCommentHasMore] = useState(true);
   const [commentsLoadingMore, setCommentsLoadingMore] = useState(false);
 
+  // ── Scroll detection for back button border ──
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const mentionUsers = useMemo(() => {
     const map = new Map<string, { name: string | null; username: string }>();
     comments.forEach((c) => {
@@ -1334,7 +1350,7 @@ export default function ProjectDetailPage() {
       <div className="project-detail-container pt-2 md:pt-0 space-y-0 pb-0 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Fixed di atas, menggantikan posisi navbar */}
-      <div className="fixed left-0 right-0 top-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
+      <div className={`fixed left-0 right-0 top-0 z-[65] flex h-14 items-center gap-3 border-b bg-[var(--card)] px-4 md:hidden transition-[border-color] duration-200 ${scrolled ? "border-[var(--brand)]" : "border-[var(--card-border)]"}`}>
         <button
           onClick={() => window.history.back()}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
