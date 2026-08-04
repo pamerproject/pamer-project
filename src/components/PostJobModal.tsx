@@ -184,13 +184,13 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
       <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       {/* Full-screen di mobile, card centered di desktop */}
       <div className="fixed inset-0 z-50 flex flex-col bg-[var(--card)] md:inset-auto md:left-1/2 md:top-1/2 md:h-auto md:max-h-[90vh] md:w-[90vw] md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl md:border md:border-[var(--card-border)] md:shadow-2xl animate-fade-in">
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-[var(--card-border)] bg-[var(--card)] px-5 py-4">
+        {/* Header — diberi safe-area top agar tidak tertutup notch/status bar */}
+        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-[var(--card-border)] bg-[var(--card)] px-5 pt-[max(env(safe-area-inset-top),1rem)] pb-4">
           <h2 className="text-lg font-bold text-[var(--foreground)]">{editJob ? t("freelance.editJob") : t("freelance.postJob")}</h2>
           <button
             onClick={onClose}
             aria-label={t("nav.close")}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--muted)] transition-all hover:bg-red-50 hover:text-red-500 active:scale-95"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--card-border)] text-[var(--foreground)] transition-all hover:bg-red-50 hover:text-red-500 active:scale-95"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -198,7 +198,9 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-5 pb-12 md:pb-10">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          {/* Area form yang bisa di-scroll */}
+          <div className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-5">
           {error && <ErrorAlert message={error} />}
 
           {/* Row: Title + Company */}
@@ -411,21 +413,32 @@ export default function PostJobModal({ onClose, onSuccess, editJob }: PostJobMod
             </div>
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {editJob ? t("settings.saving") : t("freelance.posting")}
-              </>
-            ) : (
-              editJob ? t("settings.saveLink") : t("freelance.post")
-            )}
-          </button>
+          </div>
+
+          {/* Footer — tombol selalu terlihat di bawah (Cancel + Post/Save) */}
+          <div className="flex shrink-0 items-center gap-3 border-t border-[var(--card-border)] bg-[var(--card)] px-5 pt-4 pb-[max(env(safe-area-inset-bottom),1rem)]">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-xl border border-[var(--card-border)] px-4 py-3 text-sm font-bold text-[var(--foreground)] transition-all hover:bg-[var(--card-border)]/40 active:scale-[0.98]"
+            >
+              {t("freelance.cancel")}
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--brand)] px-4 py-3 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {editJob ? t("settings.saving") : t("freelance.posting")}
+                </>
+              ) : (
+                editJob ? t("settings.saveLink") : t("freelance.post")
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </>
