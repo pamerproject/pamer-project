@@ -34,6 +34,7 @@ interface ReplyData {
   parentId: string | null;
   pinned: boolean;
   deleted: boolean;
+  censored: boolean;
   editedAt: string | null;
   createdAt: string;
   user: CommentUser;
@@ -52,6 +53,7 @@ interface CommentData {
   parentId: string | null;
   pinned: boolean;
   deleted: boolean;
+  censored: boolean;
   editedAt: string | null;
   createdAt: string;
   user: CommentUser;
@@ -502,7 +504,16 @@ function CommentItem({
             <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap break-words">{renderContent(comment.content, true, mentionDisplayMap, mentionNameToUsername)}</div>
           )}
 
-          
+          {/* Censored note */}
+          {comment.censored && !comment.deleted && (
+            <p className="mt-2 flex flex-wrap items-center gap-1 text-[10px] italic text-[var(--muted)]">
+              <svg className="h-3 w-3 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+              {t("comment.censoredNote")}{" "}
+              <Link href="/terms" className="font-semibold text-[var(--brand)] hover:underline">{t("comment.censoredTermsLink")}</Link>
+            </p>
+          )}
 
           {!comment.deleted && (
             <div className="mt-4 flex items-center gap-3">
@@ -722,6 +733,15 @@ function CommentItem({
                   </div>
                 ) : (
                   <div className="mt-4 text-sm leading-relaxed whitespace-pre-wrap break-words">{renderContent(reply.content, true, mentionDisplayMap, mentionNameToUsername)}</div>
+                )}
+                {reply.censored && !reply.deleted && (
+                  <p className="mt-2 flex flex-wrap items-center gap-1 text-[10px] italic text-[var(--muted)]">
+                    <svg className="h-3 w-3 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    {t("comment.censoredNote")}{" "}
+                    <Link href="/terms" className="font-semibold text-[var(--brand)] hover:underline">{t("comment.censoredTermsLink")}</Link>
+                  </p>
                 )}
                 {!reply.deleted && (
             <div className="mt-4 flex items-center gap-3">

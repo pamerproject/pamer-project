@@ -430,6 +430,8 @@ const id = {
     delete: "Hapus",
     pin: "Sematkan",
     unpin: "Lepas",
+    censoredNote: "Komentar ini mengandung kata yang disensor otomatis.",
+    censoredTermsLink: "Baca Syarat & Ketentuan",
   },
 
   // ── TechNews Page ──────────────────────────────────

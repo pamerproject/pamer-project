@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { createNotification } from "@/lib/notif";
-import { censorFields } from "@/lib/censor";
+import { censorFields, censorText } from "@/lib/censor";
 import { requireVerifiedEmail } from "@/lib/verified";
 
 export async function GET(
@@ -100,7 +100,9 @@ export async function POST(
     }
 
     const body = await req.json();
+    const rawContent = typeof body.content === "string" ? body.content : "";
     const { content, parentId, ogTitle, ogDescription, ogImage, ogSiteName } = censorFields(body, ['content', 'ogTitle', 'ogDescription', 'ogSiteName']);
+    const censored = censorText(rawContent).censored;
 
     if (!content?.trim()) {
       return NextResponse.json({ message: "auth.commentCannotBeEmpty" }, { status: 400 });
@@ -131,6 +133,7 @@ export async function POST(
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
+        censored,
         userId: session.user.id,
         projectId: project.id,
         parentId: parentId || null,

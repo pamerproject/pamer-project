@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { censorFields } from "@/lib/censor";
+import { censorFields, censorText } from "@/lib/censor";
 import { requireVerifiedEmail } from "@/lib/verified";
 
 // Helper: cek session + kepemilikan
@@ -74,7 +74,9 @@ export async function PATCH(
     if ("error" in owner) return owner.error;
 
     const body = await req.json();
+    const rawContent = typeof body.content === "string" ? body.content : "";
     const { content } = censorFields(body, ['content']);
+    const censored = censorText(rawContent).censored;
 
     if (!content?.trim()) {
       return NextResponse.json({ message: "auth.contentCannotBeEmpty" }, { status: 400 });
@@ -82,7 +84,7 @@ export async function PATCH(
 
     const updated = await prisma.comment.update({
       where: { id },
-      data: { content: content.trim(), editedAt: new Date() },
+      data: { content: content.trim(), censored, editedAt: new Date() },
     });
 
     return NextResponse.json({ comment: updated });

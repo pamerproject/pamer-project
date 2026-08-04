@@ -430,6 +430,8 @@ const en = {
     delete: "Delete",
     pin: "Pin",
     unpin: "Unpin",
+    censoredNote: "This comment contains auto-filtered words.",
+    censoredTermsLink: "Read Terms & Conditions",
   },
 
   // ── TechNews Page ──────────────────────────────────

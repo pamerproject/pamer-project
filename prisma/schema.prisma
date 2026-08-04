@@ -110,6 +110,7 @@ model Comment {
   parentId  String?
   pinned    Boolean  @default(false)
   deleted   Boolean  @default(false)
+  censored  Boolean  @default(false)
   createdAt DateTime @default(now())
   editedAt  DateTime?
 
