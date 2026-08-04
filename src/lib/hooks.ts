@@ -55,50 +55,49 @@ export function useInfiniteScroll(
 /**
  * Hook agar elemen (bar input mobile) tetap menempel di atas keyboard saat
  * input sedang fokus. iOS/Android mengubah ukuran visual viewport saat
- * keyboard naik/turun — `position:fixed; bottom:0` saja tidak cukup karena
- * posisinya dihitung terhadap layout viewport (jadi terlihat ikut scroll
- * saat keyboard terbuka). Hook ini mendengarkan event resize/scroll pada
- * `window.visualViewport` dan menyesuaikan `bottom` elemen secara real-time.
+ * keyboard naik/turun.
  *
- * Untuk mencegah bar melayang di atas dasar layar saat scroll biasa (URL bar
- * iOS berubah), hook hanya aktif saat `focused` true.
- * Saat `focused` berubah ke false, hook langsung mereset bottom ke "0px"
- * dalam satu siklus effect yang sama — menghindari race condition antar dua
- * effect terpisah yang bisa menyebabkan bar tidak kembali ke posisi flush.
+ * Gunakan sebagai callback ref: <div ref={setEl}>
  *
- * Gunakan sebagai callback ref: <div ref={setEl}>.
+ * Masalah: saat keyboard terbuka dan user scroll, `visualViewport.offsetTop`
+ * berubah (negatif) — ini membuat perhitungan `bottom` jadi over-estimate
+ * dan bar melayang di atas keyboard. Solusi: clamp offsetTop ke 0.
+ *
+ * Masalah kedua: `visualViewport.scroll` event dipicu terus-menerus saat
+ * scroll, dan interval 120ms terus mengoreksi — menyebabkan bar naik-turun
+ * (bergetar). Solusi: hanya update `bottom` jika perubahan keyboardHeight
+ * lebih dari 5px (debounce dengan threshold).
  */
 export function useKeepAboveKeyboard(focused: boolean) {
   const [el, setEl] = useState<HTMLElement | null>(null);
+  const lastBottomRef = useRef(0);
 
   useEffect(() => {
     if (!el) return;
 
-    // Saat tidak fokus, reset bar ke dasar layar, pulihkan padding asli,
-    // dan jangan pasang listener.
     if (!focused) {
       el.style.bottom = "0px";
       el.style.paddingBottom = "";
+      lastBottomRef.current = 0;
       return;
     }
 
     const vv = window.visualViewport;
     if (!vv) return;
 
-    // Keyboard sudah menutupi area home-indicator → kecilkan padding bawah
-    // agar tidak ada sisa ruang kosong antara input dan keyboard.
     el.style.paddingBottom = "2px";
 
-    // Hitung jarak dari dasar layout viewport ke tepi atas keyboard.
-    // Penting: offsetTop bisa NEGATIF di iOS (visual viewport terangkat untuk
-    // menampilkan input) — kalau ikut dikurangi, bottom jadi terlalu besar
-    // dan bar melayang di atas keyboard. Clamp ke 0 agar tidak over-estimate.
     const update = () => {
       const keyboardHeight = Math.max(
         0,
         window.innerHeight - vv.height - Math.max(0, vv.offsetTop)
       );
-      el.style.bottom = `${keyboardHeight}px`;
+      // Hanya update jika ada perubahan signifikan (≥5px) — mencegah
+      // bar naik-turun saat scroll (offsetTop berfluktuasi kecil).
+      if (Math.abs(keyboardHeight - lastBottomRef.current) >= 5) {
+        el.style.bottom = `${keyboardHeight}px`;
+        lastBottomRef.current = keyboardHeight;
+      }
     };
 
     vv.addEventListener("resize", update);
@@ -106,18 +105,17 @@ export function useKeepAboveKeyboard(focused: boolean) {
     window.addEventListener("resize", update);
     update();
 
-    // Pemantauan berkala selama fokus — menjamin bar selalu menempel di atas
-    // keyboard apa pun perilaku browser/timing (iOS sering telat resize).
-    const interval = window.setInterval(update, 120);
+    // Interval diperlambat jadi 300ms agar tidak terlalu agresif saat scroll
+    const interval = window.setInterval(update, 300);
 
     return () => {
       vv.removeEventListener("resize", update);
       vv.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
       window.clearInterval(interval);
-      // Cleanup: kembalikan ke bottom 0 & padding asli
       el.style.bottom = "0px";
       el.style.paddingBottom = "";
+      lastBottomRef.current = 0;
     };
   }, [el, focused]);
 
