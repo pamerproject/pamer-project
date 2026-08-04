@@ -1378,9 +1378,9 @@ export default function PostDetailPage() {
   const ref = searchParams.get("ref");
 
   return (
-    <>
+    <div className="space-y-0 md:space-y-4">
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
-      <style>{`@media (max-width: 767px) { .post-detail-container > :not(:first-child) { margin-top: 0 !important; } .post-detail-container + .card-app, .post-detail-container + div + .card-app { margin-top: 0 !important; } }`}</style>
+      <style>{`@media (max-width: 767px) { .post-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
       <div className="post-detail-container space-y-0 pb-12 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
@@ -1552,7 +1552,6 @@ export default function PostDetailPage() {
       )}
 
       </div>
-      <div className="pb-24 md:pb-0" />
 
       {/* ── Mobile Fixed Comment Bar ── */}
       {session && (
@@ -1754,6 +1753,6 @@ export default function PostDetailPage() {
         )}
       </div>
       <div className="pb-24 md:pb-0" />
-    </>
+    </div>
   );
 }

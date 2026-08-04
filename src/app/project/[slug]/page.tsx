@@ -1328,9 +1328,9 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <>
+    <div className="space-y-0 md:space-y-4">
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
-      <style>{`@media (max-width: 767px) { .project-detail-container > :not(:first-child) { margin-top: 0 !important; } .project-detail-container + .card-app, .project-detail-container + div + .card-app { margin-top: 0 !important; } }`}</style>
+      <style>{`@media (max-width: 767px) { .project-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
       <div className="project-detail-container space-y-0 pb-12 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
@@ -1513,7 +1513,6 @@ export default function ProjectDetailPage() {
       )}
 
       </div>
-      <div className="pb-24 md:pb-0" />
 
       {/* ── Mobile Fixed Comment Bar ── */}
       {session && (
@@ -1717,6 +1716,6 @@ export default function ProjectDetailPage() {
         )}
       </div>
       <div className="pb-24 md:pb-0" />
-    </>
+    </div>
   );
 }

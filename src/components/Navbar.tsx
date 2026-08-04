@@ -188,11 +188,10 @@ export default function Navbar() {
   // tindih. Di desktop, navbar tetap terlihat normal.
   const pathname = usePathname();
   const isDetailFeed = /^\/(post|project|event)\/.+/.test(pathname || "");
-  const navbarHidden = isDetailFeed;
 
   return (
     <header
-      className={`fixed top-0 z-[60] w-full border-b border-[var(--card-border)] bg-[var(--card)] transition-[top] duration-300 ease-out ${navbarHidden ? "-top-16" : "top-0"}`}
+      className={`fixed top-0 z-[60] w-full border-b border-[var(--card-border)] bg-[var(--card)] transition-[top] duration-300 ease-out ${isDetailFeed ? "hidden md:block" : "top-0"}`}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
