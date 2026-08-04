@@ -888,24 +888,29 @@ export default function ProjectDetailPage() {
   const mobileInputRef = useRef<HTMLTextAreaElement>(null);
   const [mobileInputFocused, setMobileInputFocused] = useState(false);
 
-  // ── Sesuaikan tinggi kontainer saat keyboard terbuka (iOS) ──
-  // Supaya semua komentar tetap terjangkau di atas keyboard.
+  // ── Kelola tinggi kontainer agar selalu pas dengan area terlihat (iOS) ──
+  // Keyboard tertutup → tinggi = window.innerHeight (mengikuti URL bar).
+  // Keyboard terbuka → tinggi = visualViewport.height (area di atas keyboard),
+  // sehingga semua komentar tetap terjangkau & tidak ada lapisan kosong.
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
-    if (!mobileInputFocused) {
-      el.style.height = "";
-      return;
-    }
-    const vv = window.visualViewport;
-    if (!vv) return;
     const setHeight = () => {
-      if (vv.height > 0) el.style.height = `${vv.height}px`;
+      if (mobileInputFocused) {
+        const vv = window.visualViewport;
+        el.style.height =
+          vv && vv.height > 0 ? `${vv.height}px` : `${window.innerHeight}px`;
+      } else {
+        el.style.height = `${window.innerHeight}px`;
+      }
     };
     setHeight();
-    vv.addEventListener("resize", setHeight);
+    window.addEventListener("resize", setHeight);
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", setHeight);
     return () => {
-      vv.removeEventListener("resize", setHeight);
+      window.removeEventListener("resize", setHeight);
+      vv?.removeEventListener("resize", setHeight);
       el.style.height = "";
     };
   }, [mobileInputFocused]);
@@ -1382,7 +1387,7 @@ export default function ProjectDetailPage() {
       className="bg-[var(--background)] space-y-2.5 md:space-y-4 h-[100dvh] overflow-y-auto overscroll-contain pt-14 md:h-auto md:overflow-visible md:pt-0"
     >
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
-      <style>{`@media (max-width: 767px) { html, body { overflow: hidden !important; } .layout-bottom-pad { padding-top: 0 !important; padding-bottom: 0 !important; } .layout-bottom-pad .max-w-7xl { padding-top: 0 !important; padding-bottom: 0 !important; } .project-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
+      <style>{`@media (max-width: 767px) { html, body { overflow: hidden !important; overscroll-behavior: none !important; } .layout-bottom-pad { padding-top: 0 !important; padding-bottom: 0 !important; } .layout-bottom-pad .max-w-7xl { padding-top: 0 !important; padding-bottom: 0 !important; } .project-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
       <div className="project-detail-container pt-2 md:pt-0 space-y-0 pb-0 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Fixed di atas, menggantikan posisi navbar */}
@@ -1771,7 +1776,7 @@ export default function ProjectDetailPage() {
           </>
         )}
       </div>
-      <div className="pb-24 md:pb-0" />
+      <div className="pb-20 md:pb-0" />
     </div>
   );
 }
