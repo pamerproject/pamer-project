@@ -138,7 +138,24 @@ export default function FeedItem({
   };
 
   return (
-    <article className={`card-app border-b border-[var(--card-border)] bg-[var(--card)] px-2 rounded-2xl md:rounded-xl md:border-l md:border-r md:border-t md:px-0 ${pinned ? "ring-2 ring-red-500/70" : ""}`}>
+    <article className="card-app border-b border-[var(--card-border)] bg-[var(--card)] px-2 rounded-2xl md:rounded-xl md:border-l md:border-r md:border-t md:px-0">
+      {/* Pinned strip — badge elegan di atas card (tanpa outline merah) */}
+      {pinned && (
+        <div className="flex items-center gap-1.5 border-b border-[var(--card-border)] bg-[var(--brand-light)] px-3 py-2 md:px-4">
+          <svg className="h-3.5 w-3.5 shrink-0 text-[var(--brand)]" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M16 6l2.29 2.29-9.88 9.88-4-4L6 13.17 8.41 10.59 11 13.17 16 6m0-4l-6 7-4-4-4 4 6 7 8-11z" />
+          </svg>
+          <span className="text-xs font-bold text-[var(--brand)]">{t("feed.pinned")}</span>
+          <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--muted)]/50" />
+          <span className="min-w-0 truncate text-xs text-[var(--muted)]">
+            {type === "project" ? t("feed.pinnedByProject") : t("feed.pinnedByStory")}{" "}
+            <Link href="/" className="font-semibold text-[var(--brand)] hover:underline">
+              {t("brand.name")}
+            </Link>
+          </span>
+        </div>
+      )}
+
       {/* Header: avatar + name + username + time + type badge */}
       <div className="flex items-start gap-2 px-3 pb-6 pt-3 md:gap-3 md:px-4 md:pt-4 md:pb-8">
         {isLoggedIn ? (
@@ -458,20 +475,6 @@ export default function FeedItem({
         </button>
       </div>
 
-      {/* Footer pinned — ditampilkan di bawah aksi, dengan brand yang bisa diklik */}
-      {pinned && (
-        <div className="flex items-center gap-1.5 border-t border-red-500/25 bg-red-50/60 px-4 py-2.5 text-xs text-[var(--muted)] dark:bg-red-500/5">
-          <svg className="h-3.5 w-3.5 shrink-0 text-red-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M16 6l2.29 2.29-9.88 9.88-4-4L6 13.17 8.41 10.59 11 13.17 16 6m0-4l-6 7-4-4-4 4 6 7 8-11z" />
-          </svg>
-          <span>
-            {type === "project" ? t("feed.pinnedByProject") : t("feed.pinnedByStory")}{" "}
-            <Link href="/" className="font-semibold text-red-500 hover:underline">
-              {t("brand.name")}
-            </Link>
-          </span>
-        </div>
-      )}
     </article>
   );
 }
