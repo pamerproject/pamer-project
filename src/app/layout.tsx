@@ -30,6 +30,11 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: "#dc2626",
+  // Keyboard mobile TIDAK mengecilkan layout viewport — ia mengambang di atas
+  // konten (interactive-widget: resizes-visual). Dengan begitu window.innerHeight
+  // tetap penuh, kontainer feed tidak menyusut, dan tidak muncul strip abu-abu
+  // di antara feed dan bar komentar saat keyboard naik.
+  interactiveWidget: "resizes-visual",
 };
 
 // Metadata default situs — dibaca dari SeoSettings (DB) via helper bersama.

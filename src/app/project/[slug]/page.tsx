@@ -906,40 +906,45 @@ export default function ProjectDetailPage() {
   // terbuka agar feed tidak ikut melompat ke atas/bawah saat keyboard naik.
   const feedScrollRef = useRef(0);
 
-  // ── Kelola tinggi kontainer agar selalu pas dengan area terlihat (iOS) ──
-  // Kontainer dibuat penuh setinggi window saat keyboard naik agar feed mengisi
-  // sampai input bar (fixed) dan tidak menyisakan strip abu-abu di atasnya.
+  // ── Kontainer selalu penuh setinggi window ──
+  // Jangan dikecilkan saat keyboard naik (dengan interactive-widget:
+  // resizes-visual, window.innerHeight tetap penuh) sehingga feed menjejaki
+  // layar dan tidak menyisakan strip abu-abu (--background) antara feed dan
+  // input bar.
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
     const setHeight = () => {
-      // Kontainer selalu penuh setinggi window (jangan dikecilkan ke area di
-      // atas keyboard). Input bar bersifat fixed dan mengambang di atas
-      // keyboard; feed mengisi sampai input bar sehingga tidak ada gap abu-abu.
       el.style.height = `${window.innerHeight}px`;
-      // Browser kadang auto-scroll ke bawah saat keyboard naik (ingin
-      // menampilkan input). Pulihkan scroll agar feed tetap diam.
-      if (mobileInputFocused) {
-        el.scrollTop = feedScrollRef.current;
-      }
     };
     setHeight();
     window.addEventListener("resize", setHeight);
     const vv = window.visualViewport;
     vv?.addEventListener("resize", setHeight);
-    // Fallback sekali jalan: animasi keyboard bisa selesai lebih lambat dari
-    // event resize terakhir, pulihkan scroll setelahnya agar tetap diam.
-    const settle = window.setTimeout(() => {
-      if (mobileInputFocused && el.scrollTop !== feedScrollRef.current) {
-        el.scrollTop = feedScrollRef.current;
-      }
-    }, 400);
     return () => {
       window.removeEventListener("resize", setHeight);
       vv?.removeEventListener("resize", setHeight);
-      window.clearTimeout(settle);
       el.style.height = "";
     };
+  }, [mobileInputFocused]);
+
+  // ── Kunci posisi scroll feed selama keyboard terbuka ──
+  // Browser suka auto-scroll ke bawah untuk menampilkan input saat keyboard
+  // naik. Loop rAF memaksa scrollTop tetap pada posisi saat fokus sehingga
+  // feed tidak bergerak sama sekali saat mengetik.
+  useEffect(() => {
+    if (!mobileInputFocused) return;
+    const el = contentRef.current;
+    if (!el) return;
+    let raf = 0;
+    const lock = () => {
+      if (el.scrollTop !== feedScrollRef.current) {
+        el.scrollTop = feedScrollRef.current;
+      }
+      raf = requestAnimationFrame(lock);
+    };
+    lock();
+    return () => cancelAnimationFrame(raf);
   }, [mobileInputFocused]);
 
   // Bar komentar tetap menempel di atas keyboard (VisualViewport API)
