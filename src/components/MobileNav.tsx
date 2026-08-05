@@ -36,7 +36,7 @@ export default function MobileNav() {
 
   return (
     <nav className="fixed bottom-0 z-50 flex w-full bg-[var(--card)] md:hidden">
-      <div className="flex w-full items-center justify-around border-t border-[var(--card-border)] bg-[var(--card)] px-2 pb-[calc(env(safe-area-inset-bottom)+0.625rem)] pt-4">
+      <div className="flex w-full items-center justify-around border-t border-[var(--card-border)] bg-[var(--card)] px-2 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-4">
         {items
           .filter((item) => isLoggedIn || item.href === "/" || item.action === "search")
           .map((item) => {
