@@ -592,6 +592,13 @@ const id = {
     months: "{n} bln",
   },
 
+  tags: {
+    title: "Tag",
+    subtitle: "{tag}",
+    noProjects: "Tidak ada project dengan tag ini",
+    noProjectsDesc: "Belum ada yang memakai tag #{tag}. Jadilah yang pertama!",
+  },
+
   // ── Dashboard (Admin) ──────────────────────────────
   dashboard: {
     title: "Dashboard",

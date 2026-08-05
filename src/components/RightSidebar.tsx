@@ -398,13 +398,14 @@ export default function RightSidebar() {
           ) : (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {tags.map((tagItem) => (
-                <span
+                <Link
                   key={tagItem.tag}
-                  className="cursor-pointer rounded-lg border border-[var(--card-border)] px-2.5 py-1 text-[11px] font-medium text-[var(--muted)] hover:border-[var(--brand)] hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"
+                  href={`/tags/${encodeURIComponent(tagItem.tag)}`}
+                  className="rounded-lg border border-[var(--card-border)] px-2.5 py-1 text-[11px] font-medium text-[var(--muted)] transition-all hover:border-[var(--brand)] hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"
                 >
                   #{tagItem.tag}
                   <span className="ml-1 text-[10px] text-[var(--muted)] opacity-60">{tagItem.count}</span>
-                </span>
+                </Link>
               ))}
             </div>
           )}

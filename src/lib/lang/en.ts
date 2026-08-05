@@ -584,12 +584,19 @@ const en = {
   },
 
   // ── Time Ago ──────────────────────────────────────
-  timeAgo: {
+timeAgo: {
     justNow: "just now",
     minutes: "{n} min",
     hours: "{n} hr",
-    days: "{n} day",
+    days: "{n} d",
     months: "{n} mo",
+  },
+
+  tags: {
+    title: "Tag",
+    subtitle: "{tag}",
+    noProjects: "No projects with this tag",
+    noProjectsDesc: "No one has used tag #{tag}. Be the first!",
   },
 
   // ── Dashboard (Admin) ──────────────────────────────
