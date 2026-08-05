@@ -437,7 +437,7 @@ export default function FeedItem({
             <path d="M2 20h2c.55 0 1-.45 1-1v-9c0-.55-.45-1-1-1H2v11zm19.83-7.12c.11-.25.17-.52.17-.8V11c0-1.1-.9-2-2-2h-5.5l.92-4.65c.05-.22.02-.46-.08-.66-.23-.45-.52-.86-.88-1.22L9.46 2.71 8 4.17c-.21.21-.33.48-.33.77v.17l-.95 4.58c-.05.26-.09.52-.09.79v7.42c0 .9.71 1.63 1.6 1.64l7.82.34c.63.03 1.2-.32 1.45-.91l2.5-6.38c.1-.24.16-.5.16-.77z" />
           </svg>
           {likeCount > 0 && likeCount}
-          <span className="hidden md:inline">{t("feed.likes")}</span>
+          <span>{t("feed.likes")}</span>
         </button>
 
         {isLoggedIn ? (
@@ -449,7 +449,7 @@ export default function FeedItem({
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
             </svg>
             {comments}
-            <span className="hidden md:inline">{t("feed.comments")}</span>
+            <span>{t("feed.comments")}</span>
           </Link>
         ) : (
           <button
@@ -460,7 +460,7 @@ export default function FeedItem({
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
             </svg>
             {comments}
-            <span className="hidden md:inline">{t("feed.comments")}</span>
+            <span>{t("feed.comments")}</span>
           </button>
         )}
 
