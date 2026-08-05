@@ -136,7 +136,7 @@ export default function EventsPage() {
           {events.map((ev) => (
             <Link key={ev.id} href={`/event/${ev.slug}`} className="group block">
               <article
-                className={`card-app overflow-hidden rounded-3xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md ${
+                className={`overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md ${
                   ev.active ? "" : "opacity-70 grayscale"
                 }`}
               >
