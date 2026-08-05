@@ -143,6 +143,23 @@ export default function EventDetailPage() {
     }
   }, [event, busy, t]);
 
+  // Share event — pakai Web Share jika didukung, fallback salin link
+  const handleShare = useCallback(() => {
+    const url = window.location.href;
+    const nav = navigator as Navigator & {
+      share?: (data: { title?: string; text?: string; url?: string }) => Promise<void>;
+    };
+    if (typeof nav !== "undefined" && "share" in nav) {
+      nav.share({ title: event?.title || t("feed.share"), url }).catch(() => {});
+    } else {
+      const clipboard = navigator.clipboard;
+      if (clipboard) {
+        clipboard.writeText(url).catch(() => {});
+        alert(t("codeBlock.copied"));
+      }
+    }
+  }, [event, t]);
+
   if (loading) {
     return (
       <div className="space-y-4 pb-12 md:pb-0">
@@ -373,31 +390,42 @@ export default function EventDetailPage() {
               <EventCountdown endsAt={event.endsAt} />
             </p>
           </div>
-          {!event.active && !joined ? (
+          <div className="flex w-full gap-2 sm:w-auto">
             <button
-              disabled
-              title={t("event.notActive")}
-              className="w-full cursor-not-allowed rounded-lg bg-gray-200 px-6 py-2.5 text-sm font-bold text-gray-500 dark:bg-gray-700/60 dark:text-gray-400 sm:w-auto"
+              onClick={handleShare}
+              className="inline-flex w-1/2 items-center justify-center gap-1.5 rounded-lg border border-[var(--card-border)] px-6 py-2.5 text-sm font-bold text-[var(--muted)] transition-all hover:border-[var(--brand)] hover:text-[var(--brand)] active:scale-[0.98] sm:w-auto"
             >
-              {t("event.notActive")}
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" />
+              </svg>
+              {t("feed.share")}
             </button>
-          ) : joined ? (
-            <button
-              onClick={handleJoin}
-              disabled={busy}
-              className="w-full rounded-lg border border-[var(--brand)] px-6 py-2.5 text-sm font-bold text-[var(--brand)] transition-all hover:bg-[var(--brand-light)] disabled:opacity-50 sm:w-auto"
-            >
-              {t("event.leaveEvent")}
-            </button>
-          ) : (
-            <button
-              onClick={handleJoin}
-              disabled={busy}
-              className="w-full rounded-lg bg-[var(--brand)] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] disabled:opacity-50 sm:w-auto"
-            >
-              {t("event.joinEvent")}
-            </button>
-          )}
+            {!event.active && !joined ? (
+              <button
+                disabled
+                title={t("event.notActive")}
+                className="w-1/2 cursor-not-allowed rounded-lg bg-gray-200 px-6 py-2.5 text-sm font-bold text-gray-500 dark:bg-gray-700/60 dark:text-gray-400 sm:w-auto"
+              >
+                {t("event.notActive")}
+              </button>
+            ) : joined ? (
+              <button
+                onClick={handleJoin}
+                disabled={busy}
+                className="w-1/2 rounded-lg border border-[var(--brand)] px-6 py-2.5 text-sm font-bold text-[var(--brand)] transition-all hover:bg-[var(--brand-light)] disabled:opacity-50 sm:w-auto"
+              >
+                {t("event.leaveEvent")}
+              </button>
+            ) : (
+              <button
+                onClick={handleJoin}
+                disabled={busy}
+                className="w-1/2 rounded-lg bg-[var(--brand)] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[var(--brand-hover)] disabled:opacity-50 sm:w-auto"
+              >
+                {t("event.joinEvent")}
+              </button>
+            )}
+          </div>
         </div>
 
         {joinError && (
