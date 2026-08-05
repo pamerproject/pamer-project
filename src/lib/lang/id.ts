@@ -63,6 +63,8 @@ const id = {
     events: "Events",
     myEvents: "Event yang sedang kamu ikuti",
     following: "Diikuti",
+    followEvent: "Ikuti event ini",
+    followingEvent: "Mengikuti",
   },
 
   // ── Mobile Nav ─────────────────────────────────────

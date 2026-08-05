@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useTranslation } from "@/lib/lang";
@@ -67,6 +67,7 @@ export default function RightSidebar() {
   const [loading, setLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [openMenuProjectId, setOpenMenuProjectId] = useState<string | null>(null);
+  const [joiningSlug, setJoiningSlug] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close three-dot menu on outside click
@@ -93,6 +94,29 @@ export default function RightSidebar() {
     } catch {
       alert(t("rightSidebar.networkError"));
       window.dispatchEvent(new CustomEvent("pinned-projects-updated"));
+    }
+  };
+
+  const router = useRouter();
+
+  const handleToggleJoinEvent = async (ev: SidebarEvent) => {
+    if (!session?.user?.id) {
+      router.push("/login");
+      return;
+    }
+    setJoiningSlug(ev.slug);
+    try {
+      const res = await fetch(`/api/events/${ev.slug}/join`, { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(translateApiError(data.message, t) || t("rightSidebar.networkError"));
+      }
+      window.dispatchEvent(new CustomEvent("events-updated"));
+    } catch {
+      alert(t("rightSidebar.networkError"));
+      window.dispatchEvent(new CustomEvent("events-updated"));
+    } finally {
+      setJoiningSlug(null);
     }
   };
 
@@ -527,6 +551,20 @@ export default function RightSidebar() {
                         <EventCountdown endsAt={ev.endsAt} />
                       </p>
                     )}
+                    <button
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleJoinEvent(ev); }}
+                      disabled={joiningSlug === ev.slug}
+                      className={`mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all active:scale-[0.98] disabled:opacity-50 ${
+                        ev.joined
+                          ? "border border-[var(--card-border)] bg-[var(--card)] text-[var(--muted)] hover:border-[var(--brand)] hover:text-[var(--brand)]"
+                          : "bg-[var(--brand)] text-white hover:bg-[var(--brand-hover)]"
+                      }`}
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3V15M4.5 6h15M4.5 15h15M6 6v15m-1.5 0h15a.75.75 0 00.75-.75V6.75A.75.75 0 0019.5 6H4.5a.75.75 0 00-.75.75v12.5c0 .414.336.75.75.75z" />
+                      </svg>
+                      {ev.joined ? t("rightSidebar.followingEvent") : t("rightSidebar.followEvent")}
+                    </button>
                   </div>
                 </Link>
               ))}

@@ -63,6 +63,8 @@ const en = {
     events: "Events",
     myEvents: "Events You're Following",
     following: "Following",
+    followEvent: "Follow this event",
+    followingEvent: "Following",
   },
 
   // ── Mobile Nav ─────────────────────────────────────
