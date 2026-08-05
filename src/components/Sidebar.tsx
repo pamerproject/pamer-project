@@ -148,17 +148,14 @@ export default function Sidebar() {
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className="flex animate-pulse items-center gap-2.5 rounded-lg p-2.5"
+                    className="flex animate-pulse items-center gap-3 rounded-xl p-2"
                   >
-                    <div className="h-5 w-5 rounded-full bg-gray-200 dark:bg-gray-700" />
-                    <div className="flex-1 space-y-1">
+                    <div className="h-8 w-9 shrink-0 rounded-md bg-gray-200 dark:bg-gray-700" />
+                    <div className="flex-1 space-y-1.5">
                       <div className="h-3.5 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
                       <div className="h-2.5 w-1/3 rounded bg-gray-100 dark:bg-gray-700" />
                     </div>
-                    <div className="flex gap-2">
-                      <div className="h-3 w-8 rounded bg-gray-100 dark:bg-gray-700" />
-                      <div className="h-3 w-8 rounded bg-gray-100 dark:bg-gray-700" />
-                    </div>
+                    <div className="h-3 w-8 shrink-0 rounded bg-gray-100 dark:bg-gray-700" />
                   </div>
                 ))}
               </>
@@ -169,27 +166,35 @@ export default function Sidebar() {
             ) : (
               <>
                 {trending.map((item) => {
-                  const rankColors: Record<number, string> = {
-                    1: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400",
-                    2: "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300",
-                    3: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400",
+                  // Gradient warna per peringkat — gaya Top Charts: rank 1 paling
+                  // mencolok, makin ke bawah makin redup.
+                  const defaultRankGradient =
+                    "from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600";
+                  const rankGradients: Record<number, string> = {
+                    1: "from-[var(--brand)] to-rose-400",
+                    2: "from-orange-500 to-amber-500",
+                    3: "from-amber-400 to-yellow-500",
+                    4: defaultRankGradient,
+                    5: defaultRankGradient,
                   };
-                  const rankBg = rankColors[item.rank] || "bg-[var(--card-border)] text-[var(--muted)]";
+                  const rankGradient = rankGradients[item.rank] || defaultRankGradient;
 
                   return (
                     <Link
                       key={item.id}
                       href={`/project/${item.slug || item.id}`}
-                      className="group flex items-center gap-2.5 rounded-lg p-2.5 transition-all hover:bg-[var(--brand-light)]"
+                      className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-[var(--brand-light)]"
                     >
-                      {/* Rank badge */}
-                      <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${rankBg}`}>
+                      {/* Nomor peringkat raksasa semi-transparan (watermark) */}
+                      <span
+                        className={`w-9 shrink-0 select-none bg-gradient-to-b bg-clip-text text-center text-3xl font-black leading-none tracking-tighter text-transparent opacity-70 transition-opacity group-hover:opacity-100 ${rankGradient}`}
+                      >
                         {item.rank}
                       </span>
 
                       {/* Title + tag */}
                       <div className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium text-[var(--foreground)] transition-colors group-hover:text-[var(--brand)]">
+                        <span className="block truncate text-sm font-semibold text-[var(--foreground)] transition-colors group-hover:text-[var(--brand)]">
                           {item.title}
                         </span>
                         {item.tags.length > 0 && (
