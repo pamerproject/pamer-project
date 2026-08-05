@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
@@ -16,6 +16,12 @@ const RightSidebar = dynamic(() => import("@/components/RightSidebar"));
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const viewport: Viewport = {
@@ -45,7 +51,7 @@ export default async function RootLayout({
   return (
     <html
       lang="id"
-      className={`${jetbrainsMono.variable} h-full antialiased`}
+      className={`${jetbrainsMono.variable} ${poppins.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full" suppressHydrationWarning>
