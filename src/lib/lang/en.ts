@@ -721,6 +721,8 @@ const en = {
     notFound: "Event not found",
     joinEvent: "Join Event",
     leaveEvent: "Leave Event",
+    loginToJoin: "Please login to join this event",
+    loginToJoinBtn: "Login to Join",
     detailTitle: "Event Details",
     howTo: "How to Join",
     requirements: "Requirements",

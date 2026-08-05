@@ -721,6 +721,8 @@ const id = {
     notFound: "Event tidak ditemukan",
     joinEvent: "Ikut Event",
     leaveEvent: "Batalkan Ikut",
+    loginToJoin: "Silakan login untuk mengikuti event ini",
+    loginToJoinBtn: "Login untuk Ikut",
     detailTitle: "Detail Event",
     howTo: "Tata Cara",
     requirements: "Syarat",
