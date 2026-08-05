@@ -980,23 +980,30 @@ export default function PostDetailPage() {
     };
   }, [mobileInputFocused]);
 
-  // ── Kunci posisi scroll feed selama keyboard terbuka ──
+  // ── Jaga posisi scroll feed saat keyboard terbuka (tanpa mengunci) ──
   // Browser suka auto-scroll ke bawah untuk menampilkan input saat keyboard
-  // naik. Loop rAF memaksa scrollTop tetap pada posisi saat fokus sehingga
-  // feed tidak bergerak sama sekali saat mengetik.
+  // naik. Selama ±600ms pertama setelah fokus, setiap scroll dipaksa balik ke
+  // posisi saat fokus untuk mencegah lompatan. Setelah guard lepas, scroll
+  // feed kembali bebas seperti biasa.
   useEffect(() => {
     if (!mobileInputFocused) return;
     const el = contentRef.current;
     if (!el) return;
-    let raf = 0;
-    const lock = () => {
-      if (el.scrollTop !== feedScrollRef.current) {
-        el.scrollTop = feedScrollRef.current;
-      }
-      raf = requestAnimationFrame(lock);
+    const target = feedScrollRef.current;
+    let guard = true;
+    const restore = () => {
+      if (guard && el.scrollTop !== target) el.scrollTop = target;
     };
-    lock();
-    return () => cancelAnimationFrame(raf);
+    el.addEventListener("scroll", restore, { passive: true });
+    const timer = window.setTimeout(() => {
+      guard = false;
+      el.removeEventListener("scroll", restore);
+    }, 600);
+    return () => {
+      guard = false;
+      el.removeEventListener("scroll", restore);
+      window.clearTimeout(timer);
+    };
   }, [mobileInputFocused]);
 
   // Bar komentar tetap menempel di atas keyboard (VisualViewport API)
