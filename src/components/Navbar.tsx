@@ -219,7 +219,7 @@ export default function Navbar({ favicon }: { favicon?: string | null }) {
                   P
                 </span>
               )}
-              <span className="text-[var(--brand)]">pamerproject</span>
+              pamer<span className="text-[var(--brand)]">project</span>
               <svg
                 className={`h-4 w-4 text-[var(--muted)] transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`}
                 fill="none"
@@ -249,7 +249,7 @@ export default function Navbar({ favicon }: { favicon?: string | null }) {
                   P
                 </span>
               )}
-              <span className="text-[var(--brand)]">pamerproject</span>
+              pamer<span className="text-[var(--brand)]">project</span>
             </Link>
 
             {/* Dropdown — hanya mobile */}
