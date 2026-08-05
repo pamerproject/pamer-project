@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/lang";
@@ -25,7 +26,7 @@ interface NotifItem {
   actor: { id: string; username: string; name: string | null; avatar: string | null };
 }
 
-export default function Navbar() {
+export default function Navbar({ favicon }: { favicon?: string | null }) {
   const { data: session, update } = useSession();
   const { t } = useTranslation();
   const [notifOpen, setNotifOpen] = useState(false);
@@ -205,9 +206,19 @@ export default function Navbar() {
               aria-expanded={menuOpen}
               className="flex items-center gap-1.5 text-xl font-extrabold tracking-tight md:hidden"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand)] text-sm text-white">
-                P
-              </span>
+              {favicon ? (
+                <Image
+                  src={favicon}
+                  alt="PamerProject"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 rounded-lg object-cover"
+                />
+              ) : (
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand)] text-sm text-white">
+                  P
+                </span>
+              )}
               pamerproject
               <svg
                 className={`h-4 w-4 text-[var(--muted)] transition-transform duration-200 ${menuOpen ? "rotate-180" : ""}`}
@@ -225,9 +236,19 @@ export default function Navbar() {
               href="/"
               className="hidden items-center gap-2 text-xl font-extrabold tracking-tight md:flex"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand)] text-sm text-white">
-                P
-              </span>
+              {favicon ? (
+                <Image
+                  src={favicon}
+                  alt="PamerProject"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 rounded-lg object-cover"
+                />
+              ) : (
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--brand)] text-sm text-white">
+                  P
+                </span>
+              )}
               pamerproject
             </Link>
 

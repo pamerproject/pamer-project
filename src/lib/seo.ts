@@ -13,7 +13,7 @@ const DEFAULT_SEO = {
 
 // SEO settings di-cache (tag "seo-settings") — di-invalidate lewat
 // revalidateTag() saat admin menyimpan di Dashboard → Pengaturan.
-const getSeoSettings = unstable_cache(
+export const getSeoSettings = unstable_cache(
   async () => {
     try {
       const s = await prisma.seoSettings.findUnique({

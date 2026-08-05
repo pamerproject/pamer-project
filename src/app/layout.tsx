@@ -6,7 +6,7 @@ import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import InstallApp from "@/components/InstallApp";
 import { LangProvider } from "@/lib/lang";
-import { buildSeoMetadata } from "@/lib/seo";
+import { buildSeoMetadata, getSeoSettings } from "@/lib/seo";
 import dynamic from "next/dynamic";
 
 const MobileNav = dynamic(() => import("@/components/MobileNav"));
@@ -53,6 +53,11 @@ export default async function RootLayout({
   const h = await headers();
   const nonce = h.get("x-nonce") || "";
 
+  // Favicon hasil upload admin (Dashboard → Pengaturan) — dipakai juga sebagai
+  // logo P di navbar.
+  const seoSettings = await getSeoSettings();
+  const favicon = seoSettings?.favicon || null;
+
   return (
     <html
       lang="id"
@@ -62,7 +67,7 @@ export default async function RootLayout({
       <body className="min-h-full" suppressHydrationWarning>
         <AuthProvider>
           <LangProvider>
-            <Navbar />
+            <Navbar favicon={favicon} />
             <div className="layout-bottom-pad pb-20 pt-14 md:pb-0">
               <div className="mx-auto max-w-7xl px-0 py-2 md:px-4 md:py-6">
                 <div className="flex justify-center gap-8">
