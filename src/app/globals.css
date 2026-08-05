@@ -99,20 +99,13 @@ body {
 }
 
 /* ── Mobile app feel: card tanpa border kiri/kanan ──── */
-/* Hanya garis atas/bawah sebagai separator antar card (seperti list item
-   di mobile app); jarak tepi kiri/kanan layar memakai margin kontainer
-   (px-4). Radius di-nol-kan di mobile agar garis separator lurus penuh,
-   mirip list item app. Desktop tetap border penuh + rounded. */
+/* Mobile: hilangkan border kiri/kanan (pemisah antar card memakai gap
+   background), TAPI sudut tetap rounded sesuai nilai rounded-* tiap card
+   (border-radius TIDAK lagi di-nol-kan). Desktop tidak terpengaruh. */
 @media (max-width: 767px) {
-  /* Facebook-native mobile: card putih di atas background abu-abu.
-     TANPA border sama sekali — pemisah antar card = gap background
-     (seperti feed Facebook native). Sudut persegi penuh (tanpa
-     lengkungan). Pakai !important agar menang atas utility Tailwind
-     di semua browser. Desktop tidak terpengaruh (rule hanya < md). */
   .card-app {
     border-width: 0 !important;
     border-inline-width: 0 !important;
-    border-radius: 0 !important;
   }
 }
 
