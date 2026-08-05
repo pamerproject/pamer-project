@@ -958,28 +958,6 @@ export default function PostDetailPage() {
   // terbuka agar feed tidak ikut melompat ke atas/bawah saat keyboard naik.
   const feedScrollRef = useRef(0);
 
-  // ── Kontainer selalu penuh setinggi window ──
-  // Jangan dikecilkan saat keyboard naik (dengan interactive-widget:
-  // resizes-visual, window.innerHeight tetap penuh) sehingga feed menjejaki
-  // layar dan tidak menyisakan strip abu-abu (--background) antara feed dan
-  // input bar.
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    const setHeight = () => {
-      el.style.height = `${window.innerHeight}px`;
-    };
-    setHeight();
-    window.addEventListener("resize", setHeight);
-    const vv = window.visualViewport;
-    vv?.addEventListener("resize", setHeight);
-    return () => {
-      window.removeEventListener("resize", setHeight);
-      vv?.removeEventListener("resize", setHeight);
-      el.style.height = "";
-    };
-  }, [mobileInputFocused]);
-
   // ── Jaga posisi scroll feed saat keyboard terbuka (tanpa mengunci) ──
   // Browser suka auto-scroll ke bawah untuk menampilkan input saat keyboard
   // naik. Selama ±600ms pertama setelah fokus, setiap scroll dipaksa balik ke
@@ -1474,7 +1452,7 @@ export default function PostDetailPage() {
   return (
     <div
       ref={contentRef}
-      className="bg-[var(--background)] space-y-2.5 md:space-y-4 h-[100dvh] overflow-y-auto overscroll-contain pt-14 md:h-auto md:overflow-visible md:pt-0"
+      className="fixed inset-0 bg-[var(--background)] space-y-2.5 overflow-y-auto overscroll-contain pt-14 pb-20 md:static md:h-auto md:space-y-4 md:overflow-visible md:pt-0 md:pb-0"
     >
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
       <style>{`@media (max-width: 767px) { html, body { overflow: hidden !important; overscroll-behavior: none !important; } .layout-bottom-pad { padding-top: 0 !important; padding-bottom: 0 !important; } .layout-bottom-pad .max-w-7xl { padding-top: 0 !important; padding-bottom: 0 !important; } .post-detail-container > :not(:first-child) { margin-top: 0 !important; } }`}</style>
