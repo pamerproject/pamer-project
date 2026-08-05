@@ -162,7 +162,7 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4 pb-12 md:pb-0">
+      <div className="-mt-14 space-y-4 pb-12 md:mt-0 md:pb-0">
         <div className="animate-pulse overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)]">
           <div className="h-48 w-full bg-gray-200 dark:bg-gray-700 sm:h-64 md:h-72" />
           <div className="space-y-3 p-4 md:p-5">
@@ -177,7 +177,7 @@ export default function EventDetailPage() {
 
   if (notFound || !event) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
+      <div className="-mt-14 flex flex-col items-center justify-center py-20 md:mt-0">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-light)]">
           <svg
             className="h-8 w-8 text-[var(--brand)]"
@@ -211,7 +211,7 @@ export default function EventDetailPage() {
   const extraCount = participantCount - shownParticipants.length;
 
   return (
-    <div className="space-y-4 pb-12 md:pb-0">
+    <div className="-mt-14 space-y-4 pb-12 md:mt-0 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Sticky: menggantikan posisi navbar saat navbar hide-on-scroll */}
       <div className="sticky top-0 z-[65] flex h-14 items-center gap-3 border-b border-[var(--card-border)] bg-[var(--card)] px-4 md:hidden">
