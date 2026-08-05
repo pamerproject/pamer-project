@@ -954,6 +954,9 @@ export default function PostDetailPage() {
   const [sheetMode, setSheetMode] = useState<"emoji" | "sticker" | null>(null);
   const mobileInputRef = useRef<HTMLTextAreaElement>(null);
   const [mobileInputFocused, setMobileInputFocused] = useState(false);
+  // Posisi scroll feed saat input difokus → dipertahankan selama keyboard
+  // terbuka agar feed tidak ikut melompat ke atas/bawah saat keyboard naik.
+  const feedScrollRef = useRef(0);
 
   // ── Kelola tinggi kontainer agar selalu pas dengan area terlihat (iOS) ──
   // Keyboard tertutup → tinggi = window.innerHeight (mengikuti URL bar).
@@ -967,6 +970,9 @@ export default function PostDetailPage() {
         const vv = window.visualViewport;
         el.style.height =
           vv && vv.height > 0 ? `${vv.height}px` : `${window.innerHeight}px`;
+        // Browser kadang auto-scroll ke bawah saat keyboard naik (ingin
+        // menampilkan input). Pulihkan scroll agar feed tetap diam.
+        el.scrollTop = feedScrollRef.current;
       } else {
         el.style.height = `${window.innerHeight}px`;
       }
@@ -975,9 +981,17 @@ export default function PostDetailPage() {
     window.addEventListener("resize", setHeight);
     const vv = window.visualViewport;
     vv?.addEventListener("resize", setHeight);
+    // Fallback sekali jalan: animasi keyboard bisa selesai lebih lambat dari
+    // event resize terakhir, pulihkan scroll setelahnya agar tetap diam.
+    const settle = window.setTimeout(() => {
+      if (mobileInputFocused && el.scrollTop !== feedScrollRef.current) {
+        el.scrollTop = feedScrollRef.current;
+      }
+    }, 400);
     return () => {
       window.removeEventListener("resize", setHeight);
       vv?.removeEventListener("resize", setHeight);
+      window.clearTimeout(settle);
       el.style.height = "";
     };
   }, [mobileInputFocused]);
@@ -1692,8 +1706,8 @@ export default function PostDetailPage() {
             <div className="flex items-center gap-1.5">
               <textarea
                 ref={mobileInputRef}
-                onFocus={() => setMobileInputFocused(true)}
-                onBlur={() => setMobileInputFocused(false)}
+                onFocus={() => { feedScrollRef.current = contentRef.current?.scrollTop ?? 0; setMobileInputFocused(true); }}
+                onBlur={() => { feedScrollRef.current = contentRef.current?.scrollTop ?? 0; setMobileInputFocused(false); }}
                 value={commentText}
                 onChange={(e) => handleMobileCommentChange(e.target.value)}
                 onKeyDown={(e) => {
