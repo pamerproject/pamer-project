@@ -6,9 +6,10 @@ import DashboardView from "./DashboardView";
 import EventTab from "./EventTab";
 import SeoTab from "./SeoTab";
 import ContentTab from "./ContentTab";
+import UserTab from "./UserTab";
 import type { TrendPoint } from "./DashboardView";
 
-type Tab = "statistic" | "event" | "setting";
+type Tab = "statistic" | "event" | "user" | "setting";
 
 interface DashboardTabsProps {
   totals: { users: number; projects: number; stories: number };
@@ -26,6 +27,7 @@ export default function DashboardTabs({ totals, trends }: DashboardTabsProps) {
   const tabs: { key: Tab; label: string }[] = [
     { key: "statistic", label: t("dashboard.tabStatistic") },
     { key: "event", label: t("dashboard.tabEvent") },
+    { key: "user", label: t("dashboard.tabUser") },
     { key: "setting", label: t("dashboard.tabSetting") },
   ];
 
@@ -53,6 +55,8 @@ export default function DashboardTabs({ totals, trends }: DashboardTabsProps) {
       {activeTab === "statistic" && <DashboardView totals={totals} trends={trends} />}
 
       {activeTab === "event" && <EventTab />}
+
+      {activeTab === "user" && <UserTab />}
 
       {activeTab === "setting" && (
         <div className="space-y-6">
