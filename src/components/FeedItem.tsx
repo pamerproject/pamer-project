@@ -198,7 +198,7 @@ export default function FeedItem({
         <Link href={qs(`/project/${project.slug || project.id}`, refPath)} className="block">
           <div className="mb-1 px-3 md:px-4">
             {/* Title — above image */}
-            <h3 className="text-sm leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
+            <h3 className="text-base leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
           </div>
 
           {/* Project cover image — FULL kiri-kanan (tanpa padding), carousel jika >1 */}
@@ -285,7 +285,7 @@ export default function FeedItem({
         ) : (
           <div className="block">
             <div className="mb-1 px-3 md:px-4">
-              <h3 className="text-sm leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
+              <h3 className="text-base leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
             </div>
             {(project.image || (images && images.length > 0)) && (
               <div className="-mx-2 w-[calc(100%+1rem)] overflow-hidden md:mx-0 md:w-full">
