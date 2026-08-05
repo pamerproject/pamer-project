@@ -137,7 +137,11 @@ export default function MobileNav() {
         {items
           .filter((item) => isLoggedIn || item.href === "/" || item.action === "search")
           .map((item) => {
-            const isActive = item.href ? pathname === item.href : false;
+            const isActive = item.key === "profile"
+              ? pathname === "/u" || pathname.startsWith("/u/")
+              : item.href
+                ? pathname === item.href
+                : false;
 
             // Tombol search — bukan link, dispatch event ke Navbar
             if (item.action === "search") {
