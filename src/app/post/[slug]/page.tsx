@@ -959,22 +959,20 @@ export default function PostDetailPage() {
   const feedScrollRef = useRef(0);
 
   // ── Kelola tinggi kontainer agar selalu pas dengan area terlihat (iOS) ──
-  // Keyboard tertutup → tinggi = window.innerHeight (mengikuti URL bar).
-  // Keyboard terbuka → tinggi = visualViewport.height (area di atas keyboard),
-  // sehingga semua komentar tetap terjangkau & tidak ada lapisan kosong.
+  // Kontainer dibuat penuh setinggi window saat keyboard naik agar feed mengisi
+  // sampai input bar (fixed) dan tidak menyisakan strip abu-abu di atasnya.
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
     const setHeight = () => {
+      // Kontainer selalu penuh setinggi window (jangan dikecilkan ke area di
+      // atas keyboard). Input bar bersifat fixed dan mengambang di atas
+      // keyboard; feed mengisi sampai input bar sehingga tidak ada gap abu-abu.
+      el.style.height = `${window.innerHeight}px`;
+      // Browser kadang auto-scroll ke bawah saat keyboard naik (ingin
+      // menampilkan input). Pulihkan scroll agar feed tetap diam.
       if (mobileInputFocused) {
-        const vv = window.visualViewport;
-        el.style.height =
-          vv && vv.height > 0 ? `${vv.height}px` : `${window.innerHeight}px`;
-        // Browser kadang auto-scroll ke bawah saat keyboard naik (ingin
-        // menampilkan input). Pulihkan scroll agar feed tetap diam.
         el.scrollTop = feedScrollRef.current;
-      } else {
-        el.style.height = `${window.innerHeight}px`;
       }
     };
     setHeight();
