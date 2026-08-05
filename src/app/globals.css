@@ -45,9 +45,12 @@
   --font-mono: var(--font-mono, "JetBrains Mono", monospace);
 }
 
-/* Font size responsif terhadap lebar layar */
+/* Font size responsif terhadap resolusi layar:
+   — resolusi rendah (mis. 1366px) → font mengecil (~15px)
+   — FHD (1920px) → normal (~16px)
+   — di atas FHD (2K/4K) → font membesar hingga 20px */
 html {
-  font-size: clamp(14px, calc(14px + 0.12vw), 18px);
+  font-size: clamp(14px, calc(12px + 0.22vw), 20px);
   -webkit-text-size-adjust: 100%;
 }
 
