@@ -479,12 +479,12 @@ export default function RightSidebar() {
           ) : latestEvents.length === 0 ? (
             <p className="mt-3 text-xs italic text-[var(--muted)]">{t("event.noEvents")}</p>
           ) : (
-            <div className="mt-3 space-y-2">
+            <div className="mt-3 space-y-3">
               {latestEvents.map((ev) => (
                 <Link
                   key={ev.id}
                   href={`/event/${ev.slug}`}
-                  className={`group flex items-start gap-2.5 rounded-xl border border-[var(--card-border)] p-2 transition-all hover:border-[var(--brand)] hover:bg-[var(--brand-light)] ${
+                  className={`group relative block overflow-hidden rounded-xl border border-[var(--card-border)] transition-all hover:border-[var(--brand)] hover:bg-[var(--brand-light)] ${
                     ev.active ? "" : "opacity-70 grayscale"
                   }`}
                 >
@@ -492,16 +492,18 @@ export default function RightSidebar() {
                     <Image
                       src={ev.image}
                       alt={ev.title}
-                      width={64}
-                      height={64}
-                      className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                      width={280}
+                      height={112}
+                      className="h-28 w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--brand)]/20 to-[var(--brand)]/5 text-xl font-bold text-[var(--brand)]">
-                      {ev.title.charAt(0)}
+                    <div className="flex h-28 w-full items-center justify-center bg-gradient-to-br from-[var(--brand)]/20 to-[var(--brand)]/5">
+                      <svg className="h-10 w-10 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zM6.75 6.75h10.5" />
+                      </svg>
                     </div>
                   )}
-                  <div className="min-w-0 flex-1">
+                  <div className="p-2.5">
                     <div className="flex flex-wrap items-center gap-1">
                       <span className="inline-flex items-center gap-1 rounded-md bg-[var(--brand-light)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[var(--brand)]">
                         {trophyIcon}
@@ -512,11 +514,11 @@ export default function RightSidebar() {
                         {ev.duration}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs font-bold leading-snug text-[var(--foreground)] line-clamp-2 group-hover:text-[var(--brand)]">
+                    <p className="mt-1.5 text-xs font-bold leading-snug text-[var(--foreground)] line-clamp-2 group-hover:text-[var(--brand)]">
                       {ev.title}
                     </p>
                     {ev.description && (
-                      <p className="mt-0.5 text-[11px] leading-relaxed text-[var(--muted)] line-clamp-2">
+                      <p className="mt-1 text-[11px] leading-relaxed text-[var(--muted)] line-clamp-2">
                         {ev.description}
                       </p>
                     )}
