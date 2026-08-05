@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useTranslation } from "@/lib/lang";
 import Avatar from "@/components/ui/Avatar";
 
@@ -149,14 +150,24 @@ export default function UserTab() {
               >
                 <td className="px-3 py-2 md:px-4">
                   <div className="flex items-center gap-2.5">
-                    <Avatar src={u.avatar} name={u.name || u.username} size="sm" />
-                    <span className="font-semibold text-[var(--foreground)]">
+                    <Link href={`/u/${u.username}`} className="shrink-0 transition-opacity hover:opacity-80">
+                      <Avatar src={u.avatar} name={u.name || u.username} size="sm" />
+                    </Link>
+                    <Link
+                      href={`/u/${u.username}`}
+                      className="font-semibold text-[var(--foreground)] transition-colors hover:text-[var(--brand)]"
+                    >
                       {u.name || u.username}
-                    </span>
+                    </Link>
                   </div>
                 </td>
-                <td className="hidden px-3 py-2 text-[var(--muted)] sm:table-cell md:px-4">
-                  @{u.username}
+                <td className="hidden px-3 py-2 sm:table-cell md:px-4">
+                  <Link
+                    href={`/u/${u.username}`}
+                    className="text-[var(--muted)] transition-colors hover:text-[var(--brand)]"
+                  >
+                    @{u.username}
+                  </Link>
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap text-xs text-[var(--muted)] md:text-sm">
                   {formatDate(u.createdAt, lang)}
