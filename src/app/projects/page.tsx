@@ -277,7 +277,7 @@ export default function ProjectsPage() {
               href={`/project/${project.slug || project.id}`}
               className="group block"
             >
-              <article className="card-app overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
+              <article className="overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] transition-all hover:border-[var(--brand)] hover:shadow-md">
                 {/* Image */}
                 {primaryImage ? (
                   <div className="relative aspect-video w-full overflow-hidden">
