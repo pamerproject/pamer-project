@@ -443,10 +443,10 @@ export default function FeedItem({
         {isLoggedIn ? (
           <Link
             href={qs(isProject && project ? `/project/${project.slug || project.id}` : `/post/${slug || id}`, refPath)}
-            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-[var(--muted)] hover:bg-red-50 hover:text-[var(--brand)] md:gap-1.5 md:px-3 md:py-2 md:text-sm"
+            className="flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
           >
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z" />
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
             </svg>
             {comments}
             <span className="hidden md:inline">{t("feed.comments")}</span>
@@ -454,10 +454,10 @@ export default function FeedItem({
         ) : (
           <button
             onClick={(e) => { e.stopPropagation(); window.location.href = "/login"; }}
-            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs text-[var(--muted)] hover:bg-red-50 hover:text-[var(--brand)] md:gap-1.5 md:px-3 md:py-2 md:text-sm"
+            className="flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
           >
-            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z" />
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
             </svg>
             {comments}
             <span className="hidden md:inline">{t("feed.comments")}</span>
