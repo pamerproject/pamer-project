@@ -47,10 +47,11 @@
 
 /* Font size responsif terhadap resolusi layar:
    — resolusi rendah (mis. 1366px) → font mengecil (~15px)
-   — FHD (1920px) → normal (~16px)
-   — di atas FHD (2K/4K) → font membesar hingga 20px */
+   — MacBook Pro (1512–1728px) → ~16.5–17.5px
+   — FHD (1920px) → ~18.5px
+   — di atas FHD (2K/4K) → font membesar hingga 22px */
 html {
-  font-size: clamp(14px, calc(12px + 0.22vw), 20px);
+  font-size: clamp(15px, calc(8px + 0.55vw), 22px);
   -webkit-text-size-adjust: 100%;
 }
 
