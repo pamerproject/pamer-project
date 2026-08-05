@@ -988,6 +988,10 @@ export default function PostDetailPage() {
   const setMobileBarEl = useKeepAboveKeyboard(mobileInputFocused);
   // Bar "kembali" di atas tetap menempel di puncak layar saat keyboard naik.
   const setBackBarEl = useKeepAtTop(mobileInputFocused);
+  // Container feed juga dikompensasi: di iOS saat keyboard naik, visual viewport
+  // ikut pan sehingga top container bisa terdorong keluar layar dan bagian atas
+  // feed tidak bisa di-scroll ke puncak. Set top = visualViewport.offsetTop.
+  const setContainerEl = useKeepAtTop(mobileInputFocused);
 
   // Mobile mention state
   const [mobileMentionActive, setMobileMentionActive] = useState(false);
@@ -1453,7 +1457,10 @@ export default function PostDetailPage() {
 
   return (
     <div
-      ref={contentRef}
+      ref={(node) => {
+        contentRef.current = node;
+        setContainerEl(node);
+      }}
       className="fixed inset-0 bg-[var(--background)] space-y-2.5 overflow-y-auto overscroll-contain pt-14 pb-20 md:static md:h-auto md:space-y-4 md:overflow-visible md:pt-0 md:pb-0"
     >
       <style>{`.layout-bottom-pad { padding-bottom: 0 !important; }`}</style>
