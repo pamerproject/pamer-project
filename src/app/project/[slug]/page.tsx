@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import Avatar from "@/components/ui/Avatar";
-import { useInfiniteScroll, useKeepAboveKeyboard } from "@/lib/hooks";
+import { useInfiniteScroll, useKeepAboveKeyboard, useKeepAtTop } from "@/lib/hooks";
 import renderContent from "@/lib/renderContent";
 import Breadcrumb from "@/components/Breadcrumb";
 import { translateApiError } from "@/lib/helpers";
@@ -934,6 +934,8 @@ export default function ProjectDetailPage() {
 
   // Bar komentar tetap menempel di atas keyboard (VisualViewport API)
   const setMobileBarEl = useKeepAboveKeyboard(mobileInputFocused);
+  // Bar "kembali" di atas tetap menempel di puncak layar saat keyboard naik.
+  const setBackBarEl = useKeepAtTop(mobileInputFocused);
 
   // Mobile mention state
   const [mobileMentionActive, setMobileMentionActive] = useState(false);
@@ -1408,7 +1410,7 @@ export default function ProjectDetailPage() {
       <div className="project-detail-container pt-2 md:pt-0 space-y-0 pb-0 md:space-y-4 md:pb-0">
       {/* ── Mobile Back Button ── */}
       {/* Fixed di atas, menggantikan posisi navbar */}
-      <div className={`fixed left-0 right-0 top-0 z-[65] flex h-14 items-center gap-3 border-b bg-[var(--card)] px-4 md:hidden transition-[border-color] duration-200 ${scrolled ? "border-[var(--brand)]" : "border-[var(--card-border)]"}`}>
+      <div ref={setBackBarEl} className={`fixed left-0 right-0 top-0 z-[65] flex h-14 items-center gap-3 border-b bg-[var(--card)] px-4 md:hidden transition-[border-color] duration-200 ${scrolled ? "border-[var(--brand)]" : "border-[var(--card-border)]"}`}>
         <button
           onClick={() => window.history.back()}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"

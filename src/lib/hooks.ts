@@ -147,6 +147,64 @@ export function useKeepAboveKeyboard(focused: boolean) {
 }
 
 /**
+ * Hook agar elemen fixed di atas (mis. bar "kembali") tetap menempel di puncak
+ * layar saat keyboard mobile terbuka. Di iOS, keyboard membuat visual viewport
+ * bergeser (pan) untuk menampilkan input — elemen fixed ikut terdorong keluar.
+ * Kompensasi: saat input fokus, set top = visualViewport.offsetTop (besar pan),
+ * kembali 0px saat tidak fokus. Android tidak membutuhkan ini.
+ */
+export function useKeepAtTop(focused: boolean) {
+  const elRef = useRef<HTMLElement | null>(null);
+  const setEl = useCallback((node: HTMLElement | null) => {
+    elRef.current = node;
+  }, []);
+
+  useEffect(() => {
+    const el = elRef.current;
+    if (!el) return;
+
+    if (!focused) {
+      el.style.top = "0px";
+      return;
+    }
+
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const ua = navigator.userAgent;
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    // Android: elemen fixed diposisikan relatif ke visual viewport, top 0
+    // sudah otomatis benar.
+    if (!isIOS) {
+      el.style.top = "0px";
+      return;
+    }
+
+    const update = () => {
+      el.style.top = `${Math.max(0, vv.offsetTop)}px`;
+    };
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    window.addEventListener("scroll", update);
+    update();
+    const interval = window.setInterval(update, 300);
+
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      window.removeEventListener("scroll", update);
+      window.clearInterval(interval);
+      el.style.top = "0px";
+    };
+  }, [focused]);
+
+  return setEl;
+}
+
+/**
  * Custom hook untuk pagination tak terbatas (load 10 per batch).
  * Memberikan state dan fungsi untuk memuat data secara bertahap.
  */
