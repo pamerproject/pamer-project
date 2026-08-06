@@ -156,38 +156,40 @@ export default function FeedItem({
         </div>
       )}
 
-      {/* Header: avatar + name + username + time + type badge */}
-      <div className="flex items-start gap-2 px-3 pb-6 pt-3 md:gap-3 md:px-4 md:pt-4 md:pb-8">
+      {/* Header: avatar (besar) + nama di atas + @username di bawah */}
+      <div className="flex items-start gap-3 px-3 pb-6 pt-3 md:gap-3.5 md:px-4 md:pt-4 md:pb-8">
         {isLoggedIn ? (
           <Link href={`/u/${username}`}>
-            <Avatar src={avatar} name={name} size="sm" />
+            <Avatar src={avatar} name={name} size="md" />
           </Link>
         ) : (
-          <Avatar src={avatar} name={name} size="sm" />
+          <Avatar src={avatar} name={name} size="md" />
         )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex min-w-0 flex-col">
+          <div className="flex items-center gap-1.5">
             {isLoggedIn ? (
               <Link
                 href={`/u/${username}`}
-                className="text-sm font-bold truncate hover:text-[var(--brand)] md:text-base"
+                className="truncate text-sm font-bold text-[var(--foreground)] hover:text-[var(--brand)] md:text-base"
               >
                 {name}
               </Link>
             ) : (
-              <span className="text-sm font-bold truncate md:text-base">{name}</span>
+              <span className="truncate text-sm font-bold text-[var(--foreground)] md:text-base">{name}</span>
             )}
-            <span className="text-xs text-[var(--brand)] shrink-0">@{username}</span>
-            <span className="text-xs text-[var(--muted)]">·</span>
-            <span className="text-xs text-[var(--muted)] shrink-0">{time}</span>
             {type === "project" && (
-              <span className="ml-auto inline-flex items-center gap-1 rounded-md bg-[var(--brand-light)] px-2 py-0.5 text-[10px] font-bold uppercase leading-tight text-[var(--brand)] tracking-wider shrink-0">
+              <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-md bg-[var(--brand-light)] px-2 py-0.5 text-[10px] font-bold uppercase leading-tight text-[var(--brand)] tracking-wider">
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
                 </svg>
                 {t("feed.projectBadge")}
               </span>
             )}
+          </div>
+          <div className="mt-0.5 flex items-center gap-1.5">
+            <span className="text-xs text-[var(--brand)]">@{username}</span>
+            <span className="text-[10px] text-[var(--muted)]">·</span>
+            <span className="shrink-0 text-xs text-[var(--muted)]">{time}</span>
           </div>
         </div>
       </div>
