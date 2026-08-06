@@ -363,7 +363,7 @@ export default function EventDetailPage() {
         <DetailSection
           icon={
             <svg className="h-4 w-4 text-[var(--brand)]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.035A9 9 0 1111.94 12A9 9 0 0012 2.715z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 2.25a.75.75 0 0 1 .75.75V6a.75.75 0 0 1-.75.75H6A1.125 1.125 0 0 0 6.75 7.375V19.5A.75.75 0 0 0 7.5 20.25h9a.75.75 0 0 0 .75-.75V7.375a1.125 1.125 0 0 0-.75-2.25H14.25a.75.75 0 0 1-.75-.75V3a.75.75 0 0 1 .75-.75H18A2.25 2.25 0 0 1 20.25 4.5v15a2.25 2.25 0 0 1-2.25 2.25h-12A2.25 2.25 0 0 1 3.75 19.5v-15A2.25 2.25 0 0 1 6 2.25h3.75Zm4.25 8.72a.75.75 0 0 1 0 1.06l-4 4a.75.75 0 0 1-1.06 0l-1.5-1.5a.75.75 0 1 1 1.06-1.06l.97.97 3.47-3.47a.75.75 0 0 1 1.06 0Z" />
             </svg>
           }
           title={t("event.requirements")}
