@@ -1515,12 +1515,13 @@ export default function ProjectDetailPage() {
           {project.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {project.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="rounded-full border border-[var(--card-border)] px-3 py-1 text-xs font-medium text-[var(--muted)]"
+                  href={`/tags/${encodeURIComponent(tag)}`}
+                  className="rounded-full border border-[var(--card-border)] px-3 py-1 text-xs font-medium text-[var(--muted)] transition-all hover:border-[var(--brand)] hover:bg-[var(--brand-light)] hover:text-[var(--brand)]"
                 >
                   #{tag}
-                </span>
+                </Link>
               ))}
             </div>
           )}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "@/lib/lang";
 import { translateApiError } from "@/lib/helpers";
@@ -62,6 +63,7 @@ export default function FeedItem({
 }: FeedItemProps) {
   const { data: session } = useSession();
   const { t } = useTranslation();
+  const router = useRouter();
   const isLoggedIn = !!session?.user;
 
   const hasImages = images && images.length > 0;
@@ -227,7 +229,11 @@ export default function FeedItem({
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-md px-2 py-0.5 text-[11px] font-medium text-[var(--muted)]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/tags/${encodeURIComponent(tag)}`);
+                    }}
+                    className="cursor-pointer rounded-md px-2 py-0.5 text-[11px] font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]"
                   >
                     #{tag}
                   </span>
@@ -306,7 +312,8 @@ export default function FeedItem({
               {project.tags && project.tags.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {project.tags.map((tag) => (
-                    <span key={tag} className="rounded-md px-2 py-0.5 text-[11px] font-medium text-[var(--muted)]">#{tag}</span>
+                    <span key={tag} onClick={(e) => { e.stopPropagation(); router.push(`/tags/${encodeURIComponent(tag)}`); }}
+                      className="cursor-pointer rounded-md px-2 py-0.5 text-[11px] font-medium text-[var(--muted)] transition-all hover:text-[var(--brand)]">#{tag}</span>
                   ))}
                 </div>
               )}
