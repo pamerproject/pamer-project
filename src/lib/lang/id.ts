@@ -734,6 +734,7 @@ const id = {
     howTo: "Tata Cara",
     requirements: "Syarat",
     prizes: "Hadiah",
+    prizesBadge: "Total Hadiah",
     period: "Masa Waktu",
     participants: "Peserta",
     followingMsg: "mengikuti event ini",

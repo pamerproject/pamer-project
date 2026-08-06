@@ -734,6 +734,7 @@ timeAgo: {
     howTo: "How to Join",
     requirements: "Requirements",
     prizes: "Prizes",
+    prizesBadge: "Total Prizes",
     period: "Event Period",
     participants: "Participants",
     followingMsg: "is following this event",
