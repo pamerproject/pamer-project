@@ -34,9 +34,9 @@ export async function GET() {
         user: { username: p.user.username, avatar: p.user.avatar },
         likes: p._count.likes,
         comments: p._count.comments,
-        engagement: p._count.likes + p._count.comments,
+        engagement: p._count.likes,
       }))
-      .sort((a, b) => b.engagement - a.engagement)
+      .sort((a, b) => b.likes - a.likes)
       .slice(0, 5)
       .map((item, index) => ({ ...item, rank: index + 1 }));
 
