@@ -190,7 +190,7 @@ export default function FeedItem({
       {isProject && project ? (
         isLoggedIn ? (
         <Link href={qs(`/project/${project.slug || project.id}`, refPath)} className="block">
-          <div className="mb-1 px-3 md:px-4">
+          <div className="mb-1 mt-4 px-3 md:px-4">
             {/* Title — above image */}
             <h3 className="text-base leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
           </div>
@@ -278,7 +278,7 @@ export default function FeedItem({
         </Link>
         ) : (
           <div className="block">
-            <div className="mb-1 px-3 md:px-4">
+            <div className="mb-1 mt-4 px-3 md:px-4">
               <h3 className="text-base leading-relaxed text-[var(--foreground)] font-bold line-clamp-2">{project.title}</h3>
             </div>
             {(project.image || (images && images.length > 0)) && (
