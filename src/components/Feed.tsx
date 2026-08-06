@@ -79,7 +79,7 @@ export default function Feed() {
   const { sentinelRef } = useInfiniteScroll(loadMore, hasMore, loading || loadingMore);
 
   return (
-    <div className="space-y-2.5 md:space-y-4">
+    <div className="space-y-5 md:space-y-4">
       {/* Tab filter */}
       <div className="flex border-b border-[var(--card-border)]">
         {TABS_KEYS.map((key) => {
@@ -104,7 +104,7 @@ export default function Feed() {
       </div>
 
       {loading ? (
-        <div className="space-y-2.5 md:space-y-4">
+        <div className="space-y-5 md:space-y-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}

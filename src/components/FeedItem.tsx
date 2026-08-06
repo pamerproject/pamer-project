@@ -424,7 +424,7 @@ export default function FeedItem({
       )}
 
       {/* Action buttons */}
-      <div className="flex items-center gap-1 px-2 py-1.5 md:px-4 md:py-2">
+      <div className="flex items-center gap-1 px-2 py-3 md:px-4 md:py-3">
         <button
           onClick={handleLike}
           className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs transition-all md:gap-1.5 md:px-3 md:py-2 md:text-sm ${
