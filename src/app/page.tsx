@@ -27,7 +27,7 @@ export default function Home() {
           <div className="mx-auto mt-6 h-10 w-32 rounded-xl bg-gray-200 dark:bg-gray-700" />
         </div>
       ) : session ? (
-        <div className="card-app relative overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-8 text-center md:rounded-none md:border-0 md:border md:px-8 md:py-12">
+        <div className="card-app relative overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-8 text-center md:rounded-3xl md:px-8 md:py-12">
           <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[var(--brand)]/5 md:block" />
           <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-[var(--brand)]/5 md:block" />
 
@@ -55,7 +55,7 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="card-app relative overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-16 text-center md:rounded-none md:border-0 md:border md:px-8 md:py-20">
+        <div className="card-app relative overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] px-4 py-16 text-center md:rounded-3xl md:px-8 md:py-20">
           <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[var(--brand)]/5 md:block" />
           <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-[var(--brand)]/5 md:block" />
 
