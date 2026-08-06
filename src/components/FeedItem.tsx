@@ -157,7 +157,7 @@ export default function FeedItem({
       )}
 
       {/* Header: avatar (besar) + nama di atas + @username di bawah */}
-      <div className="flex items-start gap-3 px-3 pb-6 pt-3 md:gap-3.5 md:px-4 md:pt-4 md:pb-8">
+      <div className="flex items-start gap-3 border-b border-[var(--card-border)] px-3 pb-4 pt-3 md:gap-3.5 md:px-4 md:pt-4 md:pb-5">
         {isLoggedIn ? (
           <Link href={`/u/${username}`}>
             <Avatar src={avatar} name={name} size="md" />
