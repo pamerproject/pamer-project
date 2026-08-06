@@ -64,6 +64,7 @@ export default function Sidebar() {
         });
 
     const fetchUnread = () => {
+      if (!isLoggedIn) return;
       const params = new URLSearchParams();
       const sections = ["beranda", "projects"];
       for (const s of sections) {
@@ -92,7 +93,7 @@ export default function Sidebar() {
       ignore = true;
       clearInterval(interval);
     };
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <aside className="hidden w-[260px] shrink-0 md:block">
